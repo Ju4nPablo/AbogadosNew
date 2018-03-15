@@ -1,0 +1,18 @@
+{
+  "name": "angell",
+  "version": "1.0.0",
+  "description": "sistema juridico de tareas",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://riobytesangell.visualstudio.com/_git/abogados"
+  },
+  "keywords": [
+    "angell"
+  ],
+  "author": "riobytes solutions cia ltda",
+  "license": "MIT"
+}
