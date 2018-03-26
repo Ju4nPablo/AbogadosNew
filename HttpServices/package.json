@@ -1,18 +1,22 @@
 {
-  "name": "angell",
+  "name": "rio10k",
   "version": "1.0.0",
-  "description": "sistema juridico de tareas",
+  "description": "inscripciones carrera",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://riobytesangell.visualstudio.com/_git/abogados"
-  },
-  "keywords": [
-    "angell"
-  ],
   "author": "riobytes solutions cia ltda",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.18.2",
+    "connect-multiparty": "^2.1.0",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "jwt-simple": "^0.5.1",
+    "moment": "^2.21.0",
+    "mongoose": "^5.0.10",
+    "node-restful": "^0.2.6"
+  }
 }
