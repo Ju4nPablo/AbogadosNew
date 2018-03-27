@@ -1,1 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
+body {
+  background-color: #2b2b2b !important;
+}
+.centered {
+  position: fixed;
+  top: 37%;
+  left: 35%;
+  margin-top: -50px;
+  margin-left: -100px;
+}
