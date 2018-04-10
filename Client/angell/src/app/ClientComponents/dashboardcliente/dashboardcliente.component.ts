@@ -28,6 +28,9 @@ export class DashboardclienteComponent implements OnInit {
       },
       desc: {
         title: 'Descripción'
+      },
+      attr: {
+        class: 'table-bordered table-hover table-responsive'
       }
     }
   };
