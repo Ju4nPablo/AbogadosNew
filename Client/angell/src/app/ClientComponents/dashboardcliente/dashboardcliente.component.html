@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -11,19 +11,25 @@
       </li>
 
 
+
+
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Procesos
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">Nuevo</a>
-          <a class="dropdown-item" href="#">Modificar</a>
+          <a class="dropdown-item" href="#">Listar Procesos Activos</a>
+
+
         </div>
       </li>
+
+
     </ul>
-    <span class="fi-account-logout"></span>
     <form class="form-inline my-2 my-lg-0">
-      <ul> <a class="nav-link" href="#"><i class="fa fa-sign-out" aria-hidden="true"></i>Salir</a></ul>
+      <i></i>
+      <ul (click)="openNav()"> <button class=" btn form-control"   ><i class="fa fa-bell" aria-hidden="true" ></i> Notificaciones</button></ul>
+      <ul> <button class="btn form-control" href="#"><i class="fa fa-sign-out" aria-hidden="true"></i> Salir</button></ul>
 
 
 
