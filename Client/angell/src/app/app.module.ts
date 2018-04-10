@@ -22,8 +22,11 @@ import {InputTextModule} from 'primeng/inputText';
 //import {CheckModule} from 'primeng/check';
 import {CalendarModule} from 'primeng/calendar';
 import {TabViewModule} from 'primeng/tabview';
-
-
+import { ClienteComponent } from './AdministratorComponents/cliente/cliente.component';
+import { AbogadoComponent } from './AdministratorComponents/abogado/abogado.component';
+import { ActividadesComponent } from './AdministratorComponents/actividades/actividades.component';
+import {PanelModule} from 'primeng/panel';
+import {InputTextModule} from 'primeng/inputtext';
 
 
 //noinspection TypeScriptValidateTypes
@@ -35,7 +38,10 @@ import {TabViewModule} from 'primeng/tabview';
     LoginComponent,
     InicioComponent,
     DashboardclienteComponent,
-    InicioClienteComponent
+    InicioClienteComponent,
+    ClienteComponent,
+    AbogadoComponent,
+    ActividadesComponent
   ],
   imports: [
     BrowserModule,
@@ -53,7 +59,8 @@ import {TabViewModule} from 'primeng/tabview';
     DialogModule,
     InputTextModule,
     CalendarModule,
-
+    PanelModule,
+    InputTextModule,
   //  CheckboxModule,
     ButtonModule,
     TabViewModule

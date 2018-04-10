@@ -7,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DashboardComponent implements OnInit {
 
-  notification:any=[];
+  notification:any=['a'];
 
   constructor() { }
 

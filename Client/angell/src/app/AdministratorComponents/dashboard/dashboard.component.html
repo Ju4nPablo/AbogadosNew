@@ -16,18 +16,29 @@
           Clientes
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">Nuevo</a>
+          <a class="dropdown-item" href="/dashboard/cliente">Nuevo</a>
           <a class="dropdown-item" href="#">Modificar</a>
+          <a class="dropdown-item" href="#">Listar</a>
         </div>
       </li>
-
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Administrar Procesos
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown5" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Abogados
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">Nuevo</a>
+          <a class="dropdown-item" href="/dashboard/abogado">Nuevo</a>
           <a class="dropdown-item" href="#">Modificar</a>
+          <a class="dropdown-item" href="#">Listar</a>
+
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Administrar Flujos Procesos
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">Crear Flujo Proceso</a>
+          <a class="dropdown-item" href="#">Dar de Baja Flujo Proceso</a>
 
         </div>
       </li>
@@ -50,7 +61,16 @@
           <a class="dropdown-item" href="#">Modificar</a>
         </div>
       </li>
+      <li>
+        <a class="nav-item nav-link"  href="/dashboard/actividades">Gestion Actividades</a>
+      </li>
     </ul>
+
+
+
+
+
+
     <form class="form-inline my-2 my-lg-0">
       <i></i>
       <ul (click)="openNav()"> <button class=" btn form-control"   ><i class="fa fa-bell" aria-hidden="true" ></i> Notificaciones</button></ul>
@@ -65,7 +85,7 @@
 <br>
 
 
-<div style="text-align: center ; z-index: 90000000000!important;" >
+<div style="z-index: 90000000000!important;" >
 
 
 <div class="row" style="z-index: 90000000000!important; ">
@@ -77,8 +97,11 @@
        <h3 class="ui-panelmenu-header"  style="width: 100%; z-index: 90000000001!important;">Notificaciones</h3>
 
        <div class="card" style="width: 100%; min-width:30px;text-align: center">
+         <div class="card-header" style="background-color: red">
+           <h5 class="card-title" >Card title</h5>
+         </div>
          <div class="card-body">
-           <h5 class="card-title">Card title</h5>
+
            <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
            <a href="#" class="card-link">Card link</a>
@@ -87,8 +110,11 @@
        </div>
 
        <div class="card" style="width: 100%; min-width:30px;text-align: center">
+         <div class="card-header" style="background-color: yellow">
+           <h5 class="card-title" >Card title</h5>
+         </div>
          <div class="card-body">
-           <h5 class="card-title">Card title</h5>
+
            <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
            <a href="#" class="card-link">Card link</a>
@@ -97,8 +123,11 @@
        </div>
 
        <div class="card" style="width: 100%; min-width:30px;text-align: center">
+         <div class="card-header" style="background-color: white">
+           <h5 class="card-title" >Card title</h5>
+         </div>
          <div class="card-body">
-           <h5 class="card-title">Card title</h5>
+
            <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
            <a href="#" class="card-link">Card link</a>
@@ -112,10 +141,7 @@
      <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
 
 
-         <div class="panel" style="background-color: white !important; height: 100%">
-           <router-outlet></router-outlet>
 
-         </div>
 
 
 
@@ -145,6 +171,10 @@
     <br>
     <br>
       </div>-->
+     <div class="panel" style="background-color: white !important; height: 100%">
+       <router-outlet></router-outlet>
+
+     </div>
   </div>
 
 
