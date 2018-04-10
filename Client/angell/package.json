@@ -1,6 +1,6 @@
 {
-  "name": "rio10k",
-  "version": "0.0.0",
+  "name": "angell",
+  "version": "1.0.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",

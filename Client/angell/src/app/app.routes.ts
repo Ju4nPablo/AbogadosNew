@@ -8,10 +8,29 @@ import {LoginComponent} from "./AdministratorComponents/login/login.component"
 import {InicioComponent} from "./AdministratorComponents/inicio/inicio.component"
 import {DashboardclienteComponent} from "./ClientComponents/dashboardcliente/dashboardcliente.component";
 import {InicioClienteComponent} from "./ClientComponents/inicio-cliente/inicio-cliente.component";
+import {ClienteComponent} from "./AdministratorComponents/cliente/cliente.component";
+import {AbogadoComponent} from "./AdministratorComponents/abogado/abogado.component";
+import {ActividadesComponent} from "./AdministratorComponents/actividades/actividades.component";
 const appRoutes:Routes = [
   {
     path: 'dashboard', component: DashboardComponent,
     children: [
+      {
+        path: 'inicio',
+        component: InicioComponent
+      },
+      {
+        path: 'cliente',
+        component: ClienteComponent
+      },
+      {
+        path: 'abogado',
+        component: AbogadoComponent
+      },
+      {
+        path: 'actividades',
+        component: ActividadesComponent
+      },
       {
         path: 'inicio',
         component: InicioComponent

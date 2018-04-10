@@ -25,6 +25,10 @@ import {TabViewModule} from 'primeng/tabview';
 //For tables
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 
+import { ClienteComponent } from './AdministratorComponents/cliente/cliente.component';
+import { AbogadoComponent } from './AdministratorComponents/abogado/abogado.component';
+import { ActividadesComponent } from './AdministratorComponents/actividades/actividades.component';
+import {PanelModule} from 'primeng/panel';
 
 
 //noinspection TypeScriptValidateTypes
@@ -36,7 +40,10 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
     LoginComponent,
     InicioComponent,
     DashboardclienteComponent,
-    InicioClienteComponent
+    InicioClienteComponent,
+    ClienteComponent,
+    AbogadoComponent,
+    ActividadesComponent
   ],
   imports: [
     BrowserModule,
@@ -54,7 +61,8 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
     DialogModule,
     InputTextModule,
     CalendarModule,
-
+    PanelModule,
+    InputTextModule,
   //  CheckboxModule,
     ButtonModule,
     TabViewModule,
