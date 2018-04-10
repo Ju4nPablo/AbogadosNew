@@ -13,5 +13,8 @@ export class AppComponent {
   showSuccess() {
     this.msgs = [];
     this.msgs.push({severity:'success', summary:'Success Message', detail:'Order submitted'});
+
   }
+
+  
 }

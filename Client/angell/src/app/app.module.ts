@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-
 import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import {ButtonModule} from 'primeng/button';
@@ -16,6 +16,7 @@ import {MessagesModule} from 'primeng/messages';
 import {MessageModule} from 'primeng/message';
 import {MessageService} from 'primeng/components/common/messageservice';
 import {GrowlModule} from 'primeng/growl'
+import {ScheduleModule} from 'primeng/schedule';
 //noinspection TypeScriptValidateTypes
 //noinspection TypeScriptValidateTypes
 @NgModule({
@@ -29,6 +30,7 @@ import {GrowlModule} from 'primeng/growl'
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     ButtonModule,
     routing,
     FormsModule,
@@ -37,7 +39,8 @@ import {GrowlModule} from 'primeng/growl'
     HttpModule,
     MessagesModule,
     MessageModule,
-    GrowlModule
+    GrowlModule,
+    ScheduleModule
 ],
   providers: [
     appRoutingProviders,

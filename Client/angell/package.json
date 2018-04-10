@@ -24,8 +24,11 @@
     "bootstrap": "^4.0.0",
     "core-js": "^2.4.1",
     "font-awesome": "^4.7.0",
+    "fullcalendar": "^3.2.0",
     "jquery": "^3.3.1",
+    "moment": "^2.22.0",
     "open-iconic": "^1.1.1",
+    "popper.js": "^1.14.3",
     "primeng": "^5.2.3",
     "rxjs": "^5.5.6",
     "zone.js": "^0.8.19"
