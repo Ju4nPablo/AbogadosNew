@@ -8,11 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class InicioComponent implements OnInit {
   events: any[];
-
+  headerConfig: any;
   header: any;
   constructor( ) { }
 
   ngOnInit() {
+
+    this.headerConfig = {
+      left: 'prevYear,prev,today,next,nextYear ',
+      center: 'title',
+      right: 'month,agendaWeek,agendaDay'
+    };
     this.events = [
       {
         "title": "All Day Event",

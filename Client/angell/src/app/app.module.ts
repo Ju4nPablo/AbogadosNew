@@ -17,6 +17,15 @@ import {MessageModule} from 'primeng/message';
 import {MessageService} from 'primeng/components/common/messageservice';
 import {GrowlModule} from 'primeng/growl'
 import {ScheduleModule} from 'primeng/schedule';
+import {DialogModule} from 'primeng/dialog';
+import {InputTextModule} from 'primeng/inputText';
+//import {CheckModule} from 'primeng/check';
+import {CalendarModule} from 'primeng/calendar';
+import {TabViewModule} from 'primeng/tabview';
+
+
+
+
 //noinspection TypeScriptValidateTypes
 //noinspection TypeScriptValidateTypes
 @NgModule({
@@ -40,7 +49,15 @@ import {ScheduleModule} from 'primeng/schedule';
     MessagesModule,
     MessageModule,
     GrowlModule,
-    ScheduleModule
+    ScheduleModule,
+    DialogModule,
+    InputTextModule,
+    CalendarModule,
+
+  //  CheckboxModule,
+    ButtonModule,
+    TabViewModule
+
 ],
   providers: [
     appRoutingProviders,
