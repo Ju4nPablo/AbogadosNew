@@ -1,47 +1,36 @@
-<nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+<nav class="navbar navbar-expand-lg  navbar-dark bg-dark" role="navigation">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03"
+    aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <a class="navbar-brand" href="#"><img src="assets/consorcio20.png" /> </a>
 
   <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Dashboard <span class="sr-only">(current)</span></a>
-      </li>
-
-
-
-
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true"
+          aria-expanded="false">
           Procesos
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="#">Listar Procesos Activos</a>
-
-
         </div>
       </li>
-
-
     </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <i></i>
-     <!-- <ul (click)="openNav()"> <button class=" btn form-control"   ><i class="fa fa-bell" aria-hidden="true" ></i> Notificaciones</button></ul>-->
-      <ul> <button class="btn form-control" href="#"><i class="fa fa-sign-out" aria-hidden="true"></i> Salir</button></ul>
-
-
-
-    </form>
+    <!-- <ul (click)="openNav()"> <button class=" btn form-control"   ><i class="fa fa-bell" aria-hidden="true" ></i> Notificaciones</button></ul>-->
+    <ul class="nav navbar-nav navbar-right">
+      <!--<button class="btn form-control" href="#"><i class="fa fa-sign-out" aria-hidden="true"></i> Salir</button>-->
+      <li><a href="#" style="color: white"><i class="fa fa-user" aria-hidden="true"></i> Mi perfil</a></li>
+      <li>&nbsp;&nbsp;&nbsp;</li>
+      <li><a href="#" style="color: white"><i class="fa fa-sign-out" aria-hidden="true"></i> Salir</a></li>
+    </ul>
   </div>
 </nav>
-<br>
-<br>
-<br>
+
+<br><br><br>
 <div class="container" style="background-color: white">
   <div class="panel" style="background-color: white !important; height: 100%">
-    <router-outlet></router-outlet>
-
+    <!--<router-outlet></router-outlet>-->
+    <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
   </div>
 </div>

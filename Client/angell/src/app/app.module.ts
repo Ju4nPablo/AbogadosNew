@@ -22,7 +22,8 @@ import {InputTextModule} from 'primeng/inputText';
 //import {CheckModule} from 'primeng/check';
 import {CalendarModule} from 'primeng/calendar';
 import {TabViewModule} from 'primeng/tabview';
-
+//For tables
+import { Ng2SmartTableModule } from 'ng2-smart-table';
 
 
 
@@ -56,7 +57,8 @@ import {TabViewModule} from 'primeng/tabview';
 
   //  CheckboxModule,
     ButtonModule,
-    TabViewModule
+    TabViewModule,
+    Ng2SmartTableModule
 
 ],
   providers: [
