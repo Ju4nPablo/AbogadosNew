@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -23,7 +23,27 @@
 
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Procesos
+          Administrar Procesos
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">Nuevo</a>
+          <a class="dropdown-item" href="#">Modificar</a>
+
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown4" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Gestionar Procesos
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">Nuevo</a>
+          <a class="dropdown-item" href="#">Modificar</a>
+
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown3" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Reportes
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="#">Nuevo</a>
@@ -31,15 +51,96 @@
         </div>
       </li>
     </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <i></i>
+      <ul> <a class="nav-link" href="#"><i class="fa fa-sign-out" aria-hidden="true"></i>Salir</a></ul>
 
+
+
+    </form>
   </div>
 </nav>
+
 <br>
+
+
+<div style="text-align: center">
+
+
+<div class="row" style="z-index: 900000000!important; ">
+
+  <div class="col-md-3 col-sm-3" >
+    <div class="container jumbotron" style="background-color: white">
+      <h3 class="ui-panelmenu-header"  style="width: 100%">Notificaciones</h3>
+
+      <div class="card" style="width: 100%; min-width:30px;text-align: center">
+        <div class="card-body">
+          <h5 class="card-title">Card title</h5>
+          <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <a href="#" class="card-link">Card link</a>
+          <a href="#" class="card-link">Another link</a>
+        </div>
+      </div>
+
+      <div class="card" style="width: 100%; min-width:30px;text-align: center">
+        <div class="card-body">
+          <h5 class="card-title">Card title</h5>
+          <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <a href="#" class="card-link">Card link</a>
+          <a href="#" class="card-link">Another link</a>
+        </div>
+      </div>
+
+      <div class="card" style="width: 100%; min-width:30px;text-align: center">
+        <div class="card-body">
+          <h5 class="card-title">Card title</h5>
+          <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <a href="#" class="card-link">Card link</a>
+          <a href="#" class="card-link">Another link</a>
+        </div>
+      </div>
 <br>
-<br>
-<div class="container" style="background-color: white">
-<div class="panel" style="background-color: white !important; height: 100%">
-  <router-outlet></router-outlet>
+      <nav aria-label="Page navigation example">
+        <ul class="pagination">
+          <li class="page-item">
+            <a class="page-link" href="#" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+              <span class="sr-only">Previous</span>
+            </a>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+              <span class="sr-only">Next</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    <br>
+    <br>
+      </div>
+  </div>
+  <div class="col-md-9 col-sm-9">
+    <div class="container jumbotron" style="background-color: white">
+
+      <div class="panel" style="background-color: white !important; height: 100%">
+        <router-outlet></router-outlet>
+
+      </div>
+    </div>
+  </div>
 
 </div>
+
+<br>
+<br>
+<br>
+<br>
+<br>
 </div>

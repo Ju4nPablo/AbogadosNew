@@ -4,7 +4,7 @@
 <br>
 <div class="container jumbotron">
 
-
+<form #loginForm>
   <div class="row">
     <div class="col-md-5 col-xs-5">
 
@@ -21,15 +21,17 @@
 
     </div>
     <div class="col-md-6 col-xs-12">
+      <p-messages [(value)]="msgs" life="3000"></p-messages>
+      <p-growl [(value)]="msgs" ></p-growl >
       <label>
 
       </label>
       <br>
       <label>Nombre de Usuario:</label>
-      <input type="text" placeholder="Nombre de usuario" class="form-control"><br>
+      <input type="text" placeholder="Nombre de usuario" name="usuario" class="form-control" [(ngModel)]="user.user_name"><br>
       <label>Contraseña:</label>
-      <input type="password" placeholder="Contraseña" class="form-control"><br>
-      <input type="submit" class="btn-primary form-control" value="Ingresar"><br>
+      <input type="password" placeholder="Contraseña" name="password" class="form-control" [(ngModel)]="user.password"><br>
+      <input type="submit" class="btn-primary form-control" value="Ingresar" (click)="login()"><br>
 
 
     </div>
@@ -37,4 +39,5 @@
 
     </div>
   </div>
+</form>
 </div>

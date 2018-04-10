@@ -5,7 +5,7 @@
 var mongoose = require('mongoose');
 var express= require('express');
 var bodyParser= require('body-parser');
-var port= process.env.Port|| 3001;
+var port= process.env.Port|| 3000;
 var config=require('./Config/config');
 //noinspection BadExpressionStatementJS
 mongoose.connect(config.url, (err, res)=>{
@@ -29,6 +29,14 @@ var mdAuth=require('./Middlewares/authenticated');
 //middleware
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
+
+app.use((req,res,next)=>{
+    res.header('Access-Control-Allow-Origin','*');
+    res.header('Access-Control-Allow-Headers','Authorization, X-API-KEY, Origin, X-Requested-With,Content-Type,Accept,Access-Control-Allow-Request-Method');
+    res.header('Access-Control-Allow-Methods','GET,POST,OPTIONS,PUT,DELETE');
+    res.header('Allow','GET,POST,OPTIONS,PUT,DELETE');
+    next();
+});
 
 app.get('/', (req, res)=>{
 
