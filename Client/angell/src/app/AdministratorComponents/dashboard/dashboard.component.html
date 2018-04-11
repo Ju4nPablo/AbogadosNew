@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg  navbar-dark bg-dark"  style="z-index: 90000000001!important;">
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -90,57 +90,91 @@
 
 <div class="row" style="z-index: 90000000000!important; ">
 
-
+<br>
    <div class="container jumbotron" style="background-color: white">
      <div id="mySidenav" class="sidenav">
-       <a href="javascript:void(0)" class="closebtn" (click)="closeNav()">&times;</a>
-       <h3 class="ui-panelmenu-header"  style="width: 100%; z-index: 90000000001!important;">Notificaciones</h3>
+       <div class="row">
+            <div class="col-md-8 col-xs-12">
+              <br>
+              <h2 style="color:white; z-index:90000000001!important;">Notificaciones</h2>
+            </div>
+           <div class="col-md-2 col-xs-12">
+             <a href="javascript:void(0)" class="closebtn" (click)="expand()"><i class="fa fa-arrow-right" aria-hidden="true" *ngIf="!status"></i></a>
+             <a href="javascript:void(0)" class="closebtn" (click)="openNav()"><i class="fa fa-arrow-left" aria-hidden="true" *ngIf="status"></i></a>
+             <br>
+             <br>
 
-       <div class="card" style="width: 100%; min-width:30px;text-align: center">
-         <div class="card-header" style="background-color: red">
-           <h5 class="card-title" >Card title</h5>
+           </div>
+         <div class="col-md-2 col-xs-12">
+
+           <a href="javascript:void(0)" class="closebtn" (click)="closeNav()"> <i class="fa fa-close"></i></a>
          </div>
-         <div class="card-body">
+         <br>
+         <br>
+         <br>
+       </div>
 
-           <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-           <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-           <a href="#" class="card-link">Card link</a>
-           <a href="#" class="card-link">Another link</a>
+
+
+
+
+<section>
+  <div class="row" [class.row]="this.status">
+       <div class="col-md-3 col-xs-12 col-xl-3 col-lg-3">
+         <div class="card" style=" min-width:300px!important;text-align: center">
+           <div class="card-header" style="background-color: red">
+             <h5 class="card-title" >Card title</h5>
+           </div>
+           <div class="card-body">
+
+             <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+             <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+             <a href="#" class="card-link">Card link</a>
+             <a href="#" class="card-link">Another link</a>
+           </div>
          </div>
        </div>
 
-       <div class="card" style="width: 100%; min-width:30px;text-align: center">
-         <div class="card-header" style="background-color: yellow">
-           <h5 class="card-title" >Card title</h5>
-         </div>
-         <div class="card-body">
+       <br>
+       <div class="col-md-3 col-xs-12 col-xl-3 col-lg-3">
+         <div class="card" style=" min-width:300px!important;text-align: center">
+           <div class="card-header" style="background-color: yellow">
+             <h5 class="card-title" >Card title</h5>
+           </div>
+           <div class="card-body">
 
-           <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-           <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-           <a href="#" class="card-link">Card link</a>
-           <a href="#" class="card-link">Another link</a>
-         </div>
-       </div>
-
-       <div class="card" style="width: 100%; min-width:30px;text-align: center">
-         <div class="card-header" style="background-color: white">
-           <h5 class="card-title" >Card title</h5>
-         </div>
-         <div class="card-body">
-
-           <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-           <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-           <a href="#" class="card-link">Card link</a>
-           <a href="#" class="card-link">Another link</a>
+             <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+             <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+             <a href="#" class="card-link">Card link</a>
+             <a href="#" class="card-link">Another link</a>
+           </div>
          </div>
        </div>
-     </div>
+       <br>
+       <div class="col-md-12 col-xs-12 col-xl-3 col-lg-12">
+         <div class="card" style=" min-width:300px!important;text-align: center">
+           <div class="card-header" style="background-color: white">
+             <h5 class="card-title" >Card title</h5>
+           </div>
+           <div class="card-body">
 
+             <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+             <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+             <a href="#" class="card-link">Card link</a>
+             <a href="#" class="card-link">Another link</a>
+           </div>
+         </div>
+       </div>
+  </div>
+</section>
      <!-- Use any element to open the sidenav -->
 
      <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
+     </div>
+       <div class="panel" style="background-color: white !important; height: 100%">
+         <router-outlet></router-outlet>
 
-
+       </div>
 
 
 
@@ -171,10 +205,7 @@
     <br>
     <br>
       </div>-->
-     <div class="panel" style="background-color: white !important; height: 100%">
-       <router-outlet></router-outlet>
 
-     </div>
   </div>
 
 
