@@ -9,3 +9,17 @@ body {
   margin-top: -50px;
   margin-left: -100px;
 }
+
+table > thead > tr > th {
+  text-align: center;
+  font-size: 14px;
+}
+
+table > tbody {
+  text-align: center;
+}
+
+.ng2-smart-filter input{
+  height: 35px;
+  text-align: center;
+}

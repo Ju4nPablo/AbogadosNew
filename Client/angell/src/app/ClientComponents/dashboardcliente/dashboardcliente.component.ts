@@ -28,10 +28,10 @@ export class DashboardclienteComponent implements OnInit {
       },
       desc: {
         title: 'Descripción'
-      },
-      attr: {
-        class: 'table-bordered table-hover table-responsive'
       }
+    },
+    attr: {
+      class: 'table-bordered table-hover table-responsive'
     }
   };
 
@@ -50,9 +50,9 @@ export class DashboardclienteComponent implements OnInit {
       fecha: "08/02/2018",
       desc: "Existe acuerdo mutuo"
     },
-    
+
     // ... list of items
-    
+
     {
       id: 'PJ003',
       nombre: "Compra Terrenos",
@@ -61,5 +61,11 @@ export class DashboardclienteComponent implements OnInit {
       desc: "Proceso inciado en la ciudad de Quito"
     }
   ];
+
+  display: boolean = false;
+
+  showDialog() {
+    this.display = true;
+  }
 
 }

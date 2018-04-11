@@ -31,6 +31,38 @@
 <div class="container" style="background-color: white">
   <div class="panel" style="background-color: white !important; height: 100%">
     <!--<router-outlet></router-outlet>-->
+    <h2>Mis Procesos Judiciales</h2>
+    <hr><br>
+
+    <fieldset style="text-align:left; border-left: solid 1px;">
+      <legend>Datos de cliente:</legend>
+      <p>Your Image:
+        <input type="file" name="fileToUpload"></p>
+      <p>Image preview</p>
+    </fieldset>
+
     <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
   </div>
 </div>
+<!-- Ver Dialog -->
+<p-dialog header="Title" [(visible)]="display" [width]="500" [responsive]="true">
+  <p-header>
+    Detalles de Proceso
+  </p-header>
+  <br>
+  <div class="ui-g ui-fluid">
+    <div class="ui-g-12">
+      <fieldset>
+        <legend>Datos de Cliente:</legend>
+      </fieldset>
+    </div>
+
+  </div>
+  <hr>
+  <div class="ui-g-12" style="text-align: center">
+    <button type="button" style="font-size: 11px" (click)="saveClient()" class="btn btn-primary">Registrar</button>
+    <button type="button" style="font-size: 11px" (click)="showDialog=false" class="btn btn-default">Cancelar</button>
+  </div>
+</p-dialog>
+
+<button type="text" (click)="showDialog()" pButton icon="fa-external-link-square" label="Show"></button>
