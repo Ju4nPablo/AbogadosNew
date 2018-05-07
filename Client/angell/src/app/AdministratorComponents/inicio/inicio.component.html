@@ -1,9 +1,11 @@
-<div  style="text-align: center"><h2><img src="assets/icon.png" style="width: 10%">   Bienvenido al Sistema </h2></div>
 <br>
 <br>
-<p-schedule [events]="events" [header]="headerConfig"  [editable]="false" locale="es" weekends="false"></p-schedule>
+<div style="text-align: center"><h2><img src="assets/icon.png" style="width: 10%">   Bienvenido al Sistema </h2></div>
+<br>
+<br>
+<p-schedule [events]="events" [header]="headerConfig" [editable]="false" locale="es" weekends="false"></p-schedule>
 <script>
-  $(function() {
+  $(function () {
 
     $('#calendar').fullCalendar({
       locale: 'es'
