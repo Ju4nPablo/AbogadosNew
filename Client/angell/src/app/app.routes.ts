@@ -11,6 +11,7 @@ import {InicioClienteComponent} from "./ClientComponents/inicio-cliente/inicio-c
 import {ClienteComponent} from "./AdministratorComponents/cliente/cliente.component";
 import {AbogadoComponent} from "./AdministratorComponents/abogado/abogado.component";
 import {ActividadesComponent} from "./AdministratorComponents/actividades/actividades.component";
+import { ActividadParametrizableComponent } from './AdministratorComponents/actividad-parametrizable/actividad-parametrizable.component';
 const appRoutes:Routes = [
   {
     path: 'dashboard', component: DashboardComponent,
@@ -30,6 +31,9 @@ const appRoutes:Routes = [
       {
         path: 'actividades',
         component: ActividadesComponent
+      }, {
+        path: 'actividadesParametro',
+        component: ActividadParametrizableComponent
       },
       {
         path: 'inicio',

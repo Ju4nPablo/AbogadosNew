@@ -45,9 +45,15 @@ app.get('/', (req, res)=>{
 });
 
 app.use('/api', userRoutes);
-
-
-
+app.use('/api', require('./Routes/RouteActividadParametro'));
+app.use('/api', require('./Routes/RouteProcesoParametro'));
+app.use('/api', require('./Routes/RouteActividad'));
+app.use('/api', require('./Routes/RouteActividadExtra'));
+app.use('/api', require('./Routes/RouteCliente'));
+app.use('/api', require('./Routes/RouteCobro'));
+app.use('/api', require('./Routes/RouteProceso'));
+app.use('/api', require('./Routes/RouteProcesoParametro'));
+app.use('/api', require('./Routes/RouteResponsable'));
 
 app.listen(port, ()=>{
     console.log('Server run on port '+port);

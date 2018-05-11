@@ -29,6 +29,7 @@ import { ClienteComponent } from './AdministratorComponents/cliente/cliente.comp
 import { AbogadoComponent } from './AdministratorComponents/abogado/abogado.component';
 import { ActividadesComponent } from './AdministratorComponents/actividades/actividades.component';
 import { PanelModule } from 'primeng/panel';
+import { ActividadParametrizableComponent } from './AdministratorComponents/actividad-parametrizable/actividad-parametrizable.component';
 
 
 //noinspection TypeScriptValidateTypes
@@ -43,7 +44,8 @@ import { PanelModule } from 'primeng/panel';
     InicioClienteComponent,
     ClienteComponent,
     AbogadoComponent,
-    ActividadesComponent
+    ActividadesComponent,
+    ActividadParametrizableComponent
   ],
   imports: [
     BrowserModule,
