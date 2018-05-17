@@ -22,6 +22,9 @@ const Resposable = mongoose.Schema({
     },
     telefonos: {
         type: Array
+    },
+    foto: {
+        type: String
     }
 
 });

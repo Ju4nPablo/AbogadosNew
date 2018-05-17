@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import * as $ from 'jquery';
 import {
   trigger,
   state,
@@ -19,9 +20,18 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     if(this.notification.length>0){
-  
-    }
 
+    }
+    $(function() {
+      $('marquee').mouseover(function() {
+        $(this).attr('scrollamount',-3);
+      }).mouseout(function() {
+        $(this).attr('scrollamount',5);
+      });
+
+    });
   }
+
+
 
 }

@@ -28,7 +28,10 @@ const Cliente = mongoose.Schema({
 	},
 	telefonos: {
 		type: Array
-	}
+    },
+    foto: {
+        type: String
+    }
 
 });
 
