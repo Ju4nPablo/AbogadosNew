@@ -13,6 +13,7 @@ import { NotificacionesService } from '../../Services/notificaciones/notificacio
 export class CasoComponent implements OnInit {
 
   //#region Variables e inicios
+  
   listCaso: any = [];
   listCliente: any = [];
   listAbogado: any = [];
