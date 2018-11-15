@@ -1,0 +1,214 @@
+<form>
+  <br>
+  <p-panel header="TABLA FLUJOS">
+    <p>
+      <b>Nota:</b> Click en un registro para modificar.</p>
+    <p-table #dt [columns]="cols" [value]="listFlujo" selectionMode="single" [(selection)]="selectProceso"
+      (onRowSelect)="selectItem($event)">
+      <ng-template pTemplate="caption">
+        <div class="ui-g">
+          <div class="ui-g-6" style="text-align:left">
+            <button type="button" pButton icon="fa fa-plus" (click)="showDialogAdd()" label="Añadir"></button>
+          </div>
+          <div class="ui-g-6" style="text-align: right">
+            <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+            <input type="text" pInputText size="50" placeholder="Buscar" (input)="dt.filterGlobal($event.target.value, 'contains')"
+              style="width:auto">
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns">
+            {{col.header}}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr [pSelectableRow]="rowData">
+          <!-- <td>{{rowData.data.id}}</td> -->
+          <td>{{rowData.label}}</td>
+          <td>{{rowData.data.descripcion}}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary" let-rowData>
+
+      </ng-template>
+    </p-table>
+  </p-panel>
+</form>
+
+<p-dialog header="FLUJO PROCESO" [(visible)]="showDialogMod" [responsive]="true" showEffect="fade" [modal]="true"
+  [width]="1200" [height]="500">
+  <div class="ui-g ui-fluid" *ngIf="casoTree">
+    <div class="ui-g-12">
+      <p-tree [value]="casoTree" layout="horizontal" selectionMode="single" [(selection)]="selectNode" (onNodeSelect)="selectNodo($event)"
+        (onNodeExpand)="loadNode($event)" (onNodeCollapse)="loadNode($event)"></p-tree>
+    </div>
+  </div>
+
+  <button pButton type="button" (click)="saveCaso()" label="Guardar Caso"></button>
+  <button pButton type="button" (click)="expandAll()" [disabled]="banOpen" label="Expandir Todos" class="ui-button-success"></button>
+  <button pButton type="button" (click)="collapseAll()" [disabled]="banClose" label="Ocultar Todos" class="ui-button-success"></button>
+  <button pButton type="button" (click)="exitArbol()" label="Salir" class="ui-button-danger"></button>
+</p-dialog>
+
+<p-dialog header="CREAR FLUJO PROCESO" [(visible)]="showDialogIng" [responsive]="true" showEffect="fade" [modal]="true"
+  [width]="1200" [height]="500">
+  <div class="ui-g ui-fluid" *ngIf="casoTreeNew">
+    <div class="ui-g-12">
+      <p-tree [value]="casoTreeNew" layout="horizontal" selectionMode="single" [(selection)]="selectNode"
+        (onNodeSelect)="selectNodoIng($event)" (onNodeExpand)="loadNodeIng($event)"></p-tree>
+    </div>
+  </div>
+  <button pButton type="button" (click)="saveFlujo()" label="Guardar flujo"></button>
+  <button pButton type="button" (click)="expandAll()" label="Expandir" class="ui-button-success"></button>
+  <button pButton type="button" (click)="collapseAll()" label="Ocultar" class="ui-button-danger"></button>
+</p-dialog>
+
+<p-dialog header="MODIFICAR NODO" [(visible)]="showDialogIngNodo" [responsive]="true" showEffect="fade" [modal]="true"
+  [width]="475" [height]="300">
+  <div class="ui-g ui-fluid" *ngIf="node">
+    <div class="ui-g-11 ui-md-11">
+      <span class="ui-float-label">
+        <input id="etiqueta" type="text" pInputText id="etiqueta" [(ngModel)]="nodeNew.label" name="etiqueta" class="form-control  input-sm">
+        <label for="float-input">Etiqueta: *</label>
+      </span>
+    </div>
+    <div class="ui-g-11 ui-md-11">
+      <span class="ui-float-label">
+        <input pInputText type="text" id="dato" [(ngModel)]="nodeNew.data.descripcion" name="dato" maxlength="150"
+          class="form-control  input-sm">
+        <label for="float-input">descripción: *</label>
+      </span>
+    </div>
+  </div>
+  <div class="ui-dialog-buttonpane ui-helper-clearfix">
+    <button type="button" pButton icon="fa fa-close" (click)="exit()" label="Salir" class="ui-button-danger"></button>
+    <button type="button" pButton icon="fa fa-trash" (click)="deleteNodoIng()" label="Quitar" class="ui-button-danger"></button>
+    <button type="button" pButton icon="fa fa-plus-square" (click)="addNodoIng()" label="Añadir" class="ui-button-success"></button>
+    <button type="button" pButton icon="fa fa-save" (click)="updateNodoIng()" label="Guardar"></button>
+  </div>
+</p-dialog>
+
+<p-dialog header="MODIFICAR NODO" [(visible)]="showDialog" [responsive]="true" showEffect="fade" [modal]="true" [width]="475">
+  <div class="ui-g ui-fluid" *ngIf="node">
+    <div class="ui-g-12 ui-md-12">
+      <div class="ui-g-6 ui-md-6">
+        <span class="ui-float-label">
+          <p-calendar id="fechaInicio" name="fechaInicio" [locale]="es" [(ngModel)]="fechaInicio" [showIcon]="true"
+            [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
+            [disabledDays]="[0,7]" readonlyInput="true"></p-calendar>
+          <label for="float-input">Fecha inicio: *</label>
+        </span>
+      </div>
+      <div class="ui-g-6 ui-md-6">
+        <span class="ui-float-label">
+          <p-calendar id="fechaFin" name="fechaFin" [locale]="es" [(ngModel)]="fechaFin" [showIcon]="true"
+            [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
+            [disabledDays]="[0,7]" readonlyInput="true"></p-calendar>
+          <label for="float-input">Fecha fin: *</label>
+        </span>
+      </div>
+    </div>
+    <div class="ui-g-12 ui-md-12">
+      <span class="ui-float-label">
+        <input id="etiqueta" type="text" pInputText [(ngModel)]="info.label" name="etiqueta" class="form-control  input-sm">
+        <label for="float-input">Número caso: *</label>
+      </span>
+    </div>
+    <div class="ui-g-12 ui-md-12">
+      <span class="ui-float-label">
+        <p-dropdown id="cliente" name="cliente" [options]="listCliente" [(ngModel)]="selectCliente" optionLabel="nombre"
+          [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
+        <label for="float-input">Cliente: *</label>
+      </span>
+    </div>
+    <div class="ui-g-12 ui-md-12">
+      <span class="ui-float-label">
+        <p-dropdown id="abogado" name="abogado" [options]="listAbogado" [(ngModel)]="selectAbogado" optionLabel="nombre"
+          [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
+        <label for="float-input">Abogado: *</label>
+      </span>
+    </div>
+    <div class="ui-g-12 ui-md-12">
+      <label for="float-input">Descripción abogado: </label>
+      <textarea id="dato" [(ngModel)]="info.data.descripcion_abogado" name="dato" rows="2" cols="48" pInputTextarea></textarea>
+    </div>
+    <div class="ui-g-12 ui-md-12">
+      <label for="float-input">Descripción cliente: </label>
+      <textarea id="dato" [(ngModel)]="info.data.descripcion_cliente" name="dato" rows="2" cols="48" pInputTextarea></textarea>
+    </div>
+    <div class="ui-g-12 ui-md-12">
+      <span class="ui-float-label">
+        <p-dropdown id="estado" name="estado" [options]="listEstado" [(ngModel)]="selectEstado" optionLabel="estado"
+          [showClear]="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
+        <label for="float-input">Estado: *</label>
+      </span>
+    </div>
+  </div>
+  <div class="ui-dialog-buttonpane ui-helper-clearfix">
+    <button type="button" pButton icon="fa fa-close" (click)="exitForm()" label="Salir" class="ui-button-danger"></button>
+    <button type="button" pButton icon="fa fa-trash" (click)="deleteNodo()" label="Quitar" class="ui-button-danger"></button>
+    <button type="button" pButton icon="fa fa-plus-square" (click)="addNodo()" label="Añadir" class="ui-button-success"></button>
+    <button type="button" pButton icon="fa fa-save" (click)="updateNodo()" label="Guardar"></button>
+  </div>
+</p-dialog>
+
+<p-dialog header="MODIFICAR NODO" [(visible)]="showDialogHijos" [responsive]="true" showEffect="fade" [modal]="true"
+  [width]="475">
+  <div class="ui-g ui-fluid" *ngIf="node">
+    <div class="ui-g-12 ui-md-12">
+      <div class="ui-g-6 ui-md-6">
+        <span class="ui-float-label">
+          <p-calendar id="fechaInicio" name="fechaInicio" [locale]="es" [(ngModel)]="fechaInicio" [showIcon]="true"
+            [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
+            [disabledDays]="[0,7]" readonlyInput="true"></p-calendar>
+          <label for="float-input">Fecha inicio: *</label>
+        </span>
+      </div>
+      <div class="ui-g-6 ui-md-6">
+        <span class="ui-float-label">
+          <p-calendar id="fechaFin" name="fechaFin" [locale]="es" [(ngModel)]="fechaFin" [showIcon]="true"
+            [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
+            [disabledDays]="[0,7]" readonlyInput="true"></p-calendar>
+          <label for="float-input">Fecha fin: *</label>
+        </span>
+      </div>
+    </div>
+    <div class="ui-g-12 ui-md-12">
+      <span class="ui-float-label">
+        <input id="etiqueta" type="text" pInputText [(ngModel)]="info.label" name="etiqueta" class="form-control  input-sm">
+        <label for="float-input">Descripción: *</label>
+      </span>
+    </div>
+    <div class="ui-g-12 ui-md-12">
+      <span class="ui-float-label">
+        <p-dropdown id="abogado" name="abogado" [options]="listAbogado" [(ngModel)]="selectAbogado" optionLabel="nombre"
+          [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
+        <label for="float-input">Abogado: *</label>
+      </span>
+    </div>
+    <div class="ui-g-12 ui-md-12">
+      <label>Descripción abogado: </label>
+      <textarea id="dato" [(ngModel)]="info.data.descripcion_abogado" name="dato" rows="2" cols="48"></textarea>
+    </div>
+    <div class="ui-g-12 ui-md-12">
+      <label>Observación cliente: </label>
+      <textarea id="dato" [(ngModel)]="info.data.descripcion_cliente" name="dato" rows="2" cols="48"></textarea>
+    </div>
+    <div class="ui-g-12 ui-md-12">
+      <span class="ui-float-label">
+        <p-dropdown id="estado" name="estado" [options]="listEstado" [(ngModel)]="selectEstado" optionLabel="estado"
+          [showClear]="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
+        <label for="float-input">Estado: *</label>
+      </span>
+    </div>
+  </div>
+  <div class="ui-dialog-buttonpane ui-helper-clearfix">
+    <button type="button" pButton icon="fa fa-close" (click)="exitForm()" label="Salir" class="ui-button-danger"></button>
+    <button type="button" pButton icon="fa fa-trash" (click)="deleteNodo()" label="Quitar" class="ui-button-danger"></button>
+    <button type="button" pButton icon="fa fa-plus-square" (click)="addNodo()" label="Añadir" class="ui-button-success"></button>
+    <button type="button" pButton icon="fa fa-save" (click)="updateNodo()" label="Guardar"></button>
+  </div>
+</p-dialog>

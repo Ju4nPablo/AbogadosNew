@@ -1,129 +1,73 @@
-<nav class="navbar navbar-expand-lg  navbar-dark bg-dark"  style="z-index: 90000000001!important;">
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+<nav class="navbar navbar-expand-lg  navbar-dark bg-dark" style="z-index: 90000000001!important;">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03"
+    aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <a class="navbar-brand" href="#"><img src="assets/consorcio20.png" /> </a>
-
+  <div>
+    <a class="navbar-brand" [routerLink]="['/dashboard']">
+      <img src="assets/consorcio20.png" /> </a>
+  </div>
   <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Dashboard <span class="sr-only">(current)</span></a>
-      </li>
-
-
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Clientes
+      <li class="nav-item active" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}" *ngIf="showMenu.showDashboard">
+        <a class="nav-link" [routerLink]="['/dashboard/actividadExtra']">Dashboard
+          <span class="sr-only">(current)</span>
         </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="/dashboard/cliente">Nuevo</a>
-          <a class="dropdown-item" href="#">Modificar</a>
-          <a class="dropdown-item" href="#">Listar</a>
-        </div>
       </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown5" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Abogados
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="/dashboard/abogado">Nuevo</a>
-          <a class="dropdown-item" href="#">Modificar</a>
-          <a class="dropdown-item" href="#">Listar</a>
-
-        </div>
+      <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}" *ngIf="showMenu.showDashboard">
+        <a class="nav-item nav-link" [routerLink]="['/dashboard/usuario']">Usuarios</a>
+        <!--  href="/dashboard/usuario" -->
       </li>
-
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Administrar Actividades
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="/dashboard/actividadesParametro">Administrar Actividades</a>
-
-        </div>
+      <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}" *ngIf="showMenu.showCliente">
+        <a class="nav-item nav-link" [routerLink]="['/dashboard/cliente']">Clientes</a>
+        <!-- href="/dashboard/cliente" -->
       </li>
-
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Administrar Flujos Procesos
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">Crear Flujo Proceso</a>
-          <a class="dropdown-item" href="#">Dar de Baja Flujo Proceso</a>
-
-        </div>
+      <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}" *ngIf="showMenu.showAbogado">
+        <a class="nav-item nav-link" [routerLink]="['/dashboard/abogado']">Abogados</a>
+        <!-- href="/dashboard/abogado" -->
       </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown4" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Gestionar Procesos
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">Nuevo</a>
-          <a class="dropdown-item" href="#">Modificar</a>
-
-        </div>
+      <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}" *ngIf="showMenu.showFlujo">
+        <a class="nav-item nav-link" [routerLink]="['/dashboard/bajaFlujoProceso']">Flujos Procesos</a>
+        <!-- href="/dashboard/abogado" -->
       </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown3" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Reportes
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">Nuevo</a>
-          <a class="dropdown-item" href="#">Modificar</a>
-        </div>
+      <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}" *ngIf="showMenu.showCasos">
+        <a class="nav-item nav-link" [routerLink]="['/dashboard/caso']">Casos</a> <!-- href="/dashboard/abogado" -->
       </li>
-      <li>
-        <a class="nav-item nav-link" href="/dashboard/actividades">Gestion Actividades</a>
+      <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}" *ngIf="showMenu.showReporte">
+        <a class="nav-item nav-link" [routerLink]="['/dashboard/reporte']">Reportes</a>
+        <!-- href="/dashboard/abogado" -->
       </li>
     </ul>
-
-
-
-
-
-
-    <form class="form-inline my-2 my-lg-0">
-      <i></i>
-      <!--<ul (click)="openNav()"> <button class=" btn form-control"   ><i class="fa fa-bell" aria-hidden="true" ></i> Notificaciones</button></ul>-->
-      <ul> <button class="btn form-control" href="#"><i class="fa fa-sign-out" aria-hidden="true"></i> Salir</button></ul>
-
-
-
-    </form>
+    <ul class="nav navbar-nav navbar-right">
+      <!--<button class="btn form-control" href="#"><i class="fa fa-sign-out" aria-hidden="true"></i> Salir</button>-->
+      <li><button class="btn form-control" [routerLink]="['/dashboard/login']"><i class="fa fa-user" aria-hidden="true"></i>
+          Mi perfil</button></li>
+      <li><button class="btn form-control" [routerLink]="['/dashboard/login']">
+          <i class="fa fa-sign-out" aria-hidden="true"></i> Salir
+        </button></li>
+    </ul>
+  </div>
+  <div>
+    <app-notification></app-notification>
   </div>
 </nav>
 
 <br>
 
-
-
-
-  <!--<div class="container jumbotron" style="background-color: white">-->
+<!--<div class="container jumbotron" style="background-color: white">-->
 
 <div class="row" style=" width:100%!important">
-
-  <br>
-
   <div class="col-md-10 col-xs-10">
-
-
-    <div class="panel" style="background-color: white !important; height: 100%">
+    <div class="panel" style="background-color: white !important; height: 100%; ">
       <div class="container">
         <router-outlet></router-outlet>
       </div>
-
-
     </div>
   </div>
 
   <div class="col-md-2 col-xs-2 container" style="background-color: white !important; overflow: scroll;">
-
-
-
-    <!--<div class="container jumbotron" style="background-color: white">-->
-
     <h2>Notifcaciones</h2>
-    <marquee direction="down"  onmouseover="this.stop();" onmouseout="this.start();">
+    <marquee direction="down" onmouseover="this.stop();" onmouseout="this.start();">
       <div class="card" style=" max-width:250px!important; min-width:250px!important;text-align: center">
         <div class="card-header" style="background-color: red">
           <h5 class="card-title">Card title</h5>
@@ -131,7 +75,8 @@
         <div class="card-body">
 
           <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+            content.</p>
           <a href="#" class="card-link">Card link</a>
           <a href="#" class="card-link">Another link</a>
         </div>
@@ -144,7 +89,8 @@
         <div class="card-body">
 
           <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+            content.</p>
           <a href="#" class="card-link">Card link</a>
           <a href="#" class="card-link">Another link</a>
         </div>
@@ -157,15 +103,12 @@
         <div class="card-body">
 
           <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+            content.</p>
           <a href="#" class="card-link">Card link</a>
           <a href="#" class="card-link">Another link</a>
-          <!--</div>-->
         </div>
-
       </div>
-
-
       <br />
       <div class="card" style="  max-width:250px!important; min-width:250px!important;text-align: center">
         <div class="card-header" style="background-color: darkgreen">
@@ -174,23 +117,12 @@
         <div class="card-body">
 
           <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+            content.</p>
           <a href="#" class="card-link">Card link</a>
           <a href="#" class="card-link">Another link</a>
-          <!--</div>-->
         </div>
-
       </div>
     </marquee>
   </div>
-
-
-
-    <!--</div>-->
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
 </div>
-

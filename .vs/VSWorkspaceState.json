@@ -5,14 +5,9 @@
     "\\Client\\angell",
     "\\Client\\angell\\src",
     "\\Client\\angell\\src\\app",
-    "\\Client\\angell\\src\\app\\AdministratorComponents",
-    "\\Client\\angell\\src\\app\\AdministratorComponents\\actividad-parametrizable",
     "\\Client\\angell\\src\\app\\AdministratorComponents\\dashboard",
-    "\\Client\\angell\\src\\app\\ClientComponents\\dashboardcliente",
-    "\\HttpServices",
-    "\\HttpServices\\Models",
-    "\\HttpServices\\Routes"
+    "\\HttpServices"
   ],
-  "SelectedNode": "\\Client\\angell\\src\\app\\AdministratorComponents\\dashboard\\dashboard.component.html",
+  "SelectedNode": "\\Client\\angell\\src\\app\\AdministratorComponents",
   "PreviewInSolutionExplorer": false
 }

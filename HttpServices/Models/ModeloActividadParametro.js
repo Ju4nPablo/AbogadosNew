@@ -4,27 +4,24 @@ var mongoose = restful.mongoose;
 
 const Actividad_Parameter = mongoose.Schema({
 
-
-    titulo: {
+    label: {
         type: String
     },
-    dias_maximo: {
-        type: Number
+    data: {
+        type: Object
     },
-    dias_amarillo: {
-        type: Number
-    },
-    dias_rojo: {
-        type: Number
-    },
-    descripcion: {
-        type: String
-    },
-    estado_actividad_parametro: {
-        type: String
+    children: {
+        type: Array
     }
-    
 
 });
 
 module.exports = restful.model('Actividad_Parametrizable', Actividad_Parameter);
+/* 
+// permite poner icono a al nodo.
+expandedIcon: {
+    type: String
+},
+collapsedIcon: {
+    type: String
+}, */

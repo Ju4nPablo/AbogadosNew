@@ -4,7 +4,6 @@ var mongoose = restful.mongoose;
 
 const Cliente = mongoose.Schema({
 
-
 	nombre: {
 		type: String
 	},
@@ -14,24 +13,24 @@ const Cliente = mongoose.Schema({
 	codigo_acceso_temporal: {
 		type: Array
 	},
-	estado_cliente: {
+	estado: {
 		type: String
 	},
 	direccion: {
 		type: String
 	},
-	cedula_cliente: {
+	cedula: {
 		type: String
 	},
 	mail: {
-		type: Date
+		type: String
 	},
-	telefonos: {
-		type: Array
-    },
-    foto: {
-        type: String
-    }
+	telefono: {
+		type: String
+	},
+	foto: {
+		type: String
+	}
 
 });
 

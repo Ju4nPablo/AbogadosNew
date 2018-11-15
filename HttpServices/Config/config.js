@@ -3,8 +3,8 @@
  */
 'use strict'
 
-module.exports={
-
-    url:'mongodb://localhost:27017/angell',
-    key:'abogados'
+module.exports = {
+    url: 'mongodb://localhost:27017/angell',
+    key: 'abogados',
+    database: 'mongodb://localhost:27017/'
 };

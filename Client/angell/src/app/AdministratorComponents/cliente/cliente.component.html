@@ -1,73 +1,203 @@
 <form>
-  <p-panel >
-    <p-header>
-      <h3 class="ui-panel-titlebar">NUEVO CLIENTE</h3><br>
-      <div class="row">
-      <div class="col-md-10">
-      <h6>Los campos marcados con * son obligatorios       </h6>
-      </div>
-      <div class="col-md-3">
-      <div style="text-align: center;"><img src="assets/perfil.png" style="width: 182px; height: 168px;"></div><br>
-        <button class="btn btn-primary form-control" value="Subir Foto">Subir Foto</button>
-      </div>
-      </div>
-      <br>
-    </p-header>
-    <div class="panel-body">
-
-
-    <div class="row">
-
-        <span class="ui-float-label">
-       <input id="float-input " type="text" class="form-control" size="100%" pInputText>
-         <label for="float-input">Nombre *</label>
-        </span>
-
-
-    </div>
-    <br>
-    <div class="row">
-    <div class="md-12">
-
-
-      <span class="ui-float-label">
-           <input id="float-input2 " type="text" class="form-control"  size="100%" pInputText>
-             <label for="float-input2">Cédula *</label>
-            </span>
-    </div>
-    </div>
-    <br>
-    <div class="row">
-
-      <span class="ui-float-label">
-           <input id="float-input3 " type="text" class="form-control"  size="100%" pInputText>
-             <label for="float-input3">Dirección *</label>
-            </span>
-    </div>
-    <br>
-    <div class="row">
-
-      <span class="ui-float-label">
-           <input id="float-input4 " type="text" class="form-control"  size="100%" pInputText>
-             <label for="float-input4">Teléfono *</label>
-            </span>
-    </div>
-      <br>
-      <div class="row">
-
-      <span class="ui-float-label">
-           <input id="float-input5 " type="text" class="form-control"  size="100%" pInputText>
-             <label for="float-input4">Email *</label>
-            </span>
-      </div>
-
-      <br>
-      <div class="row">
-        <div class="col-md-5 col-xs-0"></div>
-        <div class="col-md-3 right" col-xs-12>
-      <button class="form-control btn btn-primary">Ingresar</button>
+  <br>
+  <p-panel header="LISTA CLIENTES">
+    <p>
+      <b>Nota:</b> Click en un registro para modificar.</p>
+    <p-table #dt [columns]="cols" [value]="listaCliente" selectionMode="single" [responsive]="true" [(selection)]="selectCliente"
+      (onRowSelect)="onRowSelect($event)" [paginator]="true" [rows]="10">
+      <ng-template pTemplate="caption">
+        <div class="ui-g">
+          <div class="ui-g-6" style="text-align:left">
+            <button type="button" pButton icon="fa fa-plus" (click)="showDialogAdd()" label="Añadir"></button>
           </div>
+          <div class="ui-g-6" style="text-align: right">
+            <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+            <input type="text" pInputText size="50" placeholder="Buscar" (input)="dt.filterGlobal($event.target.value, 'contains')"
+              style="width:auto">
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns">
+            {{col.header}}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr [pSelectableRow]="rowData">
+          <td *ngFor="let col of columns" class="ui-resizable-column">
+            <span>{{rowData[col.field]}}</span>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="summary" let-rowData>
+
+      </ng-template>
+
+    </p-table>
+
+    <p-dialog header="INGRESO CLIENTE" [(visible)]="showDialog" [responsive]="true" showEffect="fade" [modal]="true"
+      [width]="800">
+      <div class="ui-g ui-fluid" *ngIf="cliente">
+        <div class="ui-g-12">
+          <form #imagenForm=ngForm>
+            <div class="ui-g-4">
+              <div style="text-align: center;">
+                <img [(src)]="urlImagen" style="width: 200px; height: 175px;">
+              </div>
+              <div class="ui-g-9">
+                <input type="file" #Image pButton (change)="cargaImagen($event.target.files)">
+                <!-- <button type="button" pButton icon="fa fa-upload" label="Subir" [disabled]="Image.value==''"></button> -->
+              </div>
+            </div>
+          </form>
+          <div class="ui-g-8">
+            <span class="ui-float-label">
+              <input id="cedula" type="text" pInputText id="cedula" [(ngModel)]="cliente.cedula" name="cedula"
+                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10" (ngModelChange)="verificaCedula()"
+                class="form-control  input-sm">
+              <label for="float-input">Cédula: *</label>
+            </span>
+          </div>
+          <div class="ui-g-8">
+            <span class="ui-float-label">
+              <input pInputText type="text" id="nombre" [(ngModel)]="cliente.nombre" name="nombre" onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
+              event.charCode === 241 || event.charCode === 32 || event.charCode === 209 || event.charCode >= 65 && event.charCode <= 90'
+                maxlength="50" (ngModelChange)="verificaNombres()" class="form-control  input-sm">
+              <label for="float-input">Nombres: *</label>
+            </span>
+          </div>
+          <div class="ui-g-8">
+            <span class="ui-float-label">
+              <input pInputText type="text" id="telefono" [(ngModel)]="cliente.telefono" name="telefono" onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+                maxlength="10" (ngModelChange)="verificaTelefono()" class="form-control  input-sm">
+              <label for="float-input">Teléfono: *</label>
+            </span>
+          </div>
+          <div class="ui-g-8">
+            <span class="ui-float-label">
+              <input pInputText type="text" id="mail" [(ngModel)]="cliente.mail" name="mail" (ngModelChange)="verificaEmail()"
+                class="form-control  input-sm">
+              <label for="float-input">Email: *</label>
+            </span>
+          </div>
+          <div class="ui-g-8">
+            <span class="ui-float-label">
+              <input pInputText type="text" id="direccion" [(ngModel)]="cliente.direccion" name="direccion"
+                (ngModelChange)="verificaDireccion()" class="form-control  input-sm">
+              <label for="float-input">Dirección: *</label>
+            </span>
+          </div>
+          <div class="ui-g-12">
+            <div class="ui-g-5">
+            </div>
+            <div class="ui-g-2">
+              <label for="color">Sexo: *</label>
+            </div>
+            <div class="ui-g-3">
+              <p-inputSwitch pInputText id="sexo" [(ngModel)]="selectSexo" name="sexo" onLabel="Hombre" offLabel="Mujer"></p-inputSwitch>
+            </div>
+          </div>
+        </div>
+
       </div>
-    </div>
+      <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+          <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar"></button>
+          <button type="button" pButton icon="fa fa-check" (click)="addCliente()" label="Guardar"></button>
+        </div>
+      </p-footer>
+    </p-dialog>
+
+    <p-dialog header="MODIFICAR CLIENTE" [(visible)]="showDialogMod" [responsive]="true" showEffect="fade" [modal]="true"
+      [width]="800">
+      <div class="ui-g ui-fluid" *ngIf="selectCliente">
+        <div class="ui-g-12">
+          <form #imagenForm=ngForm>
+            <div class="ui-g-4">
+              <div style="text-align: center;">
+                <img [(src)]="urlImagen" style="width: 200px; height: 175px;">
+              </div>
+              <div class="ui-g-9">
+                <input type="file" #Image pButton (change)="cargaImagen($event.target.files)">
+                <!-- <button type="button" pButton icon="fa fa-upload" label="Subir" [disabled]="Image.value==''"></button> -->
+              </div>
+            </div>
+          </form>
+          <div class="ui-g-8">
+            <span class="ui-float-label">
+              <input pInputText type="text" id="cedulaMod" [(ngModel)]="selectCliente.cedula" name="cedulaMod"
+                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10" (ngModelChange)="verificaCedula()">
+              <label for="float-input">Cédula: *</label>
+            </span>
+          </div>
+          <div class="ui-g-8">
+            <span class="ui-float-label">
+              <input pInputText type="text" id="nombreMod" [(ngModel)]="selectCliente.nombre" name="nombreMod"
+                onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
+                  event.charCode === 241 || event.charCode === 32 || event.charCode === 209 || event.charCode >= 65 && event.charCode <= 90'
+                maxlength="50" (ngModelChange)="verificaNombres()">
+              <label for="float-input">Nombres: *</label>
+            </span>
+          </div>
+          <div class="ui-g-8">
+            <span class="ui-float-label">
+              <input pInputText type="text" id="telefonoMod" [(ngModel)]="selectCliente.telefono" name="telefonoMod"
+                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10" (ngModelChange)="verificaTelefono()">
+              <label for="float-input">Teléfono: *</label>
+            </span>
+          </div>
+          <div class="ui-g-8">
+            <span class="ui-float-label">
+              <input pInputText type="text" id="mailMod" [(ngModel)]="selectCliente.mail" name="mailMod"
+                (ngModelChange)="verificaEmail()">
+              <label for="float-input">Email: *</label>
+            </span>
+          </div>
+          <div class="ui-g-8">
+            <span class="ui-float-label">
+              <input pInputText type="text" id="direccionMod" [(ngModel)]="selectCliente.direccion" name="direccionMod"
+                (ngModelChange)="verificaDireccion()">
+              <label for="float-input">Dirección: *</label>
+            </span>
+          </div>
+          <div class="ui-g-1">
+            <div class="ui-g-3">
+            </div>
+          </div>
+          <div class="ui-g-4">
+            <div class="ui-g-5">
+              <label for="color">Sexo: *</label>
+            </div>
+            <div class="ui-g-6">
+              <p-inputSwitch pInputText id="sexoMod" [(ngModel)]="selectSexo" name="sexoMod" onLabel="Hombre" offLabel="Mujer"></p-inputSwitch>
+            </div>
+          </div>
+          <div class="ui-g-1">
+            <div class="ui-g-3">
+            </div>
+          </div>
+          <div class="ui-g-4">
+            <div class="ui-g-5">
+              <label for="color">Estado: *</label>
+            </div>
+            <div class="ui-g-4">
+              <p-inputSwitch pInputText id="estadoMod" [(ngModel)]="selectEstado" name="estadoMod" onLabel="Activo"
+                offLabel="Inactivo"></p-inputSwitch>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <p-footer>
+        <div class="ui-dialog-buttonpane ui-helper-clearfix">
+          <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar"></button>
+          <button type="button" pButton icon="fa fa-check" (click)="updateCliente()" label="Modificar"></button>
+        </div>
+      </p-footer>
+    </p-dialog>
+
   </p-panel>
 </form>

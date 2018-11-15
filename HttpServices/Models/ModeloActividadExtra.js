@@ -4,8 +4,6 @@ var mongoose = restful.mongoose;
 
 const Actividad_Extra = mongoose.Schema({
 
-
-    
     actividad: {
         type: String
     },
@@ -20,9 +18,19 @@ const Actividad_Extra = mongoose.Schema({
     },
     encargado: {
         type: mongoose.Schema.ObjectId,
+    },
+    hora_inicio: {
+        type: String,
+    },
+    hora_fin: {
+        type: String,
+    },
+    repetir: {
+        type: String
+    },
+    recordatorio: {
+        type: String
     }
-
-
 });
 
 module.exports = restful.model('Actividad_Extra', Actividad_Extra);

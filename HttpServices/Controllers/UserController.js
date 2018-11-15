@@ -5,10 +5,10 @@
 
 function test(req, res) {
     res.status(200).send({
-        message:'Test Controller'
+        message: 'Test Controller'
     });
 }
 
-module.exports={
+module.exports = {
     test
 };

@@ -1,0 +1,26 @@
+<br>
+<h1>CREAR DIAGRAMA DE ACTIVIDADES</h1>
+<p-tree [value]="casoTree" layout="horizontal" selectionMode="single" [(selection)]="selectNode" (onNodeSelect)="selectNodo($event)"
+    (onNodeExpand)="loadNode($event)"></p-tree>
+
+<button pButton type="button" (click)="save()" label="Guardar Diagrama"></button>
+<button pButton type="button" (click)="expandAll()" label="Expandir Todos" class="ui-button-success"></button>
+<button pButton type="button" (click)="collapseAll()" label="Ocultar Todos" class="ui-button-danger"></button>
+
+<p-dialog header="MODIFICAR ETIQUETA" [(visible)]="showDialog" [responsive]="true" showEffect="fade" [modal]="true" [width]="475"
+    [height]="200">
+    <div class="ui-g ui-fluid" *ngIf="node">
+        <div class="ui-g-11 ui-md-11">
+            <span class="ui-float-label">
+                <input id="etiqueta" type="text" pInputText id="etiqueta" [(ngModel)]="node.label" name="etiqueta" class="form-control  input-sm">
+                <label for="float-input">Etiqueta: *</label>
+            </span>
+        </div>
+    </div>
+    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+        <button type="button" pButton icon="fa fa-close" (click)="exit()" label="Salir" class="ui-button-danger"></button>
+        <button type="button" pButton icon="fa fa-trash" (click)="deleteNodo()" label="Quitar" class="ui-button-danger"></button>
+        <button type="button" pButton icon="fa fa-plus-square" (click)="addNodo()" label="Añadir" class="ui-button-success"></button>
+        <!-- <button type="button" pButton icon="fa fa-save" (click)="updateNodo()" label="Guardar"></button> -->
+    </div>
+</p-dialog>

@@ -3,17 +3,37 @@
  */
 'use strict'
 
-var mongoose = require('mongoose');
 
-var Schema= mongoose.Schema;
+var restful = require('node-restful');
+var mongoose = restful.mongoose;
 
-var UserSchema= Schema({
 
-    user_name: String,
+var UserSchema = new mongoose.Schema({
+
+    /* user_name: String,
     password: String,
     estado: Number,
-    tipo: String,
+    tipo: String, */
 
-},{collection: 'user'});
+	user_name: {
+		type: String
+	},
+	password: {
+		type: String
+	},
+	cedula: {
+		type: String
+	},
+	mail: {
+		type: String
+	},
+	estado: {
+		type: String
+	},
+	tipo: {
+		type: String
+	}
 
-module.exports= mongoose.model('User',UserSchema);
+}, { collection: 'user' });
+
+module.exports = restful.model('User', UserSchema);
