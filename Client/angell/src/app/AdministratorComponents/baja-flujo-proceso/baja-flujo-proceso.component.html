@@ -2,13 +2,13 @@
   <br>
   <p-panel header="TABLA FLUJOS">
     <p>
-      <b>Nota:</b> Click en un registro para modificar.</p>
+      <b>Nota:</b> Click en un registro para crear un CASO.</p>
     <p-table #dt [columns]="cols" [value]="listFlujo" selectionMode="single" [(selection)]="selectProceso"
       (onRowSelect)="selectItem($event)">
       <ng-template pTemplate="caption">
         <div class="ui-g">
           <div class="ui-g-6" style="text-align:left">
-            <button type="button" pButton icon="fa fa-plus" (click)="showDialogAdd()" label="Añadir"></button>
+            <button type="button" pButton icon="fa fa-plus" (click)="showDialogAdd()" label="Añadir flujo"></button>
           </div>
           <div class="ui-g-6" style="text-align: right">
             <i class="fa fa-search" style="margin:4px 4px 0 0"></i>

@@ -65,8 +65,8 @@ export class BajaFlujoProcesoComponent implements OnInit {
       label: '',
       data: {
         id: '',
-        fecha_inicio: Date,
-        fecha_fin: Date,
+        fecha_inicio: '',
+        fecha_fin: '',
         cliente: Object,
         abogado: Object,
         descripcion_abogado: '',
@@ -78,8 +78,8 @@ export class BajaFlujoProcesoComponent implements OnInit {
       label: '',
       data: {
         id: '',
-        fecha_inicio: Date,
-        fecha_fin: Date,
+        fecha_inicio: '',
+        fecha_fin: '',
         abogado: Object,
         descripcion_abogado: '',
         descripcion_cliente: '',
@@ -95,9 +95,17 @@ export class BajaFlujoProcesoComponent implements OnInit {
     });
     this.clienteService.getClienteTipo().subscribe(data => {
       this.listCliente = data;
+      this.listCliente.unshift({
+        _id: '-1',
+        nombre: 'Seleccione abogado'
+      });
     });
     this.abogadoService.getAbogadoTipo().subscribe(data => {
       this.listAbogado = data;
+      this.listAbogado.unshift({
+        _id: '-1',
+        nombre: 'Seleccione abogado'
+      });
     });
     this.cols = [
       { field: 'label', header: 'Nombre flujo' },
@@ -123,8 +131,8 @@ export class BajaFlujoProcesoComponent implements OnInit {
       label: '',
       data: {
         id: '',
-        fecha_inicio: Date,
-        fecha_fin: Date,
+        fecha_inicio: '',
+        fecha_fin: '',
         descripcion: '',
         cliente: Object,
         abogado: Object,
@@ -264,7 +272,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
       this.showDialog = false;
       this.showDialogHijos = false;
     } else {
-      this.notifyService.notify('error', 'ERROR', 'REVISE LOS CAMPOS!');
+      this.notifyService.notify('error', 'ERROR', 'EXISTEN CAMPOS NULOS!');
     }
   }
 
@@ -282,10 +290,22 @@ export class BajaFlujoProcesoComponent implements OnInit {
     this.info.label = this.node.label;
     this.info.data = this.node.data;
     this.selectEstado = this.node.data.estado;
-    this.selectCliente = this.node.data.cliente;
-    this.selectAbogado = this.node.data.abogado;
-    this.fechaInicio = this.node.data.fecha_inicio;
-    this.fechaFin = this.node.data.fecha_fin;
+    if (!this.campoVacio(this.node.data.fecha_inicio)) {
+      this.fechaInicio = this.node.data.fecha_inicio;
+    }
+    if (!this.campoVacio(this.node.data.fecha_fin)) {
+      this.fechaFin = this.node.data.fecha_fin;
+    }
+    if (!this.campoVacio(this.node.data.abogado)) {
+      this.buscarAbogado(this.node.data.abogado.cedula);
+    } else {
+      this.selectAbogado = this.listAbogado[0];
+    }
+    if (!this.campoVacio(this.node.data.cliente)) {
+      this.buscarCliente(this.node.data.cliente.cedula);
+    } else {
+      this.selectCliente = this.listCliente[0];
+    }
     if (this.casoTree[0].data.id === event.node.data.id) {
       this.showDialog = true;
     } else {
@@ -345,18 +365,22 @@ export class BajaFlujoProcesoComponent implements OnInit {
 
   //#region Guardar Diagrama
   saveCaso() {
-    const casoSave = {
-      label: this.casoTree[0].label,
-      data: this.casoTree[0].data,
-      children: this.casoTree[0].children
-    };
-    this.casoService.addCaso(casoSave).subscribe(data => {
-      this.inicio();
-      this.ngOnInit();
-      this.notifyService.notify('success', 'Exito', 'INGRESO EXITOSO!');
-    }, err => {
-      this.notifyService.notify('error', 'ERROR', 'ERROR AL INGRESAR!');
-    });
+    if (this.verificarCasoRecursive(this.casoTree[0])) {
+      const casoSave = {
+        label: this.casoTree[0].label,
+        data: this.casoTree[0].data,
+        children: this.casoTree[0].children
+      };
+      this.casoService.addCaso(casoSave).subscribe(data => {
+        this.inicio();
+        this.ngOnInit();
+        this.notifyService.notify('success', 'Exito', 'INGRESO EXITOSO!');
+      }, err => {
+        this.notifyService.notify('error', 'ERROR', 'ERROR AL INGRESAR!');
+      });
+    } else {
+      this.notifyService.notify('error', 'ERROR', 'FALTA DATOS POR INGRESAR!');
+    }
   }
   saveFlujo() {
     const flujo = {
@@ -453,6 +477,36 @@ export class BajaFlujoProcesoComponent implements OnInit {
         this.UpdateRecursive(childNode, datos);
       });
     }
+  }
+  // Verificar caso recursivo.
+  private verificarCasoRecursive(node: TreeNode) {
+    if (this.campoVacio(node.data.abogado)) {
+      if (node.children.length > 0) {
+        node.children.forEach(childNode => {
+          this.verificarCasoRecursive(childNode);
+        });
+      } else {
+        return true;
+      }
+    } else {
+      return false;
+    }
+  }
+  // Buscar un abogado en la lista
+  public buscarAbogado(ced: any) {
+    this.listAbogado.forEach(abo => {
+      if (ced === abo.cedula) {
+        this.selectAbogado = abo;
+      }
+    });
+  }
+  // Buscar un cliente en la lista
+  private buscarCliente(ced: any) {
+    this.listCliente.forEach(cli => {
+      if (ced === cli.cedula) {
+        this.selectCliente = cli;
+      }
+    });
   }
   //#endregion
 
