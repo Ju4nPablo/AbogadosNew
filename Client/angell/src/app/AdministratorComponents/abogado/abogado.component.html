@@ -71,19 +71,21 @@
           <div class="ui-g-8">
             <span class="ui-float-label">
               <input pInputText id="telefono" [(ngModel)]="abogado.telefono" name="telefono" onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-                maxlength="10" (ngModelChange)="verificaTelefono()">
+                maxlength="10" (ngModelChange)="verificaTelefono()" class="form-control input-sm">
               <label for="float-input">Teléfono: *</label>
             </span>
           </div>
           <div class="ui-g-8">
             <span class="ui-float-label">
-              <input pInputText id="mail" [(ngModel)]="abogado.mail" name="mail" (ngModelChange)="verificaEmail()">
+              <input pInputText id="mail" [(ngModel)]="abogado.mail" name="mail" (ngModelChange)="verificaEmail()"
+                class="form-control input-sm">
               <label for="float-input">Email: *</label>
             </span>
           </div>
           <div class="ui-g-8">
             <span class="ui-float-label">
-              <input pInputText id="direccion" [(ngModel)]="abogado.direccion" name="direccion" (ngModelChange)="verificaDireccion()">
+              <input pInputText id="direccion" [(ngModel)]="abogado.direccion" name="direccion" (ngModelChange)="verificaDireccion()"
+                class="form-control input-sm">
               <label for="float-input">Dirección: *</label>
             </span>
           </div>
@@ -102,8 +104,8 @@
       </div>
       <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix">
-          <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar" class="ui-button-success"></button>
-          <button type="button" pButton icon="fa fa-check" (click)="addAbogado()" label="Guardar" class="ui-button-success"></button>
+          <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar" class="ui-button-danger"></button>
+          <button type="button" pButton icon="fa fa-check" (click)="addAbogado()" label="Guardar"></button>
         </div>
       </p-footer>
     </p-dialog>
@@ -118,7 +120,7 @@
                 <img [(src)]="urlImagen" style="width: 200px; height: 175px;">
               </div>
               <div class="ui-g-9">
-                <input type="file" #Image pButton (change)="cargaImagen($event.target.files)">
+                <input type="file" #Image pButton (change)="cargaImagen($event.target.files)" class="form-control input-sm">
                 <!-- <button type="button" pButton icon="fa fa-upload" label="Subir" [disabled]="Image.value==''"></button> -->
               </div>
             </div>
@@ -126,7 +128,7 @@
           <div class="ui-g-8">
             <span class="ui-float-label">
               <input pInputText id="cedulaMod" [(ngModel)]="selectAbogado.cedula" name="cedulaMod" onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-                maxlength="10" (ngModelChange)="verificaCedula()">
+                maxlength="10" (ngModelChange)="verificaCedula()" class="form-control input-sm">
               <label for="float-input">Cédula: *</label>
             </span>
           </div>
@@ -134,28 +136,28 @@
             <span class="ui-float-label">
               <input pInputText id="nombreMod" [(ngModel)]="selectAbogado.nombre" name="nombreMod" onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
                   event.charCode === 241 || event.charCode === 32 || event.charCode === 209 || event.charCode >= 65 && event.charCode <= 90'
-                maxlength="50" (ngModelChange)="verificaNombres()">
+                maxlength="50" (ngModelChange)="verificaNombres()" class="form-control input-sm">
               <label for="float-input">Nombres: *</label>
             </span>
           </div>
           <div class="ui-g-8">
             <span class="ui-float-label">
               <input pInputText id="telefonoMod" [(ngModel)]="selectAbogado.telefono" name="telefonoMod" onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-                maxlength="10" (ngModelChange)="verificaTelefono()">
+                maxlength="10" (ngModelChange)="verificaTelefono()" class="form-control input-sm">
               <label for="float-input">Teléfono: *</label>
             </span>
           </div>
           <div class="ui-g-8">
             <span class="ui-float-label">
               <input pInputText type="email" id="mailMod" [(ngModel)]="selectAbogado.mail" name="mailMod"
-                (ngModelChange)="verificaEmail()">
+                (ngModelChange)="verificaEmail()" class="form-control input-sm">
               <label for="float-input">Email: *</label>
             </span>
           </div>
           <div class="ui-g-8">
             <span class="ui-float-label">
               <input pInputText id="direccionMod" [(ngModel)]="selectAbogado.direccion" name="direccionMod"
-                (ngModelChange)="verificaDireccion()">
+                (ngModelChange)="verificaDireccion()" class="form-control input-sm">
               <label for="float-input">Dirección: *</label>
             </span>
           </div>

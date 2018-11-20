@@ -59,7 +59,7 @@
 
 <p-dialog header="MODIFICAR NODO" [(visible)]="showDialog" [responsive]="true" showEffect="fade" [modal]="true" [width]="475">
   <div class="ui-g ui-fluid" *ngIf="node">
-    <div class="ui-g-12 ui-md-12">
+    <div class="ui-g ui-md">
       <div class="ui-g-6 ui-md-6">
         <span class="ui-float-label">
           <p-calendar id="fechaInicio" name="fechaInicio" [locale]="es" [(ngModel)]="fechaInicio" [showIcon]="true"
@@ -76,46 +76,44 @@
           <label for="float-input">Fecha fin: *</label>
         </span>
       </div>
-    </div>
-    <div class="ui-g-12 ui-md-12">
-      <span class="ui-float-label">
-        <input id="etiqueta" type="text" pInputText [(ngModel)]="info.label" name="etiqueta" class="form-control  input-sm"
-          [(disabled)]="blockCampos.blockCaso">
-        <label for="float-input">Número caso: *</label>
-      </span>
-    </div>
-    <div class="ui-g-12 ui-md-12">
-      <span class="ui-float-label">
-        <input id="etiqueta" type="text" pInputText [(ngModel)]="cliente" name="etiqueta" class="form-control  input-sm"
-          [(disabled)]="blockCampos.blockCliente">
-        <!-- <p-dropdown id="cliente" name="cliente" [options]="listCliente" [(ngModel)]="selectCliente" optionLabel="nombre" [showClear]="true"
-          filter="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown> -->
-        <label for="float-input">Cliente: *</label>
-      </span>
-    </div>
-    <div class="ui-g-12 ui-md-12">
-      <span class="ui-float-label">
-        <p-dropdown id="abogado" name="abogado" [options]="listAbogado" [(ngModel)]="selectAbogado" optionLabel="nombre"
-          [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px" [(disabled)]="blockCampos.blockAbogado"></p-dropdown>
-        <label for="float-input">Abogado: *</label>
-      </span>
-    </div>
-    <div class="ui-g-12 ui-md-12">
-      <label for="float-input">Descripción abogado: </label>
-      <textarea id="dato" [(ngModel)]="info.data.descripcion_abogado" name="dato" rows="2" cols="48" [(disabled)]="blockCampos.blockDescripcionAbogado"
-        pInputTextarea></textarea>
-    </div>
-    <div class="ui-g-12 ui-md-12">
-      <label for="float-input">Descripción cliente: </label>
-      <textarea id="dato" [(ngModel)]="info.data.descripcion_cliente" name="dato" rows="2" cols="48" [(disabled)]="blockCampos.blockDescripcionCliente"
-        pInputTextarea></textarea>
-    </div>
-    <div class="ui-g-12 ui-md-12">
-      <span class="ui-float-label">
-        <p-dropdown id="estado" name="estado" [options]="listEstado" [(ngModel)]="selectEstado" optionLabel="estado"
-          [showClear]="true" [style]="{'width':'100%'}" scrollHeight="150px" [(disabled)]="blockCampos.blockEstado"></p-dropdown>
-        <label for="float-input">Estado: *</label>
-      </span>
+      <div class="ui-g-6 ui-md-6">
+        <span class="ui-float-label">
+          <input id="etiqueta" type="text" pInputText [(ngModel)]="info.label" name="etiqueta" class="form-control  input-sm"
+            [(disabled)]="blockCampos.blockCaso">
+          <label for="float-input">Número caso: *</label>
+        </span>
+      </div>
+      <div class="ui-g-6 ui-md-6">
+        <span class="ui-float-label">
+          <p-dropdown id="estado" name="estado" [options]="listEstado" [(ngModel)]="selectEstado" optionLabel="estado"
+            [showClear]="true" [style]="{'width':'100%'}" scrollHeight="150px" [(disabled)]="blockCampos.blockEstado"></p-dropdown>
+          <label for="float-input">Estado: *</label>
+        </span>
+      </div>
+      <div class="ui-g-6 ui-md-6">
+        <span class="ui-float-label">
+          <input id="etiqueta" type="text" pInputText [(ngModel)]="cliente" name="etiqueta" class="form-control  input-sm"
+            [(disabled)]="blockCampos.blockCliente">
+          <label for="float-input">Cliente: *</label>
+        </span>
+      </div>
+      <div class="ui-g-6 ui-md-6">
+        <span class="ui-float-label">
+          <p-dropdown id="abogado" name="abogado" [options]="listAbogado" [(ngModel)]="selectAbogado" optionLabel="nombre"
+            [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px" [(disabled)]="blockCampos.blockAbogado"></p-dropdown>
+          <label for="float-input">Abogado: *</label>
+        </span>
+      </div>
+      <div class="ui-g-12 ui-md-12">
+        <label for="float-input">Descripción abogado: </label>
+        <textarea id="dato" [(ngModel)]="info.data.descripcion_abogado" name="dato" rows="2" cols="48" [(disabled)]="blockCampos.blockDescripcionAbogado"
+          pInputTextarea></textarea>
+      </div>
+      <div class="ui-g-12 ui-md-12">
+        <label for="float-input">Descripción cliente: </label>
+        <textarea id="dato" [(ngModel)]="info.data.descripcion_cliente" name="dato" rows="2" cols="48" [(disabled)]="blockCampos.blockDescripcionCliente"
+          pInputTextarea></textarea>
+      </div>
     </div>
   </div>
   <div class="ui-dialog-buttonpane ui-helper-clearfix">
@@ -131,7 +129,7 @@
 <p-dialog header="MODIFICAR NODO" [(visible)]="showDialogHijos" [responsive]="true" showEffect="fade" [modal]="true"
   [width]="475">
   <div class="ui-g ui-fluid" *ngIf="node">
-    <div class="ui-g-12 ui-md-12">
+    <div class="ui-g ui-md">
       <div class="ui-g-6 ui-md-6">
         <span class="ui-float-label">
           <p-calendar id="fechaInicio" name="fechaInicio" [locale]="es" [(ngModel)]="fechaInicio" [showIcon]="true"
@@ -148,35 +146,35 @@
           <label for="float-input">Fecha fin: *</label>
         </span>
       </div>
-    </div>
-    <div class="ui-g-12 ui-md-12">
-      <span class="ui-float-label">
-        <input id="etiqueta" type="text" pInputText [(ngModel)]="info.label" name="etiqueta" class="form-control  input-sm"
-          [(disabled)]="blockCampos.blockCaso">
-        <label for="float-input">Descripción: *</label>
-      </span>
-    </div>
-    <div class="ui-g-12 ui-md-12">
-      <span class="ui-float-label">
-        <p-dropdown id="abogado" name="abogado" [options]="listAbogado" [(ngModel)]="selectAbogado" optionLabel="nombre"
-          [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px" [(disabled)]="blockCampos.blockAbogado"></p-dropdown>
-        <label for="float-input">Abogado: *</label>
-      </span>
-    </div>
-    <div class="ui-g-12 ui-md-12">
-      <label>Descripción abogado: </label>
-      <textarea id="dato" [(ngModel)]="info.data.descripcion_abogado" name="dato" rows="2" cols="48" [(disabled)]="blockCampos.blockDescripcionAbogado"></textarea>
-    </div>
-    <div class="ui-g-12 ui-md-12">
-      <label>Observación cliente: </label>
-      <textarea id="dato" [(ngModel)]="info.data.descripcion_cliente" name="dato" rows="2" cols="48" [(disabled)]="blockCampos.blockDescripcionCliente"></textarea>
-    </div>
-    <div class="ui-g-12 ui-md-12">
-      <span class="ui-float-label">
-        <p-dropdown id="estado" name="estado" [options]="listEstado" [(ngModel)]="selectEstado" optionLabel="estado"
-          [showClear]="true" [style]="{'width':'100%'}" scrollHeight="150px" [(disabled)]="blockCampos.blockEstado"></p-dropdown>
-        <label for="float-input">Estado: *</label>
-      </span>
+      <div class="ui-g-6 ui-md-6">
+        <span class="ui-float-label">
+          <input id="etiqueta" type="text" pInputText [(ngModel)]="info.label" name="etiqueta" class="form-control  input-sm"
+            [(disabled)]="blockCampos.blockCaso">
+          <label for="float-input">Descripción: *</label>
+        </span>
+      </div>
+      <div class="ui-g-6 ui-md-6">
+        <span class="ui-float-label">
+          <p-dropdown id="estado" name="estado" [options]="listEstado" [(ngModel)]="selectEstado" optionLabel="estado"
+            [showClear]="true" [style]="{'width':'100%'}" scrollHeight="150px" [(disabled)]="blockCampos.blockEstado"></p-dropdown>
+          <label for="float-input">Estado: *</label>
+        </span>
+      </div>
+      <div class="ui-g-6 ui-md-6">
+        <span class="ui-float-label">
+          <p-dropdown id="abogado" name="abogado" [options]="listAbogado" [(ngModel)]="selectAbogado" optionLabel="nombre"
+            [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px" [(disabled)]="blockCampos.blockAbogado"></p-dropdown>
+          <label for="float-input">Abogado: *</label>
+        </span>
+      </div>
+      <div class="ui-g-12 ui-md-12">
+        <label>Descripción abogado: </label>
+        <textarea id="dato" [(ngModel)]="info.data.descripcion_abogado" name="dato" rows="2" cols="48" [(disabled)]="blockCampos.blockDescripcionAbogado"></textarea>
+      </div>
+      <div class="ui-g-12 ui-md-12">
+        <label>Descripción cliente: </label>
+        <textarea id="dato" [(ngModel)]="info.data.descripcion_cliente" name="dato" rows="2" cols="48" [(disabled)]="blockCampos.blockDescripcionCliente"></textarea>
+      </div>
     </div>
   </div>
   <div class="ui-dialog-buttonpane ui-helper-clearfix">

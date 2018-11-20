@@ -4,6 +4,7 @@ import { TreeNode } from 'primeng/api';
 import { CasoService } from '../../Services/caso/caso.service';
 import { ClienteService } from '../../Services/cliente/cliente.service';
 import { AbogadoService } from '../../Services/abogado/abogado.service';
+import { ValidacioneService } from '../../Services/validaciones/validacione.service';
 import { NotificacionesService } from '../../Services/notificaciones/notificaciones.service';
 
 @Component({
@@ -44,12 +45,16 @@ export class BajaFlujoProcesoComponent implements OnInit {
   numCaso: any = '';
   fechaInicio: any = '';
   fechaFin: any = '';
+  activaBotonGuardarNodo: any = '';
+  activaBotonGuardarFlujo: any = '';
+  activaBotonGuardaNodoFlujo: any = '';
 
   constructor(
     private flujoProcesoService: FlujoProcesoService,
     private casoService: CasoService,
     private clienteService: ClienteService,
     private abogadoService: AbogadoService,
+    public validarService: ValidacioneService,
     public notifyService: NotificacionesService
   ) {
     this.inicio();
@@ -90,11 +95,9 @@ export class BajaFlujoProcesoComponent implements OnInit {
     });
     this.clienteService.getClienteTipo().subscribe(data => {
       this.listCliente = data;
-      this.selectCliente = this.listCliente[0];
     });
     this.abogadoService.getAbogadoTipo().subscribe(data => {
       this.listAbogado = data;
-      this.selectAbogado = this.listAbogado[0];
     });
     this.cols = [
       { field: 'label', header: 'Nombre flujo' },
@@ -144,6 +147,9 @@ export class BajaFlujoProcesoComponent implements OnInit {
     this.caso = {};
     this.banClose = true;
     this.banOpen = false;
+    this.activaBotonGuardarNodo = false;
+    this.activaBotonGuardarFlujo = true;
+    this.activaBotonGuardaNodoFlujo = true;
   }
 
   ngOnInit() {
@@ -212,37 +218,54 @@ export class BajaFlujoProcesoComponent implements OnInit {
     this.showDialog = false;
     this.showDialogHijos = false;
   }
-
+  // modifica los datos del nodo seleccionado
   updateNodo() {
-    const cli = {
-      id: this.selectCliente._id,
-      cedula: this.selectCliente.cedula,
-      nombre: this.selectCliente.nombre,
-      mail: this.selectCliente.mail
-    };
-
-    const abo = {
-      id: this.selectAbogado._id,
-      cedula: this.selectAbogado.cedula,
-      nombre: this.selectAbogado.nombre,
-      mail: this.selectAbogado.mail
-    };
-    this.node.label = this.info.label;
-    const newData = {
-      id: this.node.data.id,
-      fecha_inicio: this.fechaInicio,
-      fecha_fin: this.fechaFin,
-      descripcion_abogado: this.info.data.descripcion_abogado,
-      descripcion_cliente: this.info.data.descripcion_cliente,
-      cliente: cli,
-      abogado: abo,
-      estado: this.selectEstado
-    };
-    this.node.data = newData;
-    this.fechaInicio = '';
-    this.fechaFin = '';
-    this.showDialog = false;
-    this.showDialogHijos = false;
+    if (!this.campoVacio(this.fechaInicio) && !this.campoVacio(this.fechaFin) &&
+      !this.campoVacio(this.info.label) && !this.campoVacio(this.selectAbogado)) {
+      let newData = {};
+      const abo = {
+        id: this.selectAbogado._id,
+        cedula: this.selectAbogado.cedula,
+        nombre: this.selectAbogado.nombre,
+        mail: this.selectAbogado.mail
+      };
+      this.node.label = this.info.label;
+      if (this.casoTree[0].data.id === this.info.data.id) {
+        const cli = {
+          id: this.selectCliente._id,
+          cedula: this.selectCliente.cedula,
+          nombre: this.selectCliente.nombre,
+          mail: this.selectCliente.mail
+        };
+        newData = {
+          id: this.node.data.id,
+          fecha_inicio: this.fechaInicio,
+          fecha_fin: this.fechaFin,
+          descripcion_abogado: this.info.data.descripcion_abogado,
+          descripcion_cliente: this.info.data.descripcion_cliente,
+          cliente: cli,
+          abogado: abo,
+          estado: this.selectEstado
+        };
+      } else {
+        newData = {
+          id: this.node.data.id,
+          fecha_inicio: this.fechaInicio,
+          fecha_fin: this.fechaFin,
+          descripcion_abogado: this.info.data.descripcion_abogado,
+          descripcion_cliente: this.info.data.descripcion_cliente,
+          abogado: abo,
+          estado: this.selectEstado
+        };
+      }
+      this.node.data = newData;
+      this.fechaInicio = '';
+      this.fechaFin = '';
+      this.showDialog = false;
+      this.showDialogHijos = false;
+    } else {
+      this.notifyService.notify('error', 'ERROR', 'REVISE LOS CAMPOS!');
+    }
   }
 
   deleteNodo() {
@@ -261,6 +284,8 @@ export class BajaFlujoProcesoComponent implements OnInit {
     this.selectEstado = this.node.data.estado;
     this.selectCliente = this.node.data.cliente;
     this.selectAbogado = this.node.data.abogado;
+    this.fechaInicio = this.node.data.fecha_inicio;
+    this.fechaFin = this.node.data.fecha_fin;
     if (this.casoTree[0].data.id === event.node.data.id) {
       this.showDialog = true;
     } else {
@@ -287,6 +312,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
     };
     this.caso.node.children.push(this.selectNode);
     this.showDialogIngNodo = false;
+    this.activaBotonGuardarFlujo = false;
   }
 
   updateNodoIng() {
@@ -298,6 +324,11 @@ export class BajaFlujoProcesoComponent implements OnInit {
   deleteNodoIng() {
     this.casoTreeNew.forEach(nodes => {
       this.buscarQuitarNodo(nodes, this.node.data.id);
+      if (nodes.children.length > 0) {
+        this.activaBotonGuardarFlujo = false;
+      } else {
+        this.activaBotonGuardarFlujo = true;
+      }
     });
     this.showDialogIngNodo = false;
   }
@@ -308,6 +339,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
     this.nodeNew.label = this.node.label;
     this.nodeNew.data = this.node.data;
     this.showDialogIngNodo = true;
+    this.activaBotonGuardaNodoFlujo = true;
   }
   //#endregion
 
@@ -425,5 +457,34 @@ export class BajaFlujoProcesoComponent implements OnInit {
   //#endregion
 
   //#region Funciones de habilitar y desabilitar botones.
+  validarCampos() {
+
+  }
+  campoVacio(campo) {
+    if (campo === undefined || campo === '' || campo === null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  limpiarCampos() {
+    this.fechaInicio = '';
+    this.fechaFin = '';
+  }
+  //
+  verificaEtiqueta() {
+    if (!this.campoVacio(this.nodeNew.label)) {
+      if (!this.validarService.validateDireccion(this.nodeNew.label)) {
+        document.getElementById('etiqueta').style.borderColor = '#FE2E2E'; // rojo
+        this.activaBotonGuardaNodoFlujo = true;
+      } else {
+        document.getElementById('etiqueta').style.borderColor = '#5ff442'; // green
+        this.activaBotonGuardaNodoFlujo = false;
+      }
+    }
+  }
+  //#endregion
+  //#region Funciones de habilitar y desabilitar botones.
+
   //#endregion
 }

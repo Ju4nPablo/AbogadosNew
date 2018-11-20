@@ -297,7 +297,6 @@ export class AbogadoComponent implements OnInit {
       } else {
         document.getElementById('cedula').style.borderColor = '#5ff442'; // green
         this.bandera.ban1 = '1';
-        console.log(this.bandera);
       }
     }
     if (this.selectAbogado.cedula !== '') {
@@ -319,7 +318,6 @@ export class AbogadoComponent implements OnInit {
       } else {
         document.getElementById('telefono').style.borderColor = '#5ff442'; // green
         this.bandera.ban2 = '1';
-        console.log(this.bandera);
       }
     }
     if (this.selectAbogado.telefono !== '') {
@@ -341,7 +339,6 @@ export class AbogadoComponent implements OnInit {
       } else {
         document.getElementById('mail').style.borderColor = '#5ff442'; // green
         this.bandera.ban3 = '1';
-        console.log(this.bandera);
       }
     }
     if (this.selectAbogado.mail !== '') {
@@ -363,7 +360,6 @@ export class AbogadoComponent implements OnInit {
       } else {
         document.getElementById('nombre').style.borderColor = '#5ff442'; // green
         this.bandera.ban4 = '1';
-        console.log(this.bandera);
       }
     }
     if (this.selectAbogado.nombre !== '') {
@@ -385,7 +381,6 @@ export class AbogadoComponent implements OnInit {
       } else {
         document.getElementById('direccion').style.borderColor = '#5ff442'; // green
         this.bandera.ban5 = '1';
-        console.log(this.bandera);
       }
     }
     if (this.selectAbogado.direccion !== '') {

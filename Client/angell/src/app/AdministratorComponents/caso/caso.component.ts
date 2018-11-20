@@ -13,7 +13,7 @@ import { NotificacionesService } from '../../Services/notificaciones/notificacio
 export class CasoComponent implements OnInit {
 
   //#region Variables e inicios
-  
+
   listCaso: any = [];
   listCliente: any = [];
   listAbogado: any = [];
@@ -104,8 +104,7 @@ export class CasoComponent implements OnInit {
       const obj = {
         cedula: us.cedula
       };
-      // this.casoService.AllCasoClientePendiente(obj).subscribe(data => {
-      this.casoService.allCaso().subscribe(data => {
+      this.casoService.AllCasoClientePendiente(obj).subscribe(data => {
         this.listCaso = data;
       });
       this.blockCampos = {

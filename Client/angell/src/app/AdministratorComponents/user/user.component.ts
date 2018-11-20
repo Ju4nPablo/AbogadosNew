@@ -123,8 +123,12 @@ export class UserComponent implements OnInit {
         tipo: 'Administrador'
       },
       {
-        id: '2',
+      id: '2',
         tipo: 'Cliente'
+      },
+      {
+        id: '3',
+        tipo: 'Abogado'
       }
     ];
     this.selectTipo = this.listTipoUser[0];

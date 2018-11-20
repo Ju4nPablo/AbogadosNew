@@ -39,7 +39,6 @@ export class LoginComponent implements OnInit {
           if (response.user._id) {
             localStorage.setItem('userLogin', JSON.stringify(response.user));
             this.messageService.add({ severity: 'success', summary: 'Ingreso Correcto', detail: 'Bienvenido' });
-            console.log(response.user);
             if (response.user.tipo === '1') {
               this.router.navigateByUrl('/dashboard/actividadExtra');
             } else {
@@ -52,7 +51,6 @@ export class LoginComponent implements OnInit {
               this.router.navigateByUrl('/dashboardabogado');
             } */
           } else {
-            console.log('error');
             this.messageService.add({
               severity: 'error', summary: 'Error Usuario o contraseña ',
               detail: 'Verifique su usuario y contraseña'
@@ -65,14 +63,12 @@ export class LoginComponent implements OnInit {
                 console.log('error servidor');
               }
             } else {
-              console.log('Error login');
               this.messageService.add({
                 severity: 'error', summary: 'Error Usuario o contraseña ',
                 detail: 'Verifique su usuario y contraseña'
               });
             }
           } else {
-            console.log('ingresar campos');
             this.messageService.add({
               severity: 'error', summary: 'Ingresar campos para realizar el ingreso',
               detail: 'Verifique su usuario y contraseña'
