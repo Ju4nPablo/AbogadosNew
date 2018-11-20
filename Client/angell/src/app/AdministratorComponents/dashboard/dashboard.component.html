@@ -38,14 +38,55 @@
         <!-- href="/dashboard/abogado" -->
       </li>
     </ul>
-    <ul class="nav navbar-nav navbar-right">
-      <!--<button class="btn form-control" href="#"><i class="fa fa-sign-out" aria-hidden="true"></i> Salir</button>-->
+   <!-- <ul class="nav navbar-nav navbar-right">
+      &lt;!&ndash;<button class="btn form-control" href="#"><i class="fa fa-sign-out" aria-hidden="true"></i> Salir</button>&ndash;&gt;
       <li><button class="btn form-control" [routerLink]="['/dashboard/login']"><i class="fa fa-user" aria-hidden="true"></i>
           Mi perfil</button></li>
       <li><button class="btn form-control" [routerLink]="['/dashboard/login']">
           <i class="fa fa-sign-out" aria-hidden="true"></i> Salir
         </button></li>
-    </ul>
+    </ul>-->
+    <form class="form-inline my-2 my-lg-0">
+      <i></i>
+      <!--<ul (click)="openNav()"> <button class=" btn form-control"   ><i class="fa fa-bell" aria-hidden="true" ></i> Notificaciones</button></ul>-->
+
+
+      <div class="ui-md-4">
+
+        <ul>
+          <div class="dropdown">
+            <button class="btn  dropdown-toggle" style="background-color:darkorange; color:white" type="button"
+                    id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fa fa-bell" aria-hidden="true" style="color:white"></i>
+              <span class="badge" style="color:white">{{cantidad_notificaciones}}</span>
+              Notificaciones
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"
+                 style="overflow-y: scroll; max-height: 200px">
+              <a class="dropdown-item" href="#" *ngFor="let notification of notifications"
+                 [ngStyle]="{'background-color':notification.color === 'rojo' ? '#E52741' : '#F1DF4A' }">{{notification.titulo}}</a>
+
+            </div>
+          </div>
+        </ul>
+      </div>
+      <div class="ui-md-1">
+
+      </div>
+      <div class="ui-md-3">
+        <ul>
+        <button class="btn form-control btn-secondary" [routerLink]="['/dashboard/login']"><i class="fa fa-user" aria-hidden="true"></i>
+          Mi perfil</button>
+          </ul>
+      </div>
+      <div class="ui-md-3">
+        <ul>
+          <button class="btn form-control btn-secondary" [routerLink]="['/dashboard/login']">
+            <i class="fa fa-sign-out" aria-hidden="true"></i> Salir
+          </button>
+        </ul>
+      </div>
+    </form>
   </div>
   <div>
     <app-notification></app-notification>
@@ -57,7 +98,7 @@
 <!--<div class="container jumbotron" style="background-color: white">-->
 
 <div class="row" style=" width:100%!important">
-  <div class="col-md-10 col-xs-10">
+  <div class="col-md-12 col-xs-12">
     <div class="panel" style="background-color: white !important; height: 100%; ">
       <div class="container">
         <router-outlet></router-outlet>
@@ -65,64 +106,5 @@
     </div>
   </div>
 
-  <div class="col-md-2 col-xs-2 container" style="background-color: white !important; overflow: scroll;">
-    <h2>Notifcaciones</h2>
-    <marquee direction="down" onmouseover="this.stop();" onmouseout="this.start();">
-      <div class="card" style=" max-width:250px!important; min-width:250px!important;text-align: center">
-        <div class="card-header" style="background-color: red">
-          <h5 class="card-title">Card title</h5>
-        </div>
-        <div class="card-body">
 
-          <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-            content.</p>
-          <a href="#" class="card-link">Card link</a>
-          <a href="#" class="card-link">Another link</a>
-        </div>
-      </div>
-      <br />
-      <div class="card" style="  max-width:250px!important; min-width:250px!important;;text-align: center">
-        <div class="card-header" style="background-color: yellow">
-          <h5 class="card-title">Card title</h5>
-        </div>
-        <div class="card-body">
-
-          <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-            content.</p>
-          <a href="#" class="card-link">Card link</a>
-          <a href="#" class="card-link">Another link</a>
-        </div>
-      </div>
-      <br />
-      <div class="card" style="  max-width:250px!important; min-width:250px!important;text-align: center">
-        <div class="card-header" style="background-color: darkgreen">
-          <h5 class="card-title">Card title</h5>
-        </div>
-        <div class="card-body">
-
-          <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-            content.</p>
-          <a href="#" class="card-link">Card link</a>
-          <a href="#" class="card-link">Another link</a>
-        </div>
-      </div>
-      <br />
-      <div class="card" style="  max-width:250px!important; min-width:250px!important;text-align: center">
-        <div class="card-header" style="background-color: darkgreen">
-          <h5 class="card-title">Card title</h5>
-        </div>
-        <div class="card-body">
-
-          <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
-            content.</p>
-          <a href="#" class="card-link">Card link</a>
-          <a href="#" class="card-link">Another link</a>
-        </div>
-      </div>
-    </marquee>
-  </div>
 </div>
