@@ -272,7 +272,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
       this.showDialog = false;
       this.showDialogHijos = false;
     } else {
-      this.notifyService.notify('error', 'ERROR', 'EXISTEN CAMPOS NULOS!');
+      this.notifyService.notify('error', 'ERROR', 'EXISTEN CAMPOS VACÍOS!');
     }
   }
 
@@ -379,7 +379,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
         this.notifyService.notify('error', 'ERROR', 'ERROR AL INGRESAR!');
       });
     } else {
-      this.notifyService.notify('error', 'ERROR', 'FALTA DATOS POR INGRESAR!');
+      this.notifyService.notify('error', 'ERROR', 'FALTA DATOS POR INGRESAR O EXISTEN CAMPOS VACÍOS!');
     }
   }
   saveFlujo() {
@@ -514,6 +514,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
   validarCampos() {
 
   }
+  // valida campos nulos vacios undefined
   campoVacio(campo) {
     if (campo === undefined || campo === '' || campo === null) {
       return true;
@@ -525,7 +526,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
     this.fechaInicio = '';
     this.fechaFin = '';
   }
-  //
+  // verifica si el campo etiqueta es nulo y lo pinta.
   verificaEtiqueta() {
     if (!this.campoVacio(this.nodeNew.label)) {
       if (!this.validarService.validateDireccion(this.nodeNew.label)) {
