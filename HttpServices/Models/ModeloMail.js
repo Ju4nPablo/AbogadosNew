@@ -6,6 +6,7 @@ const nodemailer = require('nodemailer');
 module.exports= {
     
     sendMail: function (datos, callback) {
+
         nodemailer.createTestAccount((err, account) => {
             // create reusable transporter object using the default SMTP transport
             let transporter = nodemailer.createTransport({
