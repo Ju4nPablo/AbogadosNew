@@ -3,8 +3,8 @@
   <p-panel header="TABLA FLUJOS">
     <p>
       <b>Nota:</b> Click en un registro para crear un CASO.</p>
-    <p-table #dt [columns]="cols" [value]="listFlujo" selectionMode="single" [(selection)]="selectProceso"
-      (onRowSelect)="selectItem($event)">
+    <p-table #dt [columns]="cols" [value]="listTabla" selectionMode="single" [(selection)]="selectProceso"
+      (onRowSelect)="selectItem($event)" [paginator]="true" [rows]="10">
       <ng-template pTemplate="caption">
         <div class="ui-g">
           <div class="ui-g-6" style="text-align:left">
@@ -23,13 +23,25 @@
             {{col.header}}
           </th>
         </tr>
+
+        <tr>
+          <th *ngFor="let col of columns" [ngSwitch]="col.field">
+            <input *ngSwitchCase="'label'" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+            <input *ngSwitchCase="'descripcion'" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+          </th>
+        </tr>
+
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr [pSelectableRow]="rowData">
           <!-- <td>{{rowData.data.id}}</td> -->
           <td>{{rowData.label}}</td>
-          <td>{{rowData.data.descripcion}}</td>
+          <td>{{rowData.descripcion}}</td>
         </tr>
+      </ng-template>
+
+      <ng-template pTemplate="summary" let-rowData>
+
       </ng-template>
     </p-table>
   </p-panel>
@@ -54,6 +66,7 @@
   [width]="1200" [height]="500">
   <div class="ui-g ui-fluid" *ngIf="casoTreeNew">
     <div class="ui-g-12">
+      <p><b>Nota: </b>Seleccione un nodo para modificar y agregar mas nodos.</p>
       <p-tree [value]="casoTreeNew" layout="horizontal" selectionMode="single" [(selection)]="selectNode"
         (onNodeSelect)="selectNodoIng($event)" (onNodeExpand)="loadNodeIng($event)"></p-tree>
     </div>

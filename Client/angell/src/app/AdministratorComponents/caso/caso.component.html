@@ -3,7 +3,8 @@
   <p-panel header="TABLA CASOS">
     <p>
       <b>Nota:</b> Click en un registro para modificar.</p>
-    <p-table #dt [columns]="cols" [value]="listCaso" selectionMode="single" [(selection)]="selectProceso" (onRowSelect)="selectItem($event)">
+    <p-table #dt [columns]="cols" [value]="listTabla" selectionMode="single" [(selection)]="selectProceso"
+      (onRowSelect)="selectItem($event)" [paginator]="true" [rows]="10">
       <ng-template pTemplate="caption">
         <div style="text-align: right">
           <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
@@ -21,8 +22,8 @@
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr [pSelectableRow]="rowData">
           <td>{{rowData.label}}</td>
-          <td>{{rowData.data.abogado.nombre}}</td>
-          <td>{{rowData.data.cliente.nombre}}</td>
+          <td>{{rowData.abogado}}</td>
+          <td>{{rowData.cliente}}</td>
         </tr>
       </ng-template>
     </p-table>

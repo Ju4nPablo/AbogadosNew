@@ -4,7 +4,7 @@ import { CasoService } from '../../Services/caso/caso.service';
 import { ClienteService } from '../../Services/cliente/cliente.service';
 import { AbogadoService } from '../../Services/abogado/abogado.service';
 import { NotificacionesService } from '../../Services/notificaciones/notificaciones.service';
-
+import { DataTable } from 'primeng/datatable';
 @Component({
   selector: 'app-caso',
   templateUrl: './caso.component.html',
@@ -15,6 +15,7 @@ export class CasoComponent implements OnInit {
   //#region Variables e inicios
 
   listCaso: any = [];
+  listTabla: any = [];
   listCliente: any = [];
   listAbogado: any = [];
   cols: any[];
@@ -73,6 +74,7 @@ export class CasoComponent implements OnInit {
     this.listCaso = [];
     this.listAbogado = [];
     this.listCliente = [];
+    this.listTabla = [];
     this.clienteService.getClienteTipo().subscribe(data => {
       this.listCliente = data;
       this.selectCliente = this.listCliente[0];
@@ -84,6 +86,7 @@ export class CasoComponent implements OnInit {
     if (us.tipo === '1') {
       this.casoService.allCasoPendientes().subscribe(data => {
         this.listCaso = data;
+        this.cargarTabla(this.listCaso);
       });
       this.blockCampos = {
         blockFechIni: false,
@@ -106,6 +109,7 @@ export class CasoComponent implements OnInit {
       };
       this.casoService.AllCasoClientePendiente(obj).subscribe(data => {
         this.listCaso = data;
+        this.cargarTabla(this.listCaso);
       });
       this.blockCampos = {
         blockFechIni: true,
@@ -128,6 +132,7 @@ export class CasoComponent implements OnInit {
       };
       this.casoService.AllCasoAbogadoPendiente(obj).subscribe(data => {
         this.listCaso = data;
+        this.cargarTabla(this.listCaso);
       });
       this.blockCampos = {
         blockFechIni: true,
@@ -212,6 +217,17 @@ export class CasoComponent implements OnInit {
     this.cliente = '';
   }
 
+  cargarTabla(lista) {
+    lista.forEach(item => {
+      this.listTabla.push({
+        id: item._id,
+        label: item.label,
+        cliente: item.data.cliente.nombre,
+        abogado: item.data.abogado.nombre
+      });
+    });
+  }
+
   ngOnInit() {
     this.es = {
       firstDayOfWeek: 1,
@@ -228,13 +244,17 @@ export class CasoComponent implements OnInit {
   //#endregion
 
   selectItem(event) {
-    this.showDialogMod = true;
-    this.idCaso = event.data._id;
-    this.cliente = event.data.data.cliente.nombre;
-    this.casoTree = [event.data];
-    this.expandAll();
-    this.banClose = false;
-    this.banOpen = true;
+    this.listCaso.forEach(item => {
+      if (item._id === event.data.id) {
+        this.showDialogMod = true;
+        this.idCaso = event.data._id;
+        this.cliente = item.data.cliente.nombre;
+        this.casoTree = [item];
+        this.expandAll();
+        this.banClose = false;
+        this.banOpen = true;
+      }
+    });
   }
 
   //#region Trabajo con el nodo add, uptade, delete, carga

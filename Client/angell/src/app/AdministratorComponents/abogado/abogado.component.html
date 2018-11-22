@@ -3,7 +3,7 @@
   <p-panel header="LISTA ABOGADO">
     <p>
       <b>Nota:</b> Click en un registro para modificar.</p>
-    <p-table #dt [columns]="cols" [value]="listaAbogado" selectionMode="single" [responsive]="true" [(selection)]="selectAbogado"
+    <p-table #dt [columns]="cols" [value]="listaAbogado" [lazy]="true" selectionMode="single" [responsive]="true" [(selection)]="selectAbogado"
       (onRowSelect)="onRowSelect($event)" [paginator]="true" [rows]="10">
       <ng-template pTemplate="caption">
         <div class="ui-g">
