@@ -188,10 +188,10 @@ export class CasoComponent implements OnInit {
       label: '',
       data: {
         id: '',
-        fecha_inicio: Date,
-        fecha_fin: Date,
-        cliente: Object,
-        abogado: Object,
+        fecha_inicio: '',
+        fecha_fin: '',
+        cliente: '',
+        abogado: '',
         descripcion_abogado: '',
         descripcion_cliente: '',
         estado: this.listEstado[0]
@@ -201,9 +201,9 @@ export class CasoComponent implements OnInit {
       label: '',
       data: {
         id: '',
-        fecha_inicio: Date,
-        fecha_fin: Date,
-        abogado: Object,
+        fecha_inicio: '',
+        fecha_fin: '',
+        abogado: '',
         descripcion_abogado: '',
         descripcion_cliente: '',
         estado: this.listEstado[0]
@@ -264,34 +264,39 @@ export class CasoComponent implements OnInit {
   }
 
   updateNodo() {
-    const cli = {
-      id: this.selectCliente._id,
-      cedula: this.selectCliente.cedula,
-      nombre: this.selectCliente.nombre,
-      mail: this.selectCliente.mail
-    };
-    const abo = {
-      id: this.selectAbogado._id,
-      cedula: this.selectAbogado.cedula,
-      nombre: this.selectAbogado.nombre,
-      mail: this.selectAbogado.mail
-    };
-    this.node.label = this.info.label;
-    const newData = {
-      id: this.node.data.id,
-      fecha_inicio: this.fechaInicio,
-      fecha_fin: this.fechaFin,
-      descripcion_abogado: this.info.data.descripcion_abogado,
-      descripcion_cliente: this.info.data.descripcion_cliente,
-      cliente: cli,
-      abogado: abo,
-      estado: this.selectEstado
-    };
-    this.node.data = newData;
-    this.fechaInicio = '';
-    this.fechaFin = '';
-    this.showDialog = false;
-    this.showDialogHijos = false;
+    if (!this.campoVacio(this.fechaInicio) && !this.campoVacio(this.fechaFin) &&
+      !this.campoVacio(this.info.label) && !this.campoVacio(this.selectAbogado)) {
+      const cli = {
+        id: this.selectCliente._id,
+        cedula: this.selectCliente.cedula,
+        nombre: this.selectCliente.nombre,
+        mail: this.selectCliente.mail
+      };
+      const abo = {
+        id: this.selectAbogado._id,
+        cedula: this.selectAbogado.cedula,
+        nombre: this.selectAbogado.nombre,
+        mail: this.selectAbogado.mail
+      };
+      this.node.label = this.info.label;
+      const newData = {
+        id: this.node.data.id,
+        fecha_inicio: this.fechaInicio,
+        fecha_fin: this.fechaFin,
+        descripcion_abogado: this.info.data.descripcion_abogado,
+        descripcion_cliente: this.info.data.descripcion_cliente,
+        cliente: cli,
+        abogado: abo,
+        estado: this.selectEstado
+      };
+      this.node.data = newData;
+      this.fechaInicio = '';
+      this.fechaFin = '';
+      this.showDialog = false;
+      this.showDialogHijos = false;
+    } else {
+      this.notifyService.notify('error', 'ERROR', 'EXISTEN CAMPOS VACÍOS!');
+    }
   }
 
   deleteNodo() {
@@ -334,19 +339,23 @@ export class CasoComponent implements OnInit {
     });
   }
   updateCaso() {
-    const caso = {
-      _id: this.idCaso,
-      label: this.casoTree[0].label,
-      data: this.casoTree[0].data,
-      children: this.casoTree[0].children
-    };
-    this.casoService.updateCaso(caso).subscribe(data => {
-      this.inicio();
-      this.ngOnInit();
-      this.notifyService.notify('success', 'Exito', 'CAMBIOS GUARDADOS!');
-    }, err => {
-      this.notifyService.notify('error', 'ERROR', 'ERROR AL GUARDAR!');
-    });
+    if (this.verificarCasoRecursive(this.casoTree[0])) {
+      const caso = {
+        _id: this.idCaso,
+        label: this.casoTree[0].label,
+        data: this.casoTree[0].data,
+        children: this.casoTree[0].children
+      };
+      this.casoService.updateCaso(caso).subscribe(data => {
+        this.inicio();
+        this.ngOnInit();
+        this.notifyService.notify('success', 'Exito', 'CAMBIOS GUARDADOS!');
+      }, err => {
+        this.notifyService.notify('error', 'ERROR', 'ERROR AL GUARDAR!');
+      });
+    } else {
+      this.notifyService.notify('error', 'ERROR', 'FALTA DATOS POR INGRESAR O EXISTEN CAMPOS VACIOS!');
+    }
   }
   //#endregion
 
@@ -433,8 +442,30 @@ export class CasoComponent implements OnInit {
       }
     });
   }
+  // Verificar caso recursivo.
+  private verificarCasoRecursive(node: TreeNode) {
+    if (this.campoVacio(node.data.abogado)) {
+      if (node.children.length > 0) {
+        node.children.forEach(childNode => {
+          this.verificarCasoRecursive(childNode);
+        });
+      } else {
+        return true;
+      }
+    } else {
+      return false;
+    }
+  }
   //#endregion
 
   //#region Funciones de habilitar y desabilitar botones.
+  // valida campos nulos vacios undefined
+  campoVacio(campo) {
+    if (campo === undefined || campo === '' || campo === null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   //#endregion
 }

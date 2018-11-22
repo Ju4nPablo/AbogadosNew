@@ -55,25 +55,21 @@ export class DashboardComponent implements OnInit {
 
 
   notifications: any;
-  cantidad_notificaciones:number;
-  status: boolean;
-  msgs:any =[];
-  constructor() {
-    this.status = false;
-  }
+  cantidad_notificaciones: number;
+  msgs: any = [];
 
   ngOnInit() {
 
     this.notifications = [
-      {titulo:'tramite juzgado 1', estado:'1',color:'rojo',redireccion:''},
-      {titulo:'tramite juzgado 1', estado:'1',color:'rojo',redireccion:''},
-      {titulo:'tramite juzgado 1', estado:'1',color:'rojo',redireccion:''},
-      {titulo:'tramite juzgado 1', estado:'1',color:'amarillo',redireccion:''},
-      {titulo:'tramite juzgado 1', estado:'1',color:'amarillo',redireccion:''},
-      {titulo:'tramite juzgado 1', estado:'1',color:'amarillo',redireccion:''},
-      {titulo:'tramite juzgado 1', estado:'1',color:'amarillo',redireccion:''}
+      { titulo: 'tramite juzgado 1', estado: '1', color: 'rojo', redireccion: '' },
+      { titulo: 'tramite juzgado 1', estado: '1', color: 'rojo', redireccion: '' },
+      { titulo: 'tramite juzgado 1', estado: '1', color: 'rojo', redireccion: '' },
+      { titulo: 'tramite juzgado 1', estado: '1', color: 'amarillo', redireccion: '' },
+      { titulo: 'tramite juzgado 1', estado: '1', color: 'amarillo', redireccion: '' },
+      { titulo: 'tramite juzgado 1', estado: '1', color: 'amarillo', redireccion: '' },
+      { titulo: 'tramite juzgado 1', estado: '1', color: 'amarillo', redireccion: '' }
     ];
-    this.cantidad_notificaciones=this.notifications.length;
+    this.cantidad_notificaciones = this.notifications.length;
 
 
   }
