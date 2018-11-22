@@ -57,13 +57,13 @@ export class AbogadoComponent implements OnInit {
     public notifyService: NotificacionesService
   ) {
     this.cols = [
-      { field: 'cedula', header: 'Cédula' },
-      { field: 'nombre', header: 'Nombres' },
-      { field: 'direccion', header: 'Dirección' },
-      { field: 'telefono', header: 'Teléfono' },
-      { field: 'mail', header: 'Email' },
-      { field: 'sexo', header: 'Sexo' },
-      { field: 'estado', header: 'Estado' },
+      { field: 'cedula', header: 'Cédula',  width: '13%' },
+      { field: 'nombre', header: 'Nombres',  width: '13%' },
+      { field: 'direccion', header: 'Dirección',  width: '13%' },
+      { field: 'telefono', header: 'Teléfono',  width: '13%' },
+      { field: 'mail', header: 'Email',  width: '22%' },
+      { field: 'sexo', header: 'Sexo',  width: '13%' },
+      { field: 'estado', header: 'Estado',  width: '13%' },
     ];
     this.inicio();
   }

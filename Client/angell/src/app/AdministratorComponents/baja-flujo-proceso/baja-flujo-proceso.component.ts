@@ -16,6 +16,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
 
   //#region Variables e inicios
   listFlujo: any = [];
+  listTabla: any = [];
   listCliente: any = [];
   listAbogado: any = [];
   cols: any[];
@@ -90,14 +91,22 @@ export class BajaFlujoProcesoComponent implements OnInit {
     this.listFlujo = [];
     this.listAbogado = [];
     this.listCliente = [];
+    this.listTabla = [];
     this.flujoProcesoService.allFlujoProceso().subscribe(data => {
       this.listFlujo = data;
+      this.listFlujo.forEach(item => {
+        this.listTabla.push({
+          id: item._id,
+          label: item.label,
+          descripcion: item.data.descripcion
+        });
+      });
     });
     this.clienteService.getClienteTipo().subscribe(data => {
       this.listCliente = data;
       this.listCliente.unshift({
         _id: '-1',
-        nombre: 'Seleccione abogado'
+        nombre: 'Seleccione cliente'
       });
     });
     this.abogadoService.getAbogadoTipo().subscribe(data => {
@@ -134,8 +143,8 @@ export class BajaFlujoProcesoComponent implements OnInit {
         fecha_inicio: '',
         fecha_fin: '',
         descripcion: '',
-        cliente: Object,
-        abogado: Object,
+        cliente: '',
+        abogado: '',
         estado: this.listEstado[0]
       }
     };
@@ -175,7 +184,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
 
     this.casoTreeNew = [
       {
-        label: 'Número caso',
+        label: 'Nombre del flujo',
         data: {
           id: this.generarID(),
           descripcion: '',
@@ -188,15 +197,30 @@ export class BajaFlujoProcesoComponent implements OnInit {
   //#endregion
 
   selectItem(event) {
-    this.casoTree = [];
-    this.showDialogMod = true;
-    this.casoTree = [event.data];
-    this.expandAll();
-    this.banClose = false;
-    this.banOpen = true;
+    this.listFlujo.forEach(item => {
+      if (item._id === event.data.id) {
+        this.casoTree = [];
+        this.showDialogMod = true;
+        this.casoTree = [item];
+        this.expandAll();
+        this.banClose = false;
+        this.banOpen = true;
+      }
+    });
   }
 
   showDialogAdd() {
+    this.casoTreeNew = [
+      {
+        label: 'Nombre del flujo',
+        data: {
+          id: this.generarID(),
+          descripcion: '',
+          estado: this.listEstado[0]
+        },
+        children: []
+      }
+    ];
     this.showDialogIng = true;
   }
 
