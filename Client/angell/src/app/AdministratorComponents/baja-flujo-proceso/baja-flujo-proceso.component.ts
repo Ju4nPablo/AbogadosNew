@@ -106,7 +106,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
       this.listCliente = data;
       this.listCliente.unshift({
         _id: '-1',
-        nombre: 'Seleccione abogado'
+        nombre: 'Seleccione cliente'
       });
     });
     this.abogadoService.getAbogadoTipo().subscribe(data => {
