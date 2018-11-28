@@ -65,6 +65,7 @@ app.use('/api', require('./Routes/RouteProceso'));
 app.use('/api', require('./Routes/RouteProcesoParametro'));
 app.use('/api', require('./Routes/RouteResponsable'));
 app.use('/api', require('./Routes/RouteUser'));
+app.use('/api', require('./Routes/RouteMail'));
 
 app.listen(port, () => {
     console.log('Server run on port ' + port);
