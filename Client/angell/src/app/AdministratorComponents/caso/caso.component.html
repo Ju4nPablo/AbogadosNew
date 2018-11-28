@@ -56,26 +56,26 @@
   <button pButton type="button" (click)="exitArbol()" label="Salir" class="ui-button-danger"></button>
 </p-dialog>
 
-<p-dialog header="MODIFICAR NODO" [(visible)]="showDialog" [responsive]="true" showEffect="fade" [modal]="true" [width]="475">
+<p-dialog header="MODIFICAR NODO" [(visible)]="showDialog" [responsive]="true" showEffect="fade" [modal]="true" [width]="575">
   <div class="ui-g ui-fluid" *ngIf="node">
     <div class="ui-g ui-md">
       <div class="ui-g-6 ui-md-6">
         <label for="float-input">Fecha inicio: *</label><br>
         <p-calendar id="fechaInicio" name="fechaInicio" [locale]="es" [(ngModel)]="fechaInicio" [showIcon]="true" [monthNavigator]="true"
           [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0" [disabledDays]="[0,7]" readonlyInput="true"
-          [(disabled)]="blockCampos.blockFechIni" [style]="{'position': 'fixed', 'width': '180px', 'z-index':'999'}"></p-calendar>
+          [(disabled)]="blockCampos.blockFechIni"></p-calendar>
       </div>
       <div class="ui-g-6 ui-md-6" aria-disabled="showCampos.showFechFin">
-        <label for="float-input">Fecha fin: *</label><br>
+        <label for="float-input">Fecha fin: *</label>
         <p-calendar id="fechaFin" name="fechaFin" [locale]="es" [(ngModel)]="fechaFin" [showIcon]="true" [monthNavigator]="true"
           [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0" [disabledDays]="[0,7]" readonlyInput="true"
-          [(disabled)]="blockCampos.blockFechFin" [style]="{'position': 'fixed', 'width': '180px', 'z-index':'999'}"></p-calendar>
+          [(disabled)]="blockCampos.blockFechFin"></p-calendar>
       </div>
-      <div class="ui-g-6 ui-md-6"><br>
+      <div class="ui-g-6 ui-md-6">
         <label for="float-input">Número caso: *</label>
         <input id="etiqueta" type="text" pInputText [(ngModel)]="info.label" name="etiqueta" class="form-control  input-sm" [(disabled)]="blockCampos.blockCaso">
       </div>
-      <div class="ui-g-6 ui-md-6"><br>
+      <div class="ui-g-6 ui-md-6">
         <label for="float-input">Estado: *</label>
         <p-dropdown id="estado" name="estado" [options]="listEstado" [(ngModel)]="selectEstado" optionLabel="estado" [showClear]="true"
           [style]="{'width':'100%'}" scrollHeight="150px" [(disabled)]="blockCampos.blockEstado"></p-dropdown>
@@ -91,12 +91,12 @@
       </div>
       <div class="ui-g-12 ui-md-12">
         <label for="float-input">Descripción abogado: </label>
-        <textarea id="dato" [(ngModel)]="info.data.descripcion_abogado" name="dato" rows="2" cols="48" [(disabled)]="blockCampos.blockDescripcionAbogado"
+        <textarea id="dato" [(ngModel)]="info.data.descripcion_abogado" name="dato" rows="1" cols="63" [(disabled)]="blockCampos.blockDescripcionAbogado"
           pInputTextarea></textarea>
       </div>
       <div class="ui-g-12 ui-md-12">
         <label for="float-input">Descripción cliente: </label>
-        <textarea id="dato" [(ngModel)]="info.data.descripcion_cliente" name="dato" rows="2" cols="48" [(disabled)]="blockCampos.blockDescripcionCliente"
+        <textarea id="dato" [(ngModel)]="info.data.descripcion_cliente" name="dato" rows="1" cols="63" [(disabled)]="blockCampos.blockDescripcionCliente"
           pInputTextarea></textarea>
       </div>
     </div>
@@ -106,29 +106,30 @@
     <button type="button" pButton icon="fa fa-plus-square" (click)="addNodo()" label="Añadir" class="ui-button-success" *ngIf="showButon.showAnadir"></button>
     <button type="button" pButton icon="fa fa-save" (click)="updateNodo()" label="Guardar"></button>
     <button type="button" pButton icon="fa fa-envelope" (click)="reenviarMail()" label="Email"></button>
+    <button type="button" pButton icon="fa fa-close" (click)="exitForm()" label="Salir" class="ui-button-danger"></button>
   </div>
 </p-dialog>
 
-<p-dialog header="MODIFICAR NODO" [(visible)]="showDialogHijos" [responsive]="true" showEffect="fade" [modal]="true" [width]="475">
+<p-dialog header="MODIFICAR NODO" [(visible)]="showDialogHijos" [responsive]="true" showEffect="fade" [modal]="true" [width]="575">
   <div class="ui-g ui-fluid" *ngIf="node">
     <div class="ui-g ui-md">
       <div class="ui-g-6 ui-md-6">
         <label for="float-input">Fecha Inicio: *</label><br>
         <p-calendar id="fechaInicio" name="fechaInicio" [locale]="es" [(ngModel)]="fechaInicio" [showIcon]="true" [monthNavigator]="true"
           [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0" [disabledDays]="[0,7]" readonlyInput="true"
-          [(disabled)]="blockCampos.blockFechIni" [style]="{'position': 'fixed', 'width': '180px', 'z-index':'999'}"></p-calendar>
+          [(disabled)]="blockCampos.blockFechIni"></p-calendar>
       </div>
       <div class="ui-g-6 ui-md-6">
-        <label for="float-input">Fecha Fin: *</label><br>
+        <label for="float-input">Fecha Fin: *</label>
         <p-calendar id="fechaFin" name="fechaFin" [locale]="es" [(ngModel)]="fechaFin" [showIcon]="true" [monthNavigator]="true"
           [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0" [disabledDays]="[0,7]" readonlyInput="true"
-          [(disabled)]="blockCampos.blockFechFin" [style]="{'position': 'fixed', 'width': '180px', 'z-index':'999'}"></p-calendar>
+          [(disabled)]="blockCampos.blockFechFin"></p-calendar>
       </div>
-      <div class="ui-g-6 ui-md-6"><br>
+      <div class="ui-g-6 ui-md-6">
         <label for="float-input">Descripción: *</label>
         <input id="etiqueta" type="text" pInputText [(ngModel)]="info.label" name="etiqueta" class="form-control  input-sm" [(disabled)]="blockCampos.blockCaso">
       </div>
-      <div class="ui-g-6 ui-md-6"><br>
+      <div class="ui-g-6 ui-md-6">
         <label for="float-input">Estado: *</label>
         <p-dropdown id="estado" name="estado" [options]="listEstado" [(ngModel)]="selectEstado" optionLabel="estado" [showClear]="true"
           [style]="{'width':'100%'}" scrollHeight="150px" [(disabled)]="blockCampos.blockEstado"></p-dropdown>
@@ -140,11 +141,11 @@
       </div>
       <div class="ui-g-12 ui-md-12">
         <label>Descripción abogado: </label>
-        <textarea id="dato" [(ngModel)]="info.data.descripcion_abogado" name="dato" rows="2" cols="48" [(disabled)]="blockCampos.blockDescripcionAbogado"></textarea>
+        <textarea id="dato" [(ngModel)]="info.data.descripcion_abogado" name="dato" rows="1" cols="63" [(disabled)]="blockCampos.blockDescripcionAbogado"></textarea>
       </div>
       <div class="ui-g-12 ui-md-12">
         <label>Descripción cliente: </label>
-        <textarea id="dato" [(ngModel)]="info.data.descripcion_cliente" name="dato" rows="2" cols="48" [(disabled)]="blockCampos.blockDescripcionCliente"></textarea>
+        <textarea id="dato" [(ngModel)]="info.data.descripcion_cliente" name="dato" rows="1" cols="63" [(disabled)]="blockCampos.blockDescripcionCliente"></textarea>
       </div>
     </div>
   </div>
@@ -153,5 +154,6 @@
     <button type="button" pButton icon="fa fa-plus-square" (click)="addNodo()" label="Añadir" class="ui-button-success" *ngIf="showButon.showAnadir"></button>
     <button type="button" pButton icon="fa fa-save" (click)="updateNodo()" label="Guardar"></button>
     <button type="button" pButton icon="fa fa-envelope" (click)="reenviarMail()" label="Email"></button>
+    <button type="button" pButton icon="fa fa-close" (click)="exitForm()" label="Salir" class="ui-button-danger"></button>
   </div>
 </p-dialog>

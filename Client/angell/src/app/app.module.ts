@@ -56,6 +56,7 @@ import { ReporteComponent } from './AdministratorComponents/reporte/reporte.comp
 import { UserComponent } from './AdministratorComponents/user/user.component';
 import { LoginService } from './Services/login/login.service';
 import { UserService } from './Services/user/user.service';
+import { SendEmailService } from './Services/send-email/send-email.service';
 import { RouterModule, Routes } from '@angular/router';
 import { CasoClienteComponent } from './ClientComponents/caso-cliente/caso-cliente.component';
 import { DashboardabogadoComponent } from './AbogadoComponents/dashboardabogado/dashboardabogado.component';
@@ -182,7 +183,8 @@ import { InicioAbogadoComponent } from './AbogadoComponents/inicio-abogado/inici
     FlujoProcesoService,
     CasoService,
     LoginService,
-    UserService
+    UserService,
+    SendEmailService
   ],
   bootstrap: [AppComponent]
 })

@@ -4,6 +4,7 @@ import { CasoService } from '../../Services/caso/caso.service';
 import { ClienteService } from '../../Services/cliente/cliente.service';
 import { AbogadoService } from '../../Services/abogado/abogado.service';
 import { NotificacionesService } from '../../Services/notificaciones/notificaciones.service';
+import { SendEmailService } from '../../Services/send-email/send-email.service';
 import { DataTable } from 'primeng/datatable';
 @Component({
   selector: 'app-caso',
@@ -64,7 +65,8 @@ export class CasoComponent implements OnInit {
     private casoService: CasoService,
     private clienteService: ClienteService,
     private abogadoService: AbogadoService,
-    private notifyService: NotificacionesService
+    private notifyService: NotificacionesService,
+    private sendEmailService: SendEmailService
   ) {
     this.inicio();
   }
@@ -240,6 +242,7 @@ export class CasoComponent implements OnInit {
       today: 'Hoy',
       clear: 'Borrar'
     };
+    //this.sendEmailService.sendNotifications()
   }
   //#endregion
 
