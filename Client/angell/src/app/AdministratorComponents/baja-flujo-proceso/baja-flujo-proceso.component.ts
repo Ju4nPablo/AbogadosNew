@@ -6,7 +6,6 @@ import { ClienteService } from '../../Services/cliente/cliente.service';
 import { AbogadoService } from '../../Services/abogado/abogado.service';
 import { ValidacioneService } from '../../Services/validaciones/validacione.service';
 import { NotificacionesService } from '../../Services/notificaciones/notificaciones.service';
-import { async } from 'q';
 
 @Component({
   selector: 'app-baja-flujo-proceso',
@@ -50,6 +49,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
   activaBotonGuardarNodo: any = '';
   activaBotonGuardarFlujo: any = '';
   activaBotonGuardaNodoFlujo: any = '';
+  banValidar: any = '';
 
   constructor(
     private flujoProcesoService: FlujoProcesoService,
@@ -168,6 +168,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
     this.activaBotonGuardarNodo = false;
     this.activaBotonGuardarFlujo = true;
     this.activaBotonGuardaNodoFlujo = true;
+    this.banValidar = false;
   }
 
   ngOnInit() {
@@ -390,8 +391,8 @@ export class BajaFlujoProcesoComponent implements OnInit {
 
   //#region Guardar Diagrama
   saveCaso() {
-    console.log(this.verificarCasoRecursive(this.casoTree[0]));
-    if (this.verificarCasoRecursive(this.casoTree[0])) {
+    this.verificarCasoRecursive(this.casoTree[0]);
+    if (this.banValidar) {
       const casoSave = {
         label: this.casoTree[0].label,
         data: this.casoTree[0].data,
@@ -405,7 +406,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
         this.notifyService.notify('error', 'ERROR', 'ERROR AL INGRESAR!');
       });
     } else {
-      this.notifyService.notify('error', 'ERROR', 'FALTA DATOS POR INGRESAR O EXISTEN CAMPOS VACÍOS!');
+      this.notifyService.notify('error', 'ERROR', 'EXISTEN CAMPOS VACÍOS!');
     }
   }
   saveFlujo() {
@@ -505,17 +506,16 @@ export class BajaFlujoProcesoComponent implements OnInit {
     }
   }
   // Verificar caso recursivo.
-  async verificarCasoRecursive(node: TreeNode) {
+  private verificarCasoRecursive(node: TreeNode) {
+    this.banValidar = false;
     if (!this.campoVacio(node.data.abogado) && !this.campoVacio(node.data.fecha_inicio) && !this.campoVacio(node.data.fecha_fin)) {
       if (node.children.length > 0) {
         node.children.forEach(childNode => {
           this.verificarCasoRecursive(childNode);
         });
       } else {
-        return true;
+        this.banValidar = true;
       }
-    } else {
-      return false;
     }
   }
   // Buscar un abogado en la lista
