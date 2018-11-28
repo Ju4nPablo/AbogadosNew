@@ -15,7 +15,7 @@ export class SendEmailService {
   sendNotifications(mailDaemon) {
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
-    return this.http.post(this.url + 'email', mailDaemon, { headers });
+    return this.http.post(this.url + 'sendMail', mailDaemon, { headers });
   }
 
 }

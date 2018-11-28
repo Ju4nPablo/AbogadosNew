@@ -242,7 +242,10 @@ export class CasoComponent implements OnInit {
       today: 'Hoy',
       clear: 'Borrar'
     };
-    //this.sendEmailService.sendNotifications()
+    this.sendEmailService.sendNotifications({ "destinatario": "xaipoj@hotmail.com", "texto": "example text" }).subscribe(data => {
+      console.log(data);
+      //devuelve true si se envio el mail, caso contrario false
+    })
   }
   //#endregion
 
