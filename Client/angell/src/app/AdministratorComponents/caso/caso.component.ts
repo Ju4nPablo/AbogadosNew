@@ -247,7 +247,7 @@ export class CasoComponent implements OnInit {
     this.listCaso.forEach(item => {
       if (item._id === event.data.id) {
         this.showDialogMod = true;
-        this.idCaso = event.data._id;
+        this.idCaso = item._id;
         this.cliente = item.data.cliente.nombre;
         this.casoTree = [item];
         this.expandAll();
@@ -359,23 +359,23 @@ export class CasoComponent implements OnInit {
     });
   }
   updateCaso() {
-    if (this.verificarCasoRecursive(this.casoTree[0])) {
-      const caso = {
-        _id: this.idCaso,
-        label: this.casoTree[0].label,
-        data: this.casoTree[0].data,
-        children: this.casoTree[0].children
-      };
-      this.casoService.updateCaso(caso).subscribe(data => {
-        this.inicio();
-        this.ngOnInit();
-        this.notifyService.notify('success', 'Exito', 'CAMBIOS GUARDADOS!');
-      }, err => {
-        this.notifyService.notify('error', 'ERROR', 'ERROR AL GUARDAR!');
-      });
-    } else {
+    // if (this.verificarCasoRecursive(this.casoTree[0])) {
+    const caso = {
+      _id: this.idCaso,
+      label: this.casoTree[0].label,
+      data: this.casoTree[0].data,
+      children: this.casoTree[0].children
+    };
+    this.casoService.updateCaso(caso).subscribe(data => {
+      this.inicio();
+      this.ngOnInit();
+      this.notifyService.notify('success', 'Exito', 'CAMBIOS GUARDADOS!');
+    }, err => {
+      this.notifyService.notify('error', 'ERROR', 'ERROR AL GUARDAR!');
+    });
+    /* } else {
       this.notifyService.notify('error', 'ERROR', 'FALTA DATOS POR INGRESAR O EXISTEN CAMPOS VACIOS!');
-    }
+    } */
   }
   //#endregion
 
@@ -464,7 +464,7 @@ export class CasoComponent implements OnInit {
   }
   // Verificar caso recursivo.
   private verificarCasoRecursive(node: TreeNode) {
-    if (this.campoVacio(node.data.abogado)) {
+    if (!this.campoVacio(node.data.abogado && !this.campoVacio(node.data.fecha_inicio) && !this.campoVacio(node.data.fecha_fin))) {
       if (node.children.length > 0) {
         node.children.forEach(childNode => {
           this.verificarCasoRecursive(childNode);
@@ -486,6 +486,9 @@ export class CasoComponent implements OnInit {
     } else {
       return false;
     }
+  }
+  reenviarMail() {
+    console.log('hola');
   }
   //#endregion
 }

@@ -66,13 +66,9 @@
   [width]="1200" [height]="500">
   <div class="ui-g ui-fluid" *ngIf="casoTreeNew">
     <div class="ui-g-12">
-      <<<<<<< HEAD <p><b>Nota: </b>Seleccione un nodo para modificar y agregar mas nodos.</p>
-        <p-tree [value]="casoTreeNew" layout="horizontal" selectionMode="single" [(selection)]="selectNode"
-          (onNodeSelect)="selectNodoIng($event)" (onNodeExpand)="loadNodeIng($event)"></p-tree>
-        =======
-        <p-tree [value]="casoTreeNew" layout="horizontal" selectionMode="single" [(selection)]="selectNode"
-          (onNodeSelect)="selectNodoIng($event)" (onNodeExpand)="loadNodeIng($event)"></p-tree>
-        >>>>>>> a0232510219d039697df12e97621cea1e0fa1363
+      <p><b>Nota: </b>Seleccione un nodo para modificar y agregar mas nodos.</p>
+      <p-tree [value]="casoTreeNew" layout="horizontal" selectionMode="single" [(selection)]="selectNode"
+        (onNodeSelect)="selectNodoIng($event)" (onNodeExpand)="loadNodeIng($event)"></p-tree>
     </div>
   </div>
   <button pButton type="button" (click)="saveFlujo()" label="Guardar flujo" [(disabled)]="activaBotonGuardarFlujo"></button>

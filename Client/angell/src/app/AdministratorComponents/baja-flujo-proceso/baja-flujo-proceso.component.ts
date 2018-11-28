@@ -6,6 +6,7 @@ import { ClienteService } from '../../Services/cliente/cliente.service';
 import { AbogadoService } from '../../Services/abogado/abogado.service';
 import { ValidacioneService } from '../../Services/validaciones/validacione.service';
 import { NotificacionesService } from '../../Services/notificaciones/notificaciones.service';
+import { async } from 'q';
 
 @Component({
   selector: 'app-baja-flujo-proceso',
@@ -389,6 +390,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
 
   //#region Guardar Diagrama
   saveCaso() {
+    console.log(this.verificarCasoRecursive(this.casoTree[0]));
     if (this.verificarCasoRecursive(this.casoTree[0])) {
       const casoSave = {
         label: this.casoTree[0].label,
@@ -503,8 +505,8 @@ export class BajaFlujoProcesoComponent implements OnInit {
     }
   }
   // Verificar caso recursivo.
-  private verificarCasoRecursive(node: TreeNode) {
-    if (this.campoVacio(node.data.abogado)) {
+  async verificarCasoRecursive(node: TreeNode) {
+    if (!this.campoVacio(node.data.abogado) && !this.campoVacio(node.data.fecha_inicio) && !this.campoVacio(node.data.fecha_fin)) {
       if (node.children.length > 0) {
         node.children.forEach(childNode => {
           this.verificarCasoRecursive(childNode);
@@ -561,6 +563,9 @@ export class BajaFlujoProcesoComponent implements OnInit {
         this.activaBotonGuardaNodoFlujo = false;
       }
     }
+  }
+  reenviarMail() {
+    console.log('hola');
   }
   //#endregion
   //#region Funciones de habilitar y desabilitar botones.
