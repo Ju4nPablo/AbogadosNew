@@ -5,7 +5,7 @@ import { ClienteService } from '../../Services/cliente/cliente.service';
 import { AbogadoService } from '../../Services/abogado/abogado.service';
 import { NotificacionesService } from '../../Services/notificaciones/notificaciones.service';
 import { SendEmailService } from '../../Services/send-email/send-email.service';
-import { DataTable } from 'primeng/datatable';
+
 @Component({
   selector: 'app-caso',
   templateUrl: './caso.component.html',
@@ -242,7 +242,6 @@ export class CasoComponent implements OnInit {
       today: 'Hoy',
       clear: 'Borrar'
     };
-    //this.sendEmailService.sendNotifications()
   }
   //#endregion
 
@@ -251,7 +250,7 @@ export class CasoComponent implements OnInit {
       if (item._id === event.data.id) {
         this.showDialogMod = true;
         this.idCaso = item._id;
-        this.cliente = item.data.cliente.nombre;
+        this.cliente = item.data.cliente;
         this.casoTree = [item];
         this.expandAll();
         this.banClose = false;
@@ -492,6 +491,7 @@ export class CasoComponent implements OnInit {
   }
   reenviarMail() {
     console.log('hola');
+    this.sendEmailService.sendNotifications(this.cliente.mail);
   }
   //#endregion
 }
