@@ -242,10 +242,6 @@ export class CasoComponent implements OnInit {
       today: 'Hoy',
       clear: 'Borrar'
     };
-    this.sendEmailService.sendNotifications({ "destinatario": "mrjleo1989@gmail.com", "texto": "example text" }).subscribe(data => {
-      console.log(data);
-      // devuelve true si se envio el mail, caso contrario false
-    });
   }
   //#endregion
 
@@ -259,6 +255,7 @@ export class CasoComponent implements OnInit {
         this.expandAll();
         this.banClose = false;
         this.banOpen = true;
+        console.log(this.cliente);
       }
     });
   }
@@ -495,7 +492,18 @@ export class CasoComponent implements OnInit {
   }
   reenviarMail() {
     console.log('hola');
-    this.sendEmailService.sendNotifications(this.cliente.mail);
+    const mailCliente = {
+      destinatario: this.cliente.mail,
+      texto: 'Estimado cliente esto es un mail de prueba.'
+    };
+    this.sendEmailService.sendNotifications(mailCliente).subscribe(data => {
+      if (data) {
+        this.notifyService.notify('success', 'Exito', 'CORREO ENVIADO!');
+      } else {
+        this.notifyService.notify('error', 'ERROR', 'NO SE PUEDO ENVIAR EL CORREO!');
+      }
+
+    });
   }
   //#endregion
 }
