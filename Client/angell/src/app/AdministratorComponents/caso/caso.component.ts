@@ -255,7 +255,6 @@ export class CasoComponent implements OnInit {
         this.expandAll();
         this.banClose = false;
         this.banOpen = true;
-        console.log(this.cliente);
       }
     });
   }
@@ -491,7 +490,6 @@ export class CasoComponent implements OnInit {
     }
   }
   reenviarMail() {
-    console.log('hola');
     const mailCliente = {
       destinatario: this.cliente.mail,
       texto: 'Estimado cliente esto es un mail de prueba.'
