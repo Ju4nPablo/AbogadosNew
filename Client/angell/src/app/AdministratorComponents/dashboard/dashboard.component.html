@@ -4,7 +4,8 @@
     <span class="navbar-toggler-icon"></span>
   </button>
   <div>
-    <a class="navbar-brand" [routerLink]="['/dashboard']">
+    <a class="navbar-brand">
+      <!-- [routerLink]="['/dashboard']" -->
       <img src="assets/consorcio20.png" /> </a>
   </div>
   <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
@@ -38,7 +39,7 @@
         <!-- href="/dashboard/abogado" -->
       </li>
     </ul>
-   <!-- <ul class="nav navbar-nav navbar-right">
+    <!-- <ul class="nav navbar-nav navbar-right">
       &lt;!&ndash;<button class="btn form-control" href="#"><i class="fa fa-sign-out" aria-hidden="true"></i> Salir</button>&ndash;&gt;
       <li><button class="btn form-control" [routerLink]="['/dashboard/login']"><i class="fa fa-user" aria-hidden="true"></i>
           Mi perfil</button></li>
@@ -47,39 +48,29 @@
         </button></li>
     </ul>-->
     <form class="form-inline my-2 my-lg-0">
-      <i></i>
-      <!--<ul (click)="openNav()"> <button class=" btn form-control"   ><i class="fa fa-bell" aria-hidden="true" ></i> Notificaciones</button></ul>-->
-
-
       <div class="ui-md-4">
-
         <ul>
           <div class="dropdown">
-            <button class="btn  dropdown-toggle" style="background-color:darkorange; color:white" type="button"
-                    id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn  dropdown-toggle" style="background-color:darkorange; color:white" type="button" id="dropdownMenuButton"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <i class="fa fa-bell" aria-hidden="true" style="color:white"></i>
               <span class="badge" style="color:white">{{cantidad_notificaciones}}</span>
               Notificaciones
             </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"
-                 style="overflow-y: scroll; max-height: 200px">
-              <a class="dropdown-item" href="#" *ngFor="let notification of notifications"
-                 [ngStyle]="{'background-color':notification.color === 'rojo' ? '#E52741' : '#F1DF4A' }">{{notification.titulo}}</a>
-
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="overflow-y: scroll; max-height: 200px">
+              <a class="dropdown-item" href="#" *ngFor="let notification of notifications" [ngStyle]="{'background-color':notification.color === 'rojo' ? '#E52741' : '#F1DF4A' }">{{notification.titulo}}</a>
             </div>
           </div>
         </ul>
       </div>
-      <div class="ui-md-1">
-
-      </div>
-      <div class="ui-md-3">
+      <div class="ui-md-4">
         <ul>
-        <button class="btn form-control btn-secondary" [routerLink]="['/dashboard/login']"><i class="fa fa-user" aria-hidden="true"></i>
-          Mi perfil</button>
-          </ul>
+          <button class="btn form-control btn-secondary" ><i class="fa fa-user"
+              aria-hidden="true"></i>
+            {{nombreUser}}</button> <!-- [routerLink]="['/dashboard/login']" -->
+        </ul>
       </div>
-      <div class="ui-md-3">
+      <div class="ui-md-2">
         <ul>
           <button class="btn form-control btn-secondary" [routerLink]="['/dashboard/login']">
             <i class="fa fa-sign-out" aria-hidden="true"></i> Salir

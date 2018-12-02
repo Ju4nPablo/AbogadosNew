@@ -23,6 +23,8 @@ export class UserService {
     if (user.password === '') {
       const use = {
         cedula: user.cedula,
+        nombres: user.nombres,
+        apellidos: user.apellidos,
         mail: user.mail,
         tipo: user.tipo,
         estado: user.estado
@@ -33,6 +35,8 @@ export class UserService {
     } else {
       const use = {
         cedula: user.cedula,
+        nombres: user.nombres,
+        apellidos: user.apellidos,
         mail: user.mail,
         tipo: user.tipo,
         estado: user.estado,
@@ -40,7 +44,7 @@ export class UserService {
       };
       const headers = new HttpHeaders();
       headers.append('Content-Type', 'application/json');
-      return this.http.put(this.url + 'updateUser/:id' + user._id, use, { headers });
+      return this.http.put(this.url + 'user/' + user._id, use, { headers });
     }
   }
 

@@ -19,7 +19,8 @@ export class ClienteComponent implements OnInit {
     mail: '',
     sexo: '0',
     estado: '0',
-    foto: ''
+    foto: '',
+    numeroCarpeta: ''
   };
   selectCliente = {
     nombre: '',
@@ -29,7 +30,8 @@ export class ClienteComponent implements OnInit {
     mail: '',
     sexo: '0',
     estado: '0',
-    foto: ''
+    foto: '',
+    numeroCarpeta: ''
   };
   bandera = {
     ban1: '0',
@@ -62,6 +64,7 @@ export class ClienteComponent implements OnInit {
       { field: 'direccion', header: 'Dirección' },
       { field: 'telefono', header: 'Teléfono' },
       { field: 'mail', header: 'Email' },
+      { field: 'numeroCarpeta', header: 'No. Carpeta' },
       { field: 'sexo', header: 'Sexo' },
       { field: 'estado', header: 'Estado' },
     ];
@@ -71,26 +74,7 @@ export class ClienteComponent implements OnInit {
 
   //#region INICIALIZAR VARIABLES
   inicio() {
-    this.cliente = {
-      nombre: '',
-      cedula: '',
-      direccion: '',
-      telefono: '',
-      mail: '',
-      sexo: '0',
-      estado: '0',
-      foto: ''
-    };
-    this.selectCliente = {
-      nombre: '',
-      cedula: '',
-      direccion: '',
-      telefono: '',
-      mail: '',
-      sexo: '0',
-      estado: '0',
-      foto: ''
-    };
+    this.inicializarCampos();
     this.bandera = {
       ban1: '0',
       ban2: '0',
@@ -182,8 +166,8 @@ export class ClienteComponent implements OnInit {
   //#endregion
 
   //#region CARGAR Y MOSTRAR FORMULARIOS
-  // Cerrar formulario
-  cancelar() {
+  // inicializar Objetos
+  inicializarCampos() {
     this.selectCliente = {
       nombre: '',
       cedula: '',
@@ -192,7 +176,8 @@ export class ClienteComponent implements OnInit {
       mail: '',
       sexo: '0',
       estado: '0',
-      foto: ''
+      foto: '',
+      numeroCarpeta: ''
     };
     this.cliente = {
       nombre: '',
@@ -202,8 +187,13 @@ export class ClienteComponent implements OnInit {
       mail: '',
       sexo: '0',
       estado: '0',
-      foto: ''
+      foto: '',
+      numeroCarpeta: ''
     };
+  }
+  // Cerrar formulario
+  cancelar() {
+    this.inicializarCampos();
     this.showDialog = false;
     this.showDialogMod = false;
     this.inicio();
@@ -225,26 +215,7 @@ export class ClienteComponent implements OnInit {
     document.getElementById('telefono').style.borderColor = '';
     document.getElementById('mail').style.borderColor = '';
     document.getElementById('direccion').style.borderColor = '';
-    this.cliente = {
-      nombre: '',
-      cedula: '',
-      direccion: '',
-      telefono: '',
-      mail: '',
-      sexo: '0',
-      estado: '0',
-      foto: ''
-    };
-    this.selectCliente = {
-      nombre: '',
-      cedula: '',
-      direccion: '',
-      telefono: '',
-      mail: '',
-      sexo: '0',
-      estado: '0',
-      foto: ''
-    };
+    this.inicializarCampos();
     this.bandera = {
       ban1: '0',
       ban2: '0',

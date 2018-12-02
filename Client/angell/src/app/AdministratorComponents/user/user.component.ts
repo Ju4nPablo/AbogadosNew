@@ -16,6 +16,8 @@ export class UserComponent implements OnInit {
     user_name: '',
     password: '',
     cedula: '',
+    nombres: '',
+    apellidos: '',
     mail: '',
     estado: '0',
     tipo: ''
@@ -24,6 +26,8 @@ export class UserComponent implements OnInit {
     user_name: '',
     password: '',
     cedula: '',
+    nombres: '',
+    apellidos: '',
     mail: '',
     estado: '0',
     tipo: ''
@@ -56,6 +60,8 @@ export class UserComponent implements OnInit {
     this.cols = [
       { field: 'user_name', header: 'Nombre Usuario' },
       { field: 'cedula', header: 'Cédula' },
+      { field: 'nombres', header: 'Nombres' },
+      { field: 'apellidos', header: 'Apellidos' },
       { field: 'mail', header: 'Email' },
       { field: 'tipo', header: 'Tipo Usuario' },
       { field: 'estado', header: 'Estado' },
@@ -66,22 +72,7 @@ export class UserComponent implements OnInit {
 
   //#region INICIALIZAR VARIABLES
   inicio() {
-    this.user = {
-      user_name: '',
-      password: '',
-      cedula: '',
-      mail: '',
-      estado: '0',
-      tipo: ''
-    };
-    this.selectUser = {
-      user_name: '',
-      password: '',
-      cedula: '',
-      mail: '',
-      estado: '0',
-      tipo: ''
-    };
+    this.inicializarUser();
     this.bandera = {
       ban1: '0',
       ban2: '0',
@@ -123,7 +114,7 @@ export class UserComponent implements OnInit {
         tipo: 'Administrador'
       },
       {
-      id: '2',
+        id: '2',
         tipo: 'Cliente'
       },
       {
@@ -185,25 +176,33 @@ export class UserComponent implements OnInit {
   //#region CARGAR Y MOSTRAR FORMULARIOS
   // Cerrar formulario
   cancelar() {
-    this.selectUser = {
-      user_name: '',
-      password: '',
-      cedula: '',
-      mail: '',
-      estado: '0',
-      tipo: ''
-    };
+    this.inicializarUser();
+    this.showDialog = false;
+    this.showDialogMod = false;
+    this.inicio();
+  }
+  // Inicializar campos.
+  inicializarUser() {
     this.user = {
       user_name: '',
       password: '',
       cedula: '',
+      nombres: '',
+      apellidos: '',
       mail: '',
       estado: '0',
       tipo: ''
     };
-    this.showDialog = false;
-    this.showDialogMod = false;
-    this.inicio();
+    this.selectUser = {
+      user_name: '',
+      password: '',
+      cedula: '',
+      nombres: '',
+      apellidos: '',
+      mail: '',
+      estado: '',
+      tipo: ''
+    };
   }
   // Mostrar formulario de ingreso.
   showDialogAdd() {
@@ -211,22 +210,7 @@ export class UserComponent implements OnInit {
     document.getElementById('password').style.borderColor = '';
     document.getElementById('cedula').style.borderColor = '';
     document.getElementById('mail').style.borderColor = '';
-    this.user = {
-      user_name: '',
-      password: '',
-      cedula: '',
-      mail: '',
-      estado: '0',
-      tipo: ''
-    };
-    this.selectUser = {
-      user_name: '',
-      password: '',
-      cedula: '',
-      mail: '',
-      estado: '',
-      tipo: ''
-    };
+    this.inicializarUser();
     this.bandera = {
       ban1: '0',
       ban2: '0',
@@ -242,6 +226,8 @@ export class UserComponent implements OnInit {
     document.getElementById('nombreMod').style.borderColor = '';
     document.getElementById('passwordMod').style.borderColor = '';
     document.getElementById('cedulaMod').style.borderColor = '';
+    document.getElementById('nombresMod').style.borderColor = '';
+    document.getElementById('apellidosMod').style.borderColor = '';
     document.getElementById('mailMod').style.borderColor = '';
     this.bandera = {
       ban1: '1',
@@ -338,20 +324,62 @@ export class UserComponent implements OnInit {
   // verifica nombre usuario
   verificaNameUser() {
     if (this.user.user_name !== '') {
-      if (this.user.user_name.length < 6) {
-        document.getElementById('nombre').style.borderColor = '#FE2E2E';
+      if (this.user.user_name.length < 4) {
+        document.getElementById('nombres').style.borderColor = '#FE2E2E';
         this.bandera.ban4 = '0';
       } else {
-        document.getElementById('nombre').style.borderColor = '#5ff442'; // green
+        document.getElementById('nombres').style.borderColor = '#5ff442'; // green
         this.bandera.ban4 = '1';
       }
     }
     if (this.selectUser.user_name !== '') {
-      if (this.selectUser.user_name.length < 6) {
-        document.getElementById('nombreMod').style.borderColor = '#FE2E2E';
+      if (this.selectUser.user_name.length < 4) {
+        document.getElementById('nombrseMod').style.borderColor = '#FE2E2E';
         this.bandera.ban4 = '0';
       } else {
-        document.getElementById('nombreMod').style.borderColor = '#5ff442'; // green
+        document.getElementById('nombresMod').style.borderColor = '#5ff442'; // green
+        this.bandera.ban4 = '1';
+      }
+    }
+  }
+  // verifica Nombres
+  verificaNombres() {
+    if (this.user.nombres !== '') {
+      if (this.user.nombres.length < 4) {
+        document.getElementById('nombres').style.borderColor = '#FE2E2E';
+        this.bandera.ban4 = '0';
+      } else {
+        document.getElementById('nombres').style.borderColor = '#5ff442'; // green
+        this.bandera.ban4 = '1';
+      }
+    }
+    if (this.selectUser.nombres !== '') {
+      if (this.selectUser.nombres.length < 4) {
+        document.getElementById('nombresMod').style.borderColor = '#FE2E2E';
+        this.bandera.ban4 = '0';
+      } else {
+        document.getElementById('nombresMod').style.borderColor = '#5ff442'; // green
+        this.bandera.ban4 = '1';
+      }
+    }
+  }
+  // verifica Apellidos
+  verificaApellidos() {
+    if (this.user.apellidos !== '') {
+      if (this.user.apellidos.length < 4) {
+        document.getElementById('apellidos').style.borderColor = '#FE2E2E';
+        this.bandera.ban4 = '0';
+      } else {
+        document.getElementById('apellidos').style.borderColor = '#5ff442'; // green
+        this.bandera.ban4 = '1';
+      }
+    }
+    if (this.selectUser.apellidos !== '') {
+      if (this.selectUser.apellidos.length < 4) {
+        document.getElementById('apellidosMod').style.borderColor = '#FE2E2E';
+        this.bandera.ban4 = '0';
+      } else {
+        document.getElementById('apellidosMod').style.borderColor = '#5ff442'; // green
         this.bandera.ban4 = '1';
       }
     }

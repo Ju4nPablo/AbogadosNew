@@ -61,10 +61,27 @@
           <div class="ui-g-12">
             <div class="ui-g-6">
               <span class="ui-float-label">
-                <input id="cedula" type="text" pInputText id="cedula" [(ngModel)]="user.cedula" name="cedula"
-                  onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10" (ngModelChange)="verificaCedula()"
-                  class="form-control  input-sm">
+                <input id="cedula" type="text" pInputText [(ngModel)]="user.cedula" name="cedula" onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+                  maxlength="10" (ngModelChange)="verificaCedula()" class="form-control  input-sm">
                 <label for="float-input">Cédula: *</label>
+              </span>
+            </div>
+            <div class="ui-g-6">
+              <span class="ui-float-label">
+                <input id="nombres" type="text" pInputText [(ngModel)]="user.nombres" name="nombres" onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
+                event.charCode === 241 || event.charCode === 32 || event.charCode === 209 || event.charCode >= 65 && event.charCode <= 90'
+                  maxlength="50" (ngModelChange)="verificaNombres()" class="form-control  input-sm">
+                <label for="float-input">Nombres: *</label>
+              </span>
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <div class="ui-g-6">
+              <span class="ui-float-label">
+                <input id="apellidos" type="text" pInputText [(ngModel)]="user.apellidos" name="apellidos" onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
+                event.charCode === 241 || event.charCode === 32 || event.charCode === 209 || event.charCode >= 65 && event.charCode <= 90'
+                  maxlength="50" (ngModelChange)="verificaApellidos()" class="form-control  input-sm">
+                <label for="float-input">Apellidos: *</label>
               </span>
             </div>
             <div class="ui-g-6">
@@ -128,10 +145,30 @@
           <div class="ui-g-12">
             <div class="ui-g-6">
               <span class="ui-float-label">
-                <input id="cedulaMod" type="text" pInputText id="cedulaMod" [(ngModel)]="selectUser.cedula" name="cedula"
+                <input id="cedulaMod" type="text" pInputText [(ngModel)]="selectUser.cedula" name="cedulaMod"
                   onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10" (ngModelChange)="verificaCedula()"
                   class="form-control  input-sm">
                 <label for="float-input">Cédula: *</label>
+              </span>
+            </div>
+            <div class="ui-g-6">
+              <span class="ui-float-label">
+                <input id="nombresMod" type="text" pInputText [(ngModel)]="selectUser.nombres" name="nombresMod"
+                  onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
+                  event.charCode === 241 || event.charCode === 32 || event.charCode === 209 || event.charCode >= 65 && event.charCode <= 90'
+                  maxlength="50" (ngModelChange)="verificaNombres()" class="form-control  input-sm">
+                <label for="float-input">Nombres: *</label>
+              </span>
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <div class="ui-g-6">
+              <span class="ui-float-label">
+                <input id="apellidosMod" type="text" pInputText [(ngModel)]="selectUser.apellidos" name="apellidosMod"
+                  onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
+                  event.charCode === 241 || event.charCode === 32 || event.charCode === 209 || event.charCode >= 65 && event.charCode <= 90'
+                  maxlength="50" (ngModelChange)="verificaApellidos()" class="form-control  input-sm">
+                <label for="float-input">Apellidos: *</label>
               </span>
             </div>
             <div class="ui-g-6">

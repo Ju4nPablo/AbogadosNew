@@ -3,8 +3,8 @@
   <p-panel header="LISTADO ABOGADOS">
     <p>
       <b>Nota:</b> Click en un registro para modificar.</p>
-    <p-table #dt [columns]="cols" [value]="listaAbogado" [lazy]="true" selectionMode="single" [responsive]="true" [(selection)]="selectAbogado"
-      (onRowSelect)="onRowSelect($event)" [paginator]="true" [rows]="10">
+    <p-table #dt [columns]="cols" [value]="listaAbogado" [lazy]="true" selectionMode="single" [responsive]="true"
+      [(selection)]="selectAbogado" (onRowSelect)="onRowSelect($event)" [paginator]="true" [rows]="10">
       <ng-template pTemplate="caption">
 
         <div class="ui-g">
@@ -13,7 +13,8 @@
           </div>
           <div class="ui-g-6" style="text-align: right">
             <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-            <input type="text" pInputText size="50" placeholder="Buscar" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+            <input type="text" pInputText size="50" placeholder="Buscar" (input)="dt.filterGlobal($event.target.value, 'contains')"
+              style="width:auto">
           </div>
         </div>
       </ng-template>
@@ -38,7 +39,8 @@
 
     </p-table>
 
-    <p-dialog header="INGRESO ABOGADO" [(visible)]="showDialog" [responsive]="true" showEffect="fade" [modal]="true" [width]="700">
+    <p-dialog header="INGRESO ABOGADO" [(visible)]="showDialog" [responsive]="true" showEffect="fade" [modal]="true"
+      [width]="700">
       <div class="ui-g ui-fluid" *ngIf="abogado">
         <div class="ui-g-12">
           <form #imagenForm=ngForm>
@@ -89,7 +91,7 @@
             </span>
           </div>
 
-          <div class="ui-g-8 ui-g-offset-4 ui-g-nopad">
+          <div class="ui-g-offset-4 ui-g-8">
             <div class="ui-g-4">
               <label for="color">Sexo: *</label>
             </div>
@@ -109,7 +111,8 @@
       </p-footer>
     </p-dialog>
 
-    <p-dialog header="MODIFICAR ABOGADO" [(visible)]="showDialogMod" [responsive]="true" showEffect="fade" [modal]="true" [width]="700">
+    <p-dialog header="MODIFICAR ABOGADO" [(visible)]="showDialogMod" [responsive]="true" showEffect="fade" [modal]="true"
+      [width]="800">
       <div class="ui-g ui-fluid" *ngIf="selectAbogado">
         <div class="ui-g-12">
           <form #imagenForm=ngForm>
@@ -159,26 +162,23 @@
               <label for="float-input">Dirección: *</label>
             </span>
           </div>
-
-          <div class="ui-g-8 ui-g-offset-4 ui-g-nopad">
-            <div class="ui-g-4">
+          <div class="ui-g-offset-4 ui-g-4">
+            <div class="ui-g-5">
               <label for="color">Sexo: *</label>
             </div>
-            <div class="ui-g-8">
+            <div class="ui-g-4">
               <p-inputSwitch id="sexoMod" [(ngModel)]="selectSexo" name="sexoMod" onLabel="Hombre" offLabel="Mujer"></p-inputSwitch>
             </div>
           </div>
-          <div class="ui-g-8 ui-g-offset-4 ui-g-nopad">
-            <div class="ui-g-4">
+          <div class="ui-g-4">
+            <div class="ui-g-5">
               <label for="color">Estado: *</label>
             </div>
-            <div class="ui-g-8">
+            <div class="ui-g-4">
               <p-inputSwitch id="estadoMod" [(ngModel)]="selectEstado" name="estadoMod" onLabel="Activo" offLabel="Inactivo"></p-inputSwitch>
             </div>
           </div>
-
         </div>
-
       </div>
       <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix">
@@ -187,6 +187,5 @@
         </div>
       </p-footer>
     </p-dialog>
-
   </p-panel>
 </form>

@@ -16,6 +16,7 @@ export class DashboardComponent implements OnInit {
 
   notification: any = ['a'];
   status: boolean;
+  nombreUser: any = '';
   showMenu = {
     showDashboard: true,
     showUsuario: true,
@@ -25,11 +26,15 @@ export class DashboardComponent implements OnInit {
     showCasos: true,
     showReporte: true,
   };
+  usuario: any = '';
 
   constructor() {
     this.status = false;
-    const us = JSON.parse(localStorage.getItem('userLogin'));
-    if (us.tipo === '2') {
+    this.usuario = JSON.parse(localStorage.getItem('userLogin'));
+    const nombres = this.usuario.nombres.split(' ');
+    const apellidos = this.usuario.apellidos.split(' ');
+    this.nombreUser = nombres[0] + ' ' + apellidos[0];
+    if (this.usuario.tipo === '2') {
       this.showMenu = {
         showDashboard: false,
         showUsuario: false,
@@ -40,7 +45,7 @@ export class DashboardComponent implements OnInit {
         showReporte: false,
       };
     }
-    if (us.tipo === '3') {
+    if (this.usuario.tipo === '3') {
       this.showMenu = {
         showDashboard: false,
         showUsuario: false,

@@ -155,6 +155,7 @@ export class CasoComponent implements OnInit {
       { field: 'label', header: 'Número caso' },
       { field: 'abogado', header: 'Abogado' },
       { field: 'cliente', header: 'Cliente' },
+      { field: 'numeroCarpeta', header: 'Número Carpeta' },
     ];
     this.selectProceso = {};
     // Agregados
@@ -221,11 +222,13 @@ export class CasoComponent implements OnInit {
 
   cargarTabla(lista) {
     lista.forEach(item => {
+      // let cli = this.buscarCliente(item.data.cliente.cedula);
       this.listTabla.push({
         id: item._id,
         label: item.label,
         cliente: item.data.cliente.nombre,
-        abogado: item.data.abogado.nombre
+        abogado: item.data.abogado.nombre,
+        numeroCarpeta: this.buscarCliente(item.data.cliente.cedula).numeroCarpeta
       });
     });
   }
@@ -250,7 +253,7 @@ export class CasoComponent implements OnInit {
       if (item._id === event.data.id) {
         this.showDialogMod = true;
         this.idCaso = item._id;
-        this.cliente = item.data.cliente;
+        this.cliente = this.buscarCliente(item.data.cliente.cedula);
         this.casoTree = [item];
         this.expandAll();
         this.banClose = false;
@@ -449,12 +452,17 @@ export class CasoComponent implements OnInit {
     }
   }
   // Buscar un cliente en la lista
-  private buscarCliente(ced: any) {
-    this.listCliente.forEach(cli => {
-      if (ced === cli.cedula) {
-        this.selectCliente = cli;
+  public buscarCliente(ced: any) {
+    for (const c of this.listCliente) {
+      if (ced === c.cedula) {
+        return c;
       }
-    });
+    }
+    /* this.listCliente.forEach(cli => {
+      if (ced === cli.cedula) {
+        return cli;
+      }
+    }); */
   }
   // Buscar un abogado en la lista
   public buscarAbogado(ced: any) {

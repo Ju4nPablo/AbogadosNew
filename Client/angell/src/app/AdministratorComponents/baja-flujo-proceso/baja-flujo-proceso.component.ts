@@ -254,8 +254,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
   }
   // modifica los datos del nodo seleccionado
   updateNodo() {
-    if (!this.campoVacio(this.fechaInicio) && !this.campoVacio(this.fechaFin) &&
-      !this.campoVacio(this.info.label) && !this.campoVacio(this.selectAbogado)) {
+    if (!this.campoVacio(this.fechaInicio) && !this.campoVacio(this.info.label) && !this.campoVacio(this.selectAbogado)) {
       let newData = {};
       const abo = {
         id: this.selectAbogado._id,
@@ -265,6 +264,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
       };
       this.node.label = this.info.label;
       if (this.casoTree[0].data.id === this.info.data.id) {
+        this.fechaFin = this.fechaInicio;
         const cli = {
           id: this.selectCliente._id,
           cedula: this.selectCliente.cedula,
@@ -508,7 +508,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
   // Verificar caso recursivo.
   private verificarCasoRecursive(node: TreeNode) {
     this.banValidar = false;
-    if (!this.campoVacio(node.data.abogado) && !this.campoVacio(node.data.fecha_inicio) && !this.campoVacio(node.data.fecha_fin)) {
+    if (!this.campoVacio(node.data.abogado) && !this.campoVacio(node.data.fecha_inicio)) {
       if (node.children.length > 0) {
         node.children.forEach(childNode => {
           this.verificarCasoRecursive(childNode);

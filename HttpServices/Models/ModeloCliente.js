@@ -19,6 +19,9 @@ const Cliente = mongoose.Schema({
 	direccion: {
 		type: String
 	},
+	numeroCarpeta: {
+		type: String
+	},
 	cedula: {
 		type: String
 	},

@@ -24,6 +24,12 @@ var UserSchema = new mongoose.Schema({
 	cedula: {
 		type: String
 	},
+	nombres: {
+		type: String
+	},
+	apellidos: {
+		type: String
+	},
 	mail: {
 		type: String
 	},

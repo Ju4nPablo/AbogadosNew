@@ -53,12 +53,19 @@
               </div>
             </div>
           </form>
-          <div class="ui-g-8">
+          <div class="ui-g-4">
             <span class="ui-float-label">
               <input id="cedula" type="text" pInputText id="cedula" [(ngModel)]="cliente.cedula" name="cedula"
                 onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10" (ngModelChange)="verificaCedula()"
                 class="form-control  input-sm">
               <label for="float-input">Cédula: *</label>
+            </span>
+          </div>
+          <div class="ui-g-4">
+            <span class="ui-float-label">
+              <input pInputText type="text" id="numCarpeta" [(ngModel)]="selectCliente.numeroCarpeta" name="numCarpeta"
+                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10">
+              <label for="float-input">Número carpeta: *</label>
             </span>
           </div>
           <div class="ui-g-8">
@@ -91,9 +98,7 @@
             </span>
           </div>
           <div class="ui-g-12">
-            <div class="ui-g-5">
-            </div>
-            <div class="ui-g-2">
+            <div class="ui-g-offset-5 ui-g-2">
               <label for="color">Sexo: *</label>
             </div>
             <div class="ui-g-3">
@@ -126,11 +131,18 @@
               </div>
             </div>
           </form>
-          <div class="ui-g-8">
+          <div class="ui-g-4">
             <span class="ui-float-label">
               <input pInputText type="text" id="cedulaMod" [(ngModel)]="selectCliente.cedula" name="cedulaMod"
                 onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10" (ngModelChange)="verificaCedula()">
               <label for="float-input">Cédula: *</label>
+            </span>
+          </div>
+          <div class="ui-g-4">
+            <span class="ui-float-label">
+              <input pInputText type="text" id="numCarpetaMod" [(ngModel)]="selectCliente.numeroCarpeta" name="numCarpetaMod"
+                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10">
+              <label for="float-input">Numero carpeta: *</label>
             </span>
           </div>
           <div class="ui-g-8">
@@ -163,24 +175,16 @@
               <label for="float-input">Dirección: *</label>
             </span>
           </div>
-          <div class="ui-g-1">
-            <div class="ui-g-3">
-            </div>
-          </div>
-          <div class="ui-g-4">
+          <div class="ui-g-offset-4 ui-g-4">
             <div class="ui-g-5">
               <label for="color">Sexo: *</label>
             </div>
-            <div class="ui-g-6">
+            <div class="ui-g-4">
               <p-inputSwitch pInputText id="sexoMod" [(ngModel)]="selectSexo" name="sexoMod" onLabel="Hombre" offLabel="Mujer"></p-inputSwitch>
             </div>
           </div>
-          <div class="ui-g-1">
-            <div class="ui-g-3">
-            </div>
-          </div>
           <div class="ui-g-4">
-            <div class="ui-g-5">
+            <div class="ui-g-6">
               <label for="color">Estado: *</label>
             </div>
             <div class="ui-g-4">
@@ -189,7 +193,6 @@
             </div>
           </div>
         </div>
-
       </div>
       <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix">
@@ -198,6 +201,5 @@
         </div>
       </p-footer>
     </p-dialog>
-
   </p-panel>
 </form>
