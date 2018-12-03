@@ -11,11 +11,11 @@
   <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
       <li class="nav-item active" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}" *ngIf="showMenu.showDashboard">
-        <a class="nav-link" [routerLink]="['/dashboard/actividadExtra']">Dashboard
+        <a class="nav-link" [routerLink]="['/dashboard/actividadExtra']">Agenda
           <span class="sr-only">(current)</span>
         </a>
       </li>
-      <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}" *ngIf="showMenu.showDashboard">
+      <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}" *ngIf="showMenu.showUsuario">
         <a class="nav-item nav-link" [routerLink]="['/dashboard/usuario']">Usuarios</a>
         <!--  href="/dashboard/usuario" -->
       </li>
@@ -63,10 +63,12 @@
           </div>
         </ul>
       </div>
+      <div class="ui-md-1">
+
+      </div>
       <div class="ui-md-4">
         <ul>
-          <button class="btn form-control btn-secondary" ><i class="fa fa-user"
-              aria-hidden="true"></i>
+          <button class="btn form-control btn-secondary"><i class="fa fa-user" aria-hidden="true"></i>
             {{nombreUser}}</button> <!-- [routerLink]="['/dashboard/login']" -->
         </ul>
       </div>

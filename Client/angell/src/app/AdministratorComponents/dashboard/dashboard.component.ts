@@ -34,6 +34,9 @@ export class DashboardComponent implements OnInit {
     const nombres = this.usuario.nombres.split(' ');
     const apellidos = this.usuario.apellidos.split(' ');
     this.nombreUser = nombres[0] + ' ' + apellidos[0];
+    if (this.nombreUser.length > 13) {
+      this.nombreUser = nombres[0];
+    }
     if (this.usuario.tipo === '2') {
       this.showMenu = {
         showDashboard: false,
@@ -47,7 +50,7 @@ export class DashboardComponent implements OnInit {
     }
     if (this.usuario.tipo === '3') {
       this.showMenu = {
-        showDashboard: false,
+        showDashboard: true,
         showUsuario: false,
         showCliente: false,
         showAbogado: false,

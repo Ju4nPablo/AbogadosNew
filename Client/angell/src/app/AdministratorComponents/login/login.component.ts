@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit {
             if (response.user.tipo === '1') {
               this.router.navigateByUrl('/dashboard/actividadExtra');
             } else {
-              this.router.navigateByUrl('/dashboard');
+              this.router.navigateByUrl('/dashboard/caso');
             }
             /* if (response.user.tipo === '2') {
               this.router.navigateByUrl('/dashboardcliente');
