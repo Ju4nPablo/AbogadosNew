@@ -14,15 +14,19 @@ import { SendEmailService } from '../../Services/send-email/send-email.service';
 export class CasoComponent implements OnInit {
 
   //#region Variables e inicios
-
+  fileImagen: File = null;
+  urlImagen1: any = 'assets/papel.png';
+  urlImagen2: any = 'assets/papel.png';
+  urlImagen3: any = 'assets/papel.png';
+  urlImagen: any = '';
   listCaso: any = [];
   listTabla: any = [];
   listCliente: any = [];
   listAbogado: any = [];
+  filesImagens: any = [];
   cols: any[];
   es: any;
   casoTree: TreeNode[];
-  showDialogMod: Boolean = false;
   selectProceso: any = {};
   // selectNode: any = {};
   // Variables nuevas
@@ -30,7 +34,10 @@ export class CasoComponent implements OnInit {
   selectNode: TreeNode;
   node: any;
   showDialog: Boolean = false;
+  showDialogMod: Boolean = false;
   showDialogHijos: Boolean = false;
+  showDialogImagenes: Boolean = false;
+  showImagen: Boolean = false;
   caso: any = {};
   selectEstado: any = {};
   selectCliente: any = {};
@@ -58,7 +65,9 @@ export class CasoComponent implements OnInit {
   };
   showButon: any = {
     showAnadir: true,
-    showQuitar: true
+    showQuitar: true,
+    showAnadirFoto: true,
+    showMail: true,
   };
 
   constructor(
@@ -77,6 +86,11 @@ export class CasoComponent implements OnInit {
     this.listAbogado = [];
     this.listCliente = [];
     this.listTabla = [];
+    this.filesImagens = [];
+    this.urlImagen1 = 'assets/papel.png';
+    this.urlImagen2 = 'assets/papel.png';
+    this.urlImagen3 = 'assets/papel.png';
+    this.urlImagen = '';
     this.clienteService.getClienteTipo().subscribe(data => {
       this.listCliente = data;
       this.selectCliente = this.listCliente[0];
@@ -102,7 +116,9 @@ export class CasoComponent implements OnInit {
       };
       this.showButon = {
         showAnadir: true,
-        showQuitar: true
+        showQuitar: true,
+        showAnadirFoto: true,
+        showMail: true,
       };
     }
     if (us.tipo === '2') {
@@ -188,6 +204,8 @@ export class CasoComponent implements OnInit {
     this.showDialog = false;
     this.showDialogHijos = false;
     this.showDialogMod = false;
+    this.showDialogImagenes = false;
+    this.showImagen = false;
     this.caso = {};
     this.banClose = true;
     this.banOpen = false;
@@ -202,6 +220,8 @@ export class CasoComponent implements OnInit {
         abogado: '',
         descripcion_abogado: '',
         descripcion_cliente: '',
+        precio: '0',
+        imagenes: ['assets/papel.png', 'assets/papel.png', 'assets/papel.png'],
         estado: this.listEstado[0]
       }
     };
@@ -214,6 +234,8 @@ export class CasoComponent implements OnInit {
         abogado: '',
         descripcion_abogado: '',
         descripcion_cliente: '',
+        precio: '0',
+        imagenes: ['assets/papel.png', 'assets/papel.png', 'assets/papel.png'],
         estado: this.listEstado[0]
       }
     };
@@ -279,6 +301,8 @@ export class CasoComponent implements OnInit {
         fecha_fin: new Date,
         abogado: Object,
         descripcion_abogado: '',
+        descripcion_cliente: '',
+        imagenes: [],
         estado: this.listEstado[0]
       },
       children: []
@@ -312,7 +336,9 @@ export class CasoComponent implements OnInit {
         descripcion_cliente: this.info.data.descripcion_cliente,
         cliente: cli,
         abogado: abo,
-        estado: this.selectEstado
+        estado: this.selectEstado,
+        precio: this.info.data.precio,
+        imagenes: this.info.data.imagenes,
       };
       this.node.data = newData;
       this.fechaInicio = '';
@@ -382,6 +408,31 @@ export class CasoComponent implements OnInit {
       this.notifyService.notify('error', 'ERROR', 'FALTA DATOS POR INGRESAR O EXISTEN CAMPOS VACIOS!');
     } */
   }
+  // guardar imágenes
+  saveImagen() {
+    this.info.data.imagenes = [this.urlImagen1, this.urlImagen2, this.urlImagen3];
+    this.exitImagenes();
+  }
+  // muestra imagen seleccionada aumentada.
+  showImgen(img) {
+    this.showImagen = true;
+    this.urlImagen = img;
+  }
+  // Cargar imagen
+  cargaImagen(file: FileList, pos) {
+    this.fileImagen = file.item(0);
+    const reader = new FileReader();
+    reader.onload = (event: any) => {
+      if (pos === 1) {
+        this.urlImagen1 = event.target.result;
+      } else if (pos === 2) {
+        this.urlImagen2 = event.target.result;
+      } else {
+        this.urlImagen3 = event.target.result;
+      }
+    };
+    reader.readAsDataURL(this.fileImagen);
+  }
   //#endregion
 
   //#region Metodos generarID, recorrer arbol
@@ -389,15 +440,6 @@ export class CasoComponent implements OnInit {
   generarID() {
     const f = new Date();
     return (f.getTime());
-  }
-  // Boton salir arbol
-  exitArbol() {
-    this.inicio();
-  }
-  // Boton salir formulario
-  exitForm() {
-    this.showDialog = false;
-    this.showDialogHijos = false;
   }
   // Expande todo el arbol recursivamente
   expandAll() {
@@ -497,7 +539,7 @@ export class CasoComponent implements OnInit {
       return false;
     }
   }
-  reenviarMail() {
+  enviarMail() {
     const mailCliente = {
       destinatario: this.cliente.mail,
       texto: 'Estimado cliente esto es un mail de prueba.'
@@ -510,6 +552,35 @@ export class CasoComponent implements OnInit {
       }
 
     });
+  }
+  showFormImagenes() {
+    this.urlImagen1 = this.info.data.imagenes[0];
+    this.urlImagen2 = this.info.data.imagenes[1];
+    this.urlImagen3 = this.info.data.imagenes[2];
+    this.showDialogImagenes = true;
+  }
+  exitShowImage() {
+    this.showImagen = false;
+  }
+  //#endregion
+
+  //#region botones salir de los formularios
+  // Boton salir de imágenes.
+  exitImagenes() {
+    this.urlImagen = '';
+    this.urlImagen1 = 'assets/papel.png';
+    this.urlImagen2 = 'assets/papel.png';
+    this.urlImagen3 = 'assets/papel.png';
+    this.showDialogImagenes = false;
+  }
+  // Boton salir arbol
+  exitArbol() {
+    this.inicio();
+  }
+  // Boton salir formulario
+  exitForm() {
+    this.showDialog = false;
+    this.showDialogHijos = false;
   }
   //#endregion
 }

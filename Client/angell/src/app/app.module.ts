@@ -62,6 +62,8 @@ import { CasoClienteComponent } from './ClientComponents/caso-cliente/caso-clien
 import { DashboardabogadoComponent } from './AbogadoComponents/dashboardabogado/dashboardabogado.component';
 import { CasoAbogadoComponent } from './AbogadoComponents/caso-abogado/caso-abogado.component';
 import { InicioAbogadoComponent } from './AbogadoComponents/inicio-abogado/inicio-abogado.component';
+import { SpinnerModule } from 'primeng/spinner';
+import { GalleriaModule } from 'primeng/galleria';
 
 /*Navigation*/
 /* const appRoutes: Routes = [
@@ -167,6 +169,8 @@ import { InicioAbogadoComponent } from './AbogadoComponents/inicio-abogado/inici
     DropdownModule,
     TreeModule,
     TooltipModule,
+    SpinnerModule,
+    GalleriaModule,
     // RouterModule.forRoot(appRoutes),
 
   ],

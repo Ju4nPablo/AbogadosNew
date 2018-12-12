@@ -21,10 +21,7 @@ mongoose.connect(config.url, (err, res) => {
 
 });
 
-
 var app = express();
-
-
 
 //routes
 
@@ -34,8 +31,8 @@ var mdAuth = require('./Middlewares/authenticated');
 /* app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json()); */
 //body-parser middleware
-app.use(bodyParser.urlencoded({ limit: '2mb' }));
-app.use(bodyParser.json({ limit: '2mb' }));
+app.use(bodyParser.urlencoded({ limit: '25mb' }));
+app.use(bodyParser.json({ limit: '25mb' }));
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
