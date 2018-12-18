@@ -20,8 +20,11 @@ export class UserService {
   }
 
   updateUser(user) {
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
     if (user.password === '') {
       const use = {
+        user_name: user.user_name,
         cedula: user.cedula,
         nombres: user.nombres,
         apellidos: user.apellidos,
@@ -29,11 +32,11 @@ export class UserService {
         tipo: user.tipo,
         estado: user.estado
       };
-      const headers = new HttpHeaders();
-      headers.append('Content-Type', 'application/json');
       return this.http.put(this.url + 'user/' + user._id, use, { headers });
     } else {
       const use = {
+        _id: user._id,
+        user_name: user.user_name,
         cedula: user.cedula,
         nombres: user.nombres,
         apellidos: user.apellidos,
@@ -42,9 +45,7 @@ export class UserService {
         estado: user.estado,
         password: user.password
       };
-      const headers = new HttpHeaders();
-      headers.append('Content-Type', 'application/json');
-      return this.http.put(this.url + 'user/' + user._id, use, { headers });
+      return this.http.post(this.url + 'updateUserPassword', use, { headers });
     }
   }
 
