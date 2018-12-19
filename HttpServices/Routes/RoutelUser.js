@@ -10,7 +10,7 @@ var mdAuth = require('../Middlewares/authenticated');
 
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
-var url = require('../config/config').database;
+var url = require('../Config/config').database;
 
 
 //modelos

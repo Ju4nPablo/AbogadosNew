@@ -7,7 +7,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 
 require('dotenv').config();
-var authorize = require('./routes/authorize');
+var authorize = require('./Routes/authorize');
 
 var port = process.env.Port || 3000;
 var config = require('./Config/config');
