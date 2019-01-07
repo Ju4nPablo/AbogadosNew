@@ -112,7 +112,7 @@ export class DashboardComponent implements OnInit {
     const fechaNodoFin = new Date(node.data.fecha_fin);
     const res = fechaNodoFin.getTime() - fecha.getTime();
     const dias = Math.round(res / (1000 * 60 * 60 * 24));
-    if (dias >= -40 && dias < 6 && node.data.estado.id === '1') { //
+    if (dias >= 0 && dias < 6 && node.data.estado.id === '1') { //
       this.notifications.push(noti);
       return;
     }
