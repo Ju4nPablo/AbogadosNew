@@ -51,14 +51,18 @@
       <div class="ui-md-4">
         <ul>
           <div class="dropdown">
-            <button class="btn  dropdown-toggle" style="background-color:darkorange; color:white" type="button" id="dropdownMenuButton"
+            <button class="btn  dropdown-toggle" style="background-color:grey; color:white" type="button" id="dropdownMenuButton"
               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="fa fa-bell" aria-hidden="true" style="color:white"></i>
+              <i class="fa fa-bell" aria-hidden="true" style="color:yellow"></i>
               <span class="badge" style="color:white">{{cantidad_notificaciones}}</span>
               Notificaciones
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="overflow-y: scroll; max-height: 200px">
-              <a class="dropdown-item" href="#" *ngFor="let notification of notifications" [ngStyle]="{'background-color':notification.color === 'rojo' ? '#E52741' : '#F1DF4A' }">{{notification.titulo}}</a>
+              <dl class="dropdown-item borde" *ngFor="let notification of notifications" [ngStyle]="{'background-color':notification.color === 'rojo' ? '#E52741' : '#F1DF4A' }"
+                (click)="cargarCaso(notification)">
+                <dt>{{notification.titulo}}</dt>
+                <dd>{{notification.cliente}}</dd>
+            </dl>
             </div>
           </div>
         </ul>

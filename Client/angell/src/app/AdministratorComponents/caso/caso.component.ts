@@ -103,6 +103,7 @@ export class CasoComponent implements OnInit {
       this.casoService.allCasoPendientes().subscribe(data => {
         this.listCaso = data;
         this.cargarTabla(this.listCaso);
+        this.cargarCaso();
       });
       this.blockCampos = {
         blockFechIni: false,
@@ -240,6 +241,21 @@ export class CasoComponent implements OnInit {
       }
     };
     this.cliente = '';
+  }
+
+  cargarCaso() {
+    const caso = JSON.parse(localStorage.getItem('caso'));
+    if (caso !== null && caso !== '' && caso !== undefined) {
+      this.idCaso = caso._id;
+      this.cliente = this.buscarCliente(caso.data.cliente.cedula);
+      this.casoTree = [caso];
+      this.expandAll();
+      this.banClose = false;
+      this.banOpen = true;
+      this.showDialogMod = true;
+      this.showDialogMod = true;
+      localStorage.setItem('caso', null);
+    }
   }
 
   cargarTabla(lista) {

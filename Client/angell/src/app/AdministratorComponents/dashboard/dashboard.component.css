@@ -3,3 +3,9 @@
   -webkit-animation-play-state: paused;
   animation-play-state: paused;
 }
+
+.borde {
+  border-style: solid;
+  border-width: medium;
+  cursor: pointer;
+}
