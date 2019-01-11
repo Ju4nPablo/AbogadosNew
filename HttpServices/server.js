@@ -54,16 +54,11 @@ app.use('/api', userRoutes);
 app.use('/authorize', authorize);
 app.use('/api', require('./Routes/index'));
 app.use('/api', require('./Routes/RouteAbogado'));
-app.use('/api', require('./Routes/RouteActividad'));
 app.use('/api', require('./Routes/RouteActividadExtra'));
-app.use('/api', require('./Routes/RouteActividadParametro'));
 app.use('/api', require('./Routes/RouteCaso'));
 app.use('/api', require('./Routes/RouteCliente'));
 app.use('/api', require('./Routes/RouteCobro'));
 app.use('/api', require('./Routes/RouteFlujoProceso'));
-app.use('/api', require('./Routes/RouteProceso'));
-app.use('/api', require('./Routes/RouteProcesoParametro'));
-app.use('/api', require('./Routes/RouteResponsable'));
 app.use('/api', require('./Routes/RouteUser'));
 app.use('/api', require('./Routes/RouteMail'));
 

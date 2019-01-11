@@ -34,14 +34,11 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { DropdownModule } from 'primeng/dropdown';
 import { ClienteComponent } from './AdministratorComponents/cliente/cliente.component';
 import { AbogadoComponent } from './AdministratorComponents/abogado/abogado.component';
-import { ActividadesComponent } from './AdministratorComponents/actividades/actividades.component';
 import { PanelModule } from 'primeng/panel';
-import { ActividadParametrizableComponent } from './AdministratorComponents/actividad-parametrizable/actividad-parametrizable.component';
 import { ClienteService } from './Services/cliente/cliente.service';
 import { AbogadoService } from './Services/abogado/abogado.service';
 import { ActividadExtraService } from './Services/actividad-extra/actividad-extra.service';
 import { ValidacioneService } from './Services/validaciones/validacione.service';
-import { ActividadParametrizableService } from './Services/actividad-parametrizable/actividad-parametrizable.service';
 import { EventService } from './Services/event/event.service';
 import { NotificacionesService } from './Services/notificaciones/notificaciones.service';
 import { NotificationComponent } from './AdministratorComponents/notification/notification.component';
@@ -125,8 +122,6 @@ import { GalleriaModule } from 'primeng/galleria';
     InicioClienteComponent,
     ClienteComponent,
     AbogadoComponent,
-    ActividadesComponent,
-    ActividadParametrizableComponent,
     NotificationComponent,
     ActividadExtraComponent,
     FlujoProcesoComponent,
@@ -183,7 +178,6 @@ import { GalleriaModule } from 'primeng/galleria';
     NotificacionesService,
     ActividadExtraService,
     EventService,
-    ActividadParametrizableService,
     FlujoProcesoService,
     CasoService,
     LoginService,

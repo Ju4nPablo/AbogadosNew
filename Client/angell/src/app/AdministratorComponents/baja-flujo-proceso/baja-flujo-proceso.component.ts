@@ -7,6 +7,7 @@ import { AbogadoService } from '../../Services/abogado/abogado.service';
 import { ValidacioneService } from '../../Services/validaciones/validacione.service';
 import { NotificacionesService } from '../../Services/notificaciones/notificaciones.service';
 import { SendEmailService } from '../../Services/send-email/send-email.service';
+import { ActividadExtraService } from '../../Services/actividad-extra/actividad-extra.service';
 
 @Component({
   selector: 'app-baja-flujo-proceso',
@@ -67,7 +68,8 @@ export class BajaFlujoProcesoComponent implements OnInit {
     private abogadoService: AbogadoService,
     public validarService: ValidacioneService,
     public notifyService: NotificacionesService,
-    private sendEmailService: SendEmailService
+    private sendEmailService: SendEmailService,
+    private agenda: ActividadExtraService
   ) {
     this.inicio();
   }
@@ -435,6 +437,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
   saveCaso() {
     this.verificarCasoRecursive(this.casoTree[0]);
     if (this.banValidar) {
+      this.recorrerAddActividades(this.casoTree[0]);
       const casoSave = {
         label: this.casoTree[0].label,
         data: this.casoTree[0].data,
@@ -451,6 +454,41 @@ export class BajaFlujoProcesoComponent implements OnInit {
       this.notifyService.notify('error', 'ERROR', 'EXISTEN CAMPOS VACÍOS!');
     }
   }
+
+  // recorrer el nodo para guardar las actividades.
+  recorrerAddActividades(nodoActividad: TreeNode) {
+    const act = {
+      label: nodoActividad.label,
+      data: nodoActividad.data
+    };
+    this.addActividad(act);
+    if (nodoActividad.children) {
+      nodoActividad.children.forEach(childNode => {
+        this.recorrerAddActividades(childNode);
+      });
+    }
+  }
+
+  // Guadar actividad en la agenda.
+  addActividad(datosCalendario) {
+    const actividad = {
+      'actividad': datosCalendario.label,
+      'fecha_inicio': datosCalendario.data.fecha_inicio,
+      'fecha_fin': datosCalendario.fecha_fin,
+      'prioridad': 'yellow',
+      'encargado': datosCalendario.data.abogado.id,
+      'hora_inicio': '8:00',
+      'hora_fin': '16:00',
+      'repetir': 'Nunca',
+      'recordatorio': '1 hora antes'
+    };
+    this.agenda.addActividadExtra(actividad).subscribe(data => {
+      console.log(data);
+    }, err => {
+      // this.notifyService.notify('error', 'ERROR', 'Error Conexión!');
+    });
+  }
+
   // guardar flujo
   saveFlujo() {
     const flujo = {

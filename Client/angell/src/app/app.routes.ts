@@ -10,8 +10,6 @@ import { DashboardclienteComponent } from './ClientComponents/dashboardcliente/d
 import { InicioClienteComponent } from './ClientComponents/inicio-cliente/inicio-cliente.component';
 import { ClienteComponent } from './AdministratorComponents/cliente/cliente.component';
 import { AbogadoComponent } from './AdministratorComponents/abogado/abogado.component';
-import { ActividadesComponent } from './AdministratorComponents/actividades/actividades.component';
-import { ActividadParametrizableComponent } from './AdministratorComponents/actividad-parametrizable/actividad-parametrizable.component';
 import { ActividadExtraComponent } from './AdministratorComponents/actividad-extra/actividad-extra.component';
 import { FlujoProcesoComponent } from './AdministratorComponents/flujo-proceso/flujo-proceso.component';
 import { BajaFlujoProcesoComponent } from './AdministratorComponents/baja-flujo-proceso/baja-flujo-proceso.component';
@@ -43,16 +41,8 @@ const appRoutes: Routes = [
         component: AbogadoComponent
       },
       {
-        path: 'actividades',
-        component: ActividadesComponent
-      },
-      {
         path: 'actividadExtra',
         component: ActividadExtraComponent
-      },
-      {
-        path: 'actividadesParametro',
-        component: ActividadParametrizableComponent
       },
       {
         path: 'flujoProceso',

@@ -186,19 +186,23 @@ export class ActividadExtraComponent implements OnInit {
   //#region INGRESAR Y MODIFICAR ACTIVIDAD
   // Ingresa una actividad
   addActividad() {
-    this.actividad.prioridad = this.selectPrioridad.color;
-    this.actividad.encargado = this.selectAbogado._id;
-    this.actividad.hora_inicio = this.selectHoraIni.hora;
-    this.actividad.hora_fin = this.selectHoraFin.hora;
-    this.actividad.repetir = this.selectRepetir.descripcion;
-    this.actividad.recordatorio = this.selectRecordatorio.descripcion;
-    this.actividadService.addActividadExtra(this.actividad).subscribe(data => {
-      this.showDialog = false;
-      this.notifyService.notify('success', 'Exito', 'Ingreso Existoso!');
-      this.inicio();
-    }, err => {
-      this.notifyService.notify('error', 'ERROR', 'Error Conexión!');
-    });
+    if (this.actividad.actividad !== '' && this.actividad.actividad !== null && this.actividad.actividad !== undefined) {
+      this.actividad.prioridad = this.selectPrioridad.color;
+      this.actividad.encargado = this.selectAbogado._id;
+      this.actividad.hora_inicio = this.selectHoraIni.hora;
+      this.actividad.hora_fin = this.selectHoraFin.hora;
+      this.actividad.repetir = this.selectRepetir.descripcion;
+      this.actividad.recordatorio = this.selectRecordatorio.descripcion;
+      this.actividadService.addActividadExtra(this.actividad).subscribe(data => {
+        this.showDialog = false;
+        this.notifyService.notify('success', 'Exito', 'Ingreso Existoso!');
+        this.inicio();
+      }, err => {
+        this.notifyService.notify('error', 'ERROR', 'Error Conexión!');
+      });
+    } else {
+      this.notifyService.notify('error', 'ERROR', 'Ingrese una actividad!');
+    }
   }
   // Ingresa una actividad
   updateActividad() {
