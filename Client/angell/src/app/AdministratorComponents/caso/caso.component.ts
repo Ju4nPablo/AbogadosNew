@@ -5,6 +5,8 @@ import { ClienteService } from '../../Services/cliente/cliente.service';
 import { AbogadoService } from '../../Services/abogado/abogado.service';
 import { NotificacionesService } from '../../Services/notificaciones/notificaciones.service';
 import { SendEmailService } from '../../Services/send-email/send-email.service';
+import { ActividadExtraService } from '../../Services/actividad-extra/actividad-extra.service';
+import { nodeValue } from '@angular/core/src/view';
 
 @Component({
   selector: 'app-caso',
@@ -69,19 +71,30 @@ export class CasoComponent implements OnInit {
     showAnadirFoto: true,
     showMail: true,
   };
+  listaEliminarActividad: any = [];
+  numeroCaso: any = '';
+
+  // agregar caso nuevo.
+  showDialogIng: any = false;
+  casoTreeNew: TreeNode[];
 
   constructor(
     private casoService: CasoService,
     private clienteService: ClienteService,
     private abogadoService: AbogadoService,
     private notifyService: NotificacionesService,
-    private sendEmailService: SendEmailService
+    private sendEmailService: SendEmailService,
+    private actividadAgenda: ActividadExtraService
   ) {
     this.inicio();
   }
 
   inicio() {
+
+    this.showDialogIng = false;
+
     const us = JSON.parse(localStorage.getItem('userLogin'));
+    this.listaEliminarActividad = [];
     this.listCaso = [];
     this.listAbogado = [];
     this.listCliente = [];
@@ -283,10 +296,29 @@ export class CasoComponent implements OnInit {
       today: 'Hoy',
       clear: 'Borrar'
     };
+
+    this.casoTreeNew = [
+      {
+        label: 'Nombre del flujo',
+        data: {
+          id: this.generarID(),
+          fecha_inicio: new Date,
+          fecha_fin: new Date,
+          abogado: Object,
+          descripcion_abogado: '',
+          descripcion_cliente: '',
+          imagenes: [],
+          estado: this.listEstado[0]
+        },
+        children: []
+      }
+    ];
+
   }
   //#endregion
 
   selectItem(event) {
+    this.numeroCaso = '';
     this.listCaso.forEach(item => {
       if (item._id === event.data.id) {
         this.showDialogMod = true;
@@ -300,6 +332,29 @@ export class CasoComponent implements OnInit {
     });
   }
 
+  //#region Ingresar nuevo caso
+  showDialogAdd() {
+    this.casoTreeNew = [
+      {
+        label: 'Nombre del flujo',
+        data: {
+          id: this.generarID(),
+          fecha_inicio: new Date,
+          fecha_fin: new Date,
+          abogado: Object,
+          descripcion_abogado: '',
+          descripcion_cliente: '',
+          imagenes: [],
+          estado: this.listEstado[0]
+        },
+        children: []
+      }
+    ];
+    this.showDialogIng = true;
+  }
+
+  //#endregion
+
   //#region Trabajo con el nodo add, uptade, delete, carga
   loadNode(event) {
     this.selectNode = {};
@@ -308,6 +363,7 @@ export class CasoComponent implements OnInit {
     this.banOpen = false;
   }
 
+  // Añadir un nodo.
   addNodo() {
     this.selectNode = {
       label: 'Nodo New',
@@ -328,9 +384,16 @@ export class CasoComponent implements OnInit {
     this.showDialogHijos = false;
   }
 
+  // Modificar un nodo
   updateNodo() {
+    let fech = '';
     if (!this.campoVacio(this.fechaInicio) && !this.campoVacio(this.fechaFin) &&
       !this.campoVacio(this.info.label) && !this.campoVacio(this.selectAbogado)) {
+      if (this.casoTree[0].label === this.info.label) {
+        fech = this.fechaInicio;
+      } else {
+        fech = this.fechaFin;
+      }
       const cli = {
         id: this.selectCliente._id,
         cedula: this.selectCliente.cedula,
@@ -347,7 +410,7 @@ export class CasoComponent implements OnInit {
       const newData = {
         id: this.node.data.id,
         fecha_inicio: this.fechaInicio,
-        fecha_fin: this.fechaFin,
+        fecha_fin: fech,
         descripcion_abogado: this.info.data.descripcion_abogado,
         descripcion_cliente: this.info.data.descripcion_cliente,
         cliente: cli,
@@ -356,6 +419,7 @@ export class CasoComponent implements OnInit {
         precio: this.info.data.precio,
         imagenes: this.info.data.imagenes,
       };
+
       this.node.data = newData;
       this.fechaInicio = '';
       this.fechaFin = '';
@@ -365,7 +429,7 @@ export class CasoComponent implements OnInit {
       this.notifyService.notify('error', 'ERROR', 'EXISTEN CAMPOS VACÍOS!');
     }
   }
-
+  // Eliminar un nodo
   deleteNodo() {
     this.casoTree.forEach(nodes => {
       this.buscarQuitarNodo(nodes, this.node.data.id);
@@ -374,6 +438,7 @@ export class CasoComponent implements OnInit {
     this.showDialogHijos = false;
   }
 
+  // Seleccionar un nodo.
   selectNodo(event) {
     this.fechaInicio = new Date(event.node.data.fecha_inicio);
     this.fechaFin = new Date(event.node.data.fecha_fin);
@@ -402,27 +467,31 @@ export class CasoComponent implements OnInit {
       children: this.casoTree[0].children
     };
     this.casoService.addCaso(caso).subscribe(data => {
+      this.listaEliminarActividad.forEach(act => {
+        const actividad = {
+          id_actividad_caso: act
+        };
+        this.actividadAgenda.deleteActividadExtraIdCaso(actividad).subscribe();
+      });
       this.inicio();
     });
   }
   updateCaso() {
-    // if (this.verificarCasoRecursive(this.casoTree[0])) {
     const caso = {
       _id: this.idCaso,
       label: this.casoTree[0].label,
       data: this.casoTree[0].data,
       children: this.casoTree[0].children
     };
+    this.numeroCaso = this.casoTree[0].label;
     this.casoService.updateCaso(caso).subscribe(data => {
+      this.recorrerUpdateActividades(this.casoTree[0]);
       this.inicio();
       this.ngOnInit();
       this.notifyService.notify('success', 'Exito', 'CAMBIOS GUARDADOS!');
     }, err => {
       this.notifyService.notify('error', 'ERROR', 'ERROR AL GUARDAR!');
     });
-    /* } else {
-      this.notifyService.notify('error', 'ERROR', 'FALTA DATOS POR INGRESAR O EXISTEN CAMPOS VACIOS!');
-    } */
   }
   // guardar imágenes
   saveImagen() {
@@ -455,7 +524,7 @@ export class CasoComponent implements OnInit {
   // Generar clave
   generarID() {
     const f = new Date();
-    return (f.getTime());
+    return (f.getTime().toString());
   }
   // Expande todo el arbol recursivamente
   expandAll() {
@@ -501,7 +570,12 @@ export class CasoComponent implements OnInit {
       let i = 0;
       nodes.children.forEach(childNode => {
         if (childNode.data.id === id) {
-          nodes.children.splice(i, 1);
+          if (childNode.children.length === 0) {
+            this.listaEliminarActividad.push(childNode.data.id);
+            nodes.children.splice(i, 1);
+          } else {
+            this.notifyService.notify('error', 'ERROR', 'No se puede eliminar, porque contine mas actividades dentro!');
+          }
         } else {
           i++;
           this.buscarQuitarNodo(childNode, id);
@@ -543,6 +617,37 @@ export class CasoComponent implements OnInit {
     } else {
       return false;
     }
+  }
+  // recorrer el nodo para guardar las actividades.
+  recorrerUpdateActividades(nodoActividad: TreeNode) {
+    const act = {
+      label: nodoActividad.label,
+      data: nodoActividad.data
+    };
+    this.updateActividad(act);
+    if (nodoActividad.children) {
+      nodoActividad.children.forEach(childNode => {
+        this.recorrerUpdateActividades(childNode);
+      });
+    }
+  }
+  // Guadar actividad en la agenda.
+  updateActividad(datosCalendario) {
+    const actividad = {
+      'id_actividad_caso': datosCalendario.data.id.toString(),
+      'caso_numero': this.numeroCaso,
+      'actividad': datosCalendario.label,
+      'fecha_inicio': datosCalendario.data.fecha_inicio,
+      'fecha_fin': datosCalendario.data.fecha_fin,
+      'prioridad': 'yellow',
+      'abogado': datosCalendario.data.abogado.id,
+      'hora_inicio': '8:00',
+      'hora_fin': '16:00',
+      'repetir': 'Nunca',
+      'recordatorio': '1 hora antes'
+    };
+    this.actividadAgenda.updateActividadExtraIdCaso(actividad).subscribe();
+
   }
   //#endregion
 

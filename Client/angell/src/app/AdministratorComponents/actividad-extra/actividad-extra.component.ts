@@ -19,11 +19,13 @@ export class ActividadExtraComponent implements OnInit {
   headerConfig: any;
   header: any;
   actividad = {
+    'id_actividad_caso': 'agenda',
+    'caso_numero': '000',
     'actividad': '',
     'fecha_inicio': '',
     'fecha_fin': '',
     'prioridad': '',
-    'encargado': '',
+    'abogado': '',
     'hora_inicio': '',
     'hora_fin': '',
     'repetir': '',
@@ -75,11 +77,13 @@ export class ActividadExtraComponent implements OnInit {
     this.listActividad = [];
     this.selectPrioridad = '';
     this.actividad = {
+      'id_actividad_caso': 'agenda',
+      'caso_numero': '000',
       'actividad': '',
       'fecha_inicio': '',
       'fecha_fin': '',
       'prioridad': '',
-      'encargado': '',
+      'abogado': '',
       'hora_inicio': '',
       'hora_fin': '',
       'repetir': '',
@@ -188,7 +192,7 @@ export class ActividadExtraComponent implements OnInit {
   addActividad() {
     if (this.actividad.actividad !== '' && this.actividad.actividad !== null && this.actividad.actividad !== undefined) {
       this.actividad.prioridad = this.selectPrioridad.color;
-      this.actividad.encargado = this.selectAbogado._id;
+      this.actividad.abogado = this.selectAbogado._id;
       this.actividad.hora_inicio = this.selectHoraIni.hora;
       this.actividad.hora_fin = this.selectHoraFin.hora;
       this.actividad.repetir = this.selectRepetir.descripcion;
@@ -204,22 +208,41 @@ export class ActividadExtraComponent implements OnInit {
       this.notifyService.notify('error', 'ERROR', 'Ingrese una actividad!');
     }
   }
-  // Ingresa una actividad
+  // Modificar una actividad
   updateActividad() {
-    this.actividad.prioridad = this.selectPrioridad.color;
-    this.actividad.encargado = this.selectAbogado._id;
-    this.actividad.hora_inicio = this.selectHoraIni.hora;
-    this.actividad.hora_fin = this.selectHoraFin.hora;
-    this.actividad.repetir = this.selectRepetir.descripcion;
-    this.actividad.recordatorio = this.selectRecordatorio.descripcion;
-    this.actividadService.updateActividadExtra(this.actividad).subscribe(data => {
-      this.showDialog = false;
-      this.notifyService.notify('success', 'Exito', 'Modificación Existosa!');
-      this.inicio();
-    }, err => {
-      this.notifyService.notify('error', 'ERROR', 'Error Conexión!');
-    });
+    if (this.actividad.id_actividad_caso === 'agenda') {
+      this.actividad.prioridad = this.selectPrioridad.color;
+      this.actividad.abogado = this.selectAbogado._id;
+      this.actividad.hora_inicio = this.selectHoraIni.hora;
+      this.actividad.hora_fin = this.selectHoraFin.hora;
+      this.actividad.repetir = this.selectRepetir.descripcion;
+      this.actividad.recordatorio = this.selectRecordatorio.descripcion;
+      this.actividadService.updateActividadExtra(this.actividad).subscribe(data => {
+        this.showDialog = false;
+        this.notifyService.notify('success', 'Exito', 'Modificación Existosa!');
+        this.inicio();
+      }, err => {
+        this.notifyService.notify('error', 'ERROR', 'Error Conexión!');
+      });
+    } else {
+      this.notifyService.notify('error', 'ERROR', 'Dirígase al caso "' + this.actividad.caso_numero + '" para poder modificar!');
+    }
+  }
+  //#endregion
 
+  // Eliminar una actividad
+  deleteActividad() {
+    if (this.actividad.id_actividad_caso === 'agenda') {
+      this.actividadService.deleteActividadExtra(this.actividad).subscribe(data => {
+        this.showDialog = false;
+        this.notifyService.notify('success', 'Exito', 'Eliminación Existosa!');
+        this.inicio();
+      }, err => {
+        this.notifyService.notify('error', 'ERROR', 'Error Conexión!');
+      });
+    } else {
+      this.notifyService.notify('error', 'ERROR', 'Dirígase al caso "' + this.actividad.caso_numero + '" para poder eliminar!');
+    }
   }
   //#endregion
 
@@ -253,7 +276,7 @@ export class ActividadExtraComponent implements OnInit {
           }
         }
         for (const ab of this.listAbogado) {
-          if (ab._id === act.encargado) {
+          if (ab._id === act.abogado) {
             this.selectAbogado = ab;
           }
         }

@@ -61,7 +61,7 @@
               <dl class="dropdown-item borde" *ngFor="let notification of notifications" [ngStyle]="{'background-color':notification.color === 'rojo' ? '#E52741' : '#F1DF4A' }"
                 (click)="cargarCaso(notification)">
                 <dt>{{notification.titulo}}</dt>
-                <dd>{{notification.cliente}}</dd>
+                <dd>{{notification.cliente.nombre}}</dd>
             </dl>
             </div>
           </div>

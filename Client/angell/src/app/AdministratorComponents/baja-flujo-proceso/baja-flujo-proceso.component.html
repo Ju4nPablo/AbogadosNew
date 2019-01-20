@@ -62,7 +62,7 @@
   <button pButton type="button" (click)="exitArbol()" label="Salir" class="ui-button-danger"></button>
 </p-dialog>
 
-<p-dialog header="CREAR FLUJO PROCESO" [(visible)]="showDialogIng" [responsive]="true" showEffect="fade" [modal]="true"
+<p-dialog header="CREAR NUEVO FLUJO" [(visible)]="showDialogIng" [responsive]="true" showEffect="fade" [modal]="true"
   [width]="1200" [height]="500">
   <div class="ui-g ui-fluid" *ngIf="casoTreeNew">
     <div class="ui-g-12">
@@ -155,6 +155,10 @@
         <label for="float-input">Observación cliente: </label>
         <textarea id="dato" [(ngModel)]="info.data.descripcion_cliente" name="dato" rows="2" cols="63" pInputTextarea></textarea>
       </div>
+      <div class="ui-g-12 ui-md-12">
+        <label for="float-input">Descripción del evento: </label>
+        <textarea id="dato" [(ngModel)]="info.data.descripcion" name="dato" rows="2" cols="63" pInputTextarea disabled></textarea>
+      </div>
     </div>
   </div>
   <div class="ui-dialog-buttonpane ui-helper-clearfix">
@@ -204,6 +208,10 @@
       <div class="ui-g-12 ui-md-12">
         <label>Observación cliente: </label>
         <textarea id="dato" [(ngModel)]="info.data.descripcion_cliente" name="dato" rows="2" cols="63"></textarea>
+      </div>
+      <div class="ui-g-12 ui-md-12">
+        <label for="float-input">Descripción del evento: </label>
+        <textarea id="dato" [(ngModel)]="info.data.descripcion" name="dato" rows="2" cols="63" pInputTextarea disabled></textarea>
       </div>
     </div>
   </div>

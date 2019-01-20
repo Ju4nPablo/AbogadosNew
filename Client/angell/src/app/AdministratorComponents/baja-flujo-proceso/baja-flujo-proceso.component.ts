@@ -53,13 +53,13 @@ export class BajaFlujoProcesoComponent implements OnInit {
   banOpen: Boolean = false;
   info: any = '';
   infoNodo: any = '';
-  numCaso: any = '';
   fechaInicio: any = '';
   fechaFin: any = '';
   activaBotonGuardarNodo: any = '';
   activaBotonGuardarFlujo: any = '';
   activaBotonGuardaNodoFlujo: any = '';
   banValidar: any = '';
+  numeroCaso: any = '';
 
   constructor(
     private flujoProcesoService: FlujoProcesoService,
@@ -221,6 +221,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
   //#endregion
 
   selectItem(event) {
+    this.numeroCaso = '';
     this.listFlujo.forEach(item => {
       if (item._id === event.data.id) {
         this.casoTree = [];
@@ -260,7 +261,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
     this.selectNode = {
       label: 'Nodo New',
       data: {
-        id: this.generarID(),
+        id: this.generarID().toString(),
         fecha_inicio: '',
         fecha_fin: '',
         abogado: '',
@@ -437,13 +438,14 @@ export class BajaFlujoProcesoComponent implements OnInit {
   saveCaso() {
     this.verificarCasoRecursive(this.casoTree[0]);
     if (this.banValidar) {
-      this.recorrerAddActividades(this.casoTree[0]);
       const casoSave = {
         label: this.casoTree[0].label,
         data: this.casoTree[0].data,
         children: this.casoTree[0].children
       };
+      this.numeroCaso = this.casoTree[0].label;
       this.casoService.addCaso(casoSave).subscribe(data => {
+        this.recorrerAddActividades(this.casoTree[0]);
         this.inicio();
         this.ngOnInit();
         this.notifyService.notify('success', 'Exito', 'INGRESO EXITOSO!');
@@ -472,18 +474,20 @@ export class BajaFlujoProcesoComponent implements OnInit {
   // Guadar actividad en la agenda.
   addActividad(datosCalendario) {
     const actividad = {
+      'id_actividad_caso': datosCalendario.data.id.toString(),
+      'caso_numero': this.numeroCaso,
       'actividad': datosCalendario.label,
       'fecha_inicio': datosCalendario.data.fecha_inicio,
-      'fecha_fin': datosCalendario.fecha_fin,
+      'fecha_fin': datosCalendario.data.fecha_fin,
       'prioridad': 'yellow',
-      'encargado': datosCalendario.data.abogado.id,
+      'abogado': datosCalendario.data.abogado.id,
       'hora_inicio': '8:00',
       'hora_fin': '16:00',
       'repetir': 'Nunca',
       'recordatorio': '1 hora antes'
     };
     this.agenda.addActividadExtra(actividad).subscribe(data => {
-      console.log(data);
+      // this.numeroCaso = '';
     }, err => {
       // this.notifyService.notify('error', 'ERROR', 'Error Conexión!');
     });
@@ -535,7 +539,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
   // Generar clave
   generarID() {
     const f = new Date();
-    return (f.getTime());
+    return (f.getTime().toString());
   }
   // Boton salir arbol
   exitArbol() {

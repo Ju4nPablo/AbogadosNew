@@ -3,7 +3,13 @@ var mongoose = restful.mongoose;
 
 
 const Actividad_Extra = mongoose.Schema({
-
+    
+    id_actividad_caso: {
+        type: String
+    },
+    caso_numero: {
+        type: String
+    },
     actividad: {
         type: String
     },
@@ -16,7 +22,7 @@ const Actividad_Extra = mongoose.Schema({
     prioridad: {
         type: String
     },
-    encargado: {
+    abogado: {
         type: mongoose.Schema.ObjectId,
     },
     hora_inicio: {

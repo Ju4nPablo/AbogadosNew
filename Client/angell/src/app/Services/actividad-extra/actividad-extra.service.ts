@@ -21,9 +21,14 @@ export class ActividadExtraService {
 
   updateActividadExtra(actividadExtra) {
     const headers = new HttpHeaders();
-    console.log(actividadExtra);
     headers.append('Content-Type', 'application/json');
     return this.http.put(this.url + 'actividad_extra/' + actividadExtra._id, actividadExtra, { headers });
+  }
+
+  deleteActividadExtra(actividadExtra) {
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    return this.http.delete(this.url + 'actividad_extra/' + actividadExtra._id);
   }
 
   listActividadExtra() {
@@ -36,6 +41,18 @@ export class ActividadExtraService {
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     return this.http.get(this.url + 'linkCorreo', { headers: headers });
+  }
+
+  updateActividadExtraIdCaso(actividadExtra) {
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    return this.http.post(this.url + 'updateActividad', actividadExtra, { headers });
+  }
+
+  deleteActividadExtraIdCaso(actividadExtra) {
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    return this.http.post(this.url + 'deleteActividad', actividadExtra, { headers });
   }
 
 }

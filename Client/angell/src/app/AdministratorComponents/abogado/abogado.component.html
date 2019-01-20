@@ -6,7 +6,6 @@
     <p-table #dt [columns]="cols" [value]="listaAbogado" [lazy]="true" selectionMode="single" [responsive]="true"
       [(selection)]="selectAbogado" (onRowSelect)="onRowSelect($event)" [paginator]="true" [rows]="10">
       <ng-template pTemplate="caption">
-
         <div class="ui-g">
           <div class="ui-g-6" style="text-align:left">
             <button type="button" pButton icon="fa fa-plus" (click)="showDialogAdd()" label="Añadir"></button>

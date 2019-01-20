@@ -52,8 +52,8 @@ export class LoginComponent implements OnInit {
             } */
           } else {
             this.messageService.add({
-              severity: 'error', summary: 'Error Usuario o contraseña ',
-              detail: 'Verifique su usuario y contraseña'
+              severity: 'error', summary: 'Usuario o contraseña ',
+              detail: 'Verifique su usuario o contraseña'
             });
           }
         }, error => {
@@ -64,14 +64,14 @@ export class LoginComponent implements OnInit {
               }
             } else {
               this.messageService.add({
-                severity: 'error', summary: 'Error Usuario o contraseña ',
-                detail: 'Verifique su usuario y contraseña'
+                severity: 'error', summary: 'Usuario o contraseña ',
+                detail: 'Verifique su usuario o contraseña'
               });
             }
           } else {
             this.messageService.add({
               severity: 'error', summary: 'Ingresar campos para realizar el ingreso',
-              detail: 'Verifique su usuario y contraseña'
+              detail: 'Verifique su usuario o contraseña'
             });
           }
         });

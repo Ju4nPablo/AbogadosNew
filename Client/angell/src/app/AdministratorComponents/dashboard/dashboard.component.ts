@@ -36,6 +36,7 @@ export class DashboardComponent implements OnInit {
     showReporte: true,
   };
   usuario: any = '';
+  casoNotificacion: any = '';
 
   constructor(
     private casoService: CasoService,
@@ -43,6 +44,7 @@ export class DashboardComponent implements OnInit {
   ) {
     this.listCasos = [];
     this.notifications = [];
+    this.casoNotificacion = '';
     this.status = false;
     this.usuario = JSON.parse(localStorage.getItem('userLogin'));
     const nombres = this.usuario.nombres.split(' ');
@@ -79,6 +81,7 @@ export class DashboardComponent implements OnInit {
     this.casoService.allCasoPendientes().subscribe(data => {
       this.listCasos = data;
       for (const c of this.listCasos) {
+        this.casoNotificacion = c;
         this.AgregarNotificación(c);
       }
       this.cantidad_notificaciones = this.notifications.length;
@@ -103,9 +106,9 @@ export class DashboardComponent implements OnInit {
       titulo: node.label,
       estado: '1',
       color: 'rojo',
-      cliente: node.data.cliente.nombre,
+      cliente: this.casoNotificacion.data.cliente,
       redireccion: '',
-      caso: node
+      caso: this.casoNotificacion
     };
     const fecha = new Date();
     const fechaNodoInicio = new Date(node.data.fecha_inicio);
