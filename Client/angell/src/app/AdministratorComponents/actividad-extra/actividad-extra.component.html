@@ -90,7 +90,7 @@
         <div class="ui-g-5 ui-md-5">
           <span class="ui-float-label">
             <p-dropdown id="repetir" name="repetir" [options]="listRepetir" [(ngModel)]="selectRepetir" optionLabel="descripcion"
-              [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
+              [showClear]="true"[style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
             <label for="float-input">Repetir: *</label>
           </span>
         </div>
@@ -99,7 +99,7 @@
         <div class="ui-g-5 ui-md-5">
           <span class="ui-float-label">
             <p-dropdown id="recordatorio" name="recordatorio" [options]="listRecordatorio" [(ngModel)]="selectRecordatorio"
-              optionLabel="descripcion" [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
+              optionLabel="descripcion" [showClear]="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
             <label for="float-input">Recordatorio: *</label>
           </span>
         </div>
@@ -205,8 +205,8 @@
     <p-footer>
       <div class="ui-dialog-buttonpane ui-helper-clearfix">
         <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar" class="ui-button-danger"></button>
-        <button type="button" pButton icon="fa fa-check" (click)="updateActividad()" label="Modificar" class="ui-button-success"></button>
-        <button type="button" pButton icon="fa fa-trash" (click)="deleteActividad()" label="Eliminar" class="ui-button-danger"></button>
+        <button type="button" pButton icon="fa fa-check" (click)="updateActividad()" label="Modificar" class="ui-button-success" *ngIf="showButton.bttnUpdate"></button>
+        <button type="button" pButton icon="fa fa-trash" (click)="deleteActividad()" label="Eliminar" class="ui-button-danger" *ngIf="showButton.bttnDelete"></button>
       </div>
     </p-footer>
   </p-dialog>

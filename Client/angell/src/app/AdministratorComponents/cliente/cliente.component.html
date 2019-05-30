@@ -63,8 +63,8 @@
           </div>
           <div class="ui-g-4">
             <span class="ui-float-label">
-              <input pInputText type="text" id="numCarpeta" [(ngModel)]="selectCliente.numeroCarpeta" name="numCarpeta"
-                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10">
+              <input pInputText type="text" id="numCarpeta" [(ngModel)]="cliente.numeroCarpeta" name="numCarpeta"
+                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10" (ngModelChange)="verificaNumeroCarpeta()">
               <label for="float-input">Número carpeta: *</label>
             </span>
           </div>
@@ -141,7 +141,7 @@
           <div class="ui-g-4">
             <span class="ui-float-label">
               <input pInputText type="text" id="numCarpetaMod" [(ngModel)]="selectCliente.numeroCarpeta" name="numCarpetaMod"
-                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10">
+                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10" (ngModelChange)="verificaNumeroCarpeta()">
               <label for="float-input">Numero carpeta: *</label>
             </span>
           </div>

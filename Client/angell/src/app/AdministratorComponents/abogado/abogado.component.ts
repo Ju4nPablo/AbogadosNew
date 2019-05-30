@@ -40,14 +40,15 @@ export class AbogadoComponent implements OnInit {
   };
 
   fileImagen: File = null;
-  listaAbogado: any = [];
+  listaAbogado: any[];
   selectSexo: any = '';
   selectEstado: any = '0';
-  cols: any = [];
+  cols: any[];
   showDialog: boolean;
   showDialogMod: boolean;
   urlImagen: any = 'assets/perfil.png';
   uploadedFiles: any;
+  totalRecords: number;
   //#endregion
 
   //#region CONSTRUCTOR
@@ -56,21 +57,14 @@ export class AbogadoComponent implements OnInit {
     public validarService: ValidacioneService,
     public notifyService: NotificacionesService
   ) {
-    this.cols = [
-      { field: 'cedula', header: 'Cédula',  width: '13%' },
-      { field: 'nombre', header: 'Nombres',  width: '13%' },
-      { field: 'direccion', header: 'Dirección',  width: '13%' },
-      { field: 'telefono', header: 'Teléfono',  width: '13%' },
-      { field: 'mail', header: 'Email',  width: '22%' },
-      { field: 'sexo', header: 'Sexo',  width: '13%' },
-      { field: 'estado', header: 'Estado',  width: '13%' },
-    ];
     this.inicio();
   }
   //#endregion
 
   //#region INICIO DE VARIABLES
   inicio() {
+    this.totalRecords = 0;
+    // this.cols = [];
     this.abogado = {
       nombre: '',
       cedula: '',
@@ -108,26 +102,35 @@ export class AbogadoComponent implements OnInit {
 
     this.abogadoService.listAbogado().subscribe(data => {
       const aux: any = data;
-      for (const cli of aux) {
-        if (cli.sexo === '0') {
-          cli.sexo = 'Hombre';
+      this.totalRecords = aux.length;
+      for (const abo of aux) {
+        if (abo.sexo === '0') {
+          abo.sexo = 'Hombre';
         } else {
-          cli.sexo = 'Mujer';
+          abo.sexo = 'Mujer';
         }
-        if (cli.estado === '0') {
-          cli.estado = 'Activo';
-          this.listaAbogado.push(cli);
+        if (abo.estado === '0') {
+          abo.estado = 'Activo';
         } else {
-          cli.estado = 'Inactivo';
-          this.listaAbogado.push(cli);
+          abo.estado = 'Inactivo';
         }
+        this.listaAbogado.push(abo);
       }
     }, err => {
       console.log(err);
     });
   }
-  ngOnInit() {
 
+  ngOnInit() {
+    this.cols = [
+      { field: 'cedula', header: 'Cédula', width: '13%' },
+      { field: 'nombre', header: 'Nombres', width: '13%' },
+      { field: 'direccion', header: 'Dirección', width: '13%' },
+      { field: 'telefono', header: 'Teléfono', width: '13%' },
+      { field: 'mail', header: 'Email', width: '22%' },
+      { field: 'sexo', header: 'Sexo', width: '13%' },
+      { field: 'estado', header: 'Estado', width: '13%' },
+    ];
   }
   //#endregion
 
@@ -145,6 +148,7 @@ export class AbogadoComponent implements OnInit {
       this.abogadoService.addAbogado(this.abogado).subscribe(dat => {
         this.showDialog = false;
         this.inicio();
+
         this.notifyService.notify('success', 'Exito', 'Ingreso existoso!');
       }, err => {
         this.notifyService.notify('error', 'ERROR', 'Abogado ya existe!');
@@ -182,8 +186,8 @@ export class AbogadoComponent implements OnInit {
   //#endregion
 
   //#region CARGAR IMAGEN Y CERRAR, ABRIR FORMULARIO
-  // Cerrar formulario
-  cancelar() {
+  // inicializar Objetos
+  inicializarCampos() {
     this.selectAbogado = {
       nombre: '',
       cedula: '',
@@ -192,7 +196,7 @@ export class AbogadoComponent implements OnInit {
       mail: '',
       sexo: '0',
       estado: '0',
-      foto: ''
+      foto: '',
     };
     this.abogado = {
       nombre: '',
@@ -202,11 +206,16 @@ export class AbogadoComponent implements OnInit {
       mail: '',
       sexo: '0',
       estado: '0',
-      foto: ''
+      foto: '',
     };
+  }
+
+  // Cerrar formulario
+  cancelar() {
+    this.inicializarCampos();
     this.showDialog = false;
     this.showDialogMod = false;
-    this.inicio();
+    // this.inicio();
   }
   // Cargar imagen
   cargaImagen(file: FileList) {

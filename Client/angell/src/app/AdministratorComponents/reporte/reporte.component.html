@@ -3,7 +3,8 @@
   <p-panel>
     <p-header>
       <div class="ui-helper-clearfix">
-        <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px"><b> REPORTE CASOS</b></span>
+        <span class="ui-panel-title" style="font-size:16px;display:inline-block;margin-top:2px"><b> REPORTE
+            CASOS</b></span>
       </div>
     </p-header>
     <div class="ui-g-12 ui-md-12 ui-panel-content">
@@ -11,15 +12,17 @@
       <p><b>Nota: </b>Si no se pone fecha trae todo los que se encuentren</p>
       <div class="ui-g-4 ui-md-4">
         <span class="ui-float-label">
-          <p-dropdown id="abogado" name="abogado" [options]="listAbogado" [(ngModel)]="selectAbogado" optionLabel="nombre"
-            [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
+          <p-dropdown id="abogado" name="abogado" [options]="listAbogado" [(ngModel)]="selectAbogado"
+            optionLabel="nombre" [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px">
+          </p-dropdown>
           <label for="float-input">Abogado: *</label>
         </span>
       </div>
       <div class="ui-g-4 ui-md-4">
         <span class="ui-float-label">
-          <p-dropdown id="abogado" name="cliente" [options]="listCliente" [(ngModel)]="selectCliente" optionLabel="nombre"
-            [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
+          <p-dropdown id="abogado" name="cliente" [options]="listCliente" [(ngModel)]="selectCliente"
+            optionLabel="nombre" [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px">
+          </p-dropdown>
           <label for="float-input">Cliente: *</label>
         </span>
       </div>
@@ -34,7 +37,7 @@
         <span class="ui-float-label">
           <p-calendar id="fechaInicio" name="fechaInicio" [locale]="es" [(ngModel)]="fechaInicio" [showIcon]="true"
             [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
-            [disabledDays]="[0,7]" readonlyInput="true"></p-calendar>
+            [disabledDays]="[0,7]"></p-calendar>
           <label for="float-input">Fecha inicio: *</label>
         </span>
       </div>
@@ -42,19 +45,21 @@
         <span class="ui-float-label">
           <p-calendar id="fechaFin" name="fechaFin" [locale]="es" [(ngModel)]="fechaFin" [showIcon]="true"
             [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
-            [disabledDays]="[0,7]" readonlyInput="true"></p-calendar>
+            [disabledDays]="[0,7]"></p-calendar>
           <label for="float-input">Fecha fin: *</label>
         </span>
       </div>
     </div>
-    <button pButton type="button" icon="pi pi-search" label="Generar" class="ui-button-success" (click)="generar()"></button>
+    <button pButton type="button" icon="pi pi-search" label="Generar" class="ui-button-success"
+      (click)="generar()"></button>
   </p-panel>
 </form>
 
 <form>
   <br>
   <p-panel header="TABLA CASOS">
-    <p-table #dt [columns]="cols" [value]="listCaso" selectionMode="single"> <!-- [(selection)]="selectProceso"  (onRowSelect)="selectItem($event)" -->
+    <p-table #dt [columns]="cols" [value]="listCaso" selectionMode="single" [paginator]="true" [rows]="10">
+      <!-- [(selection)]="selectProceso"  (onRowSelect)="selectItem($event)" -->
       <!-- <ng-template pTemplate="caption">
         <div style="text-align: right">
           <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
@@ -74,6 +79,8 @@
           <td>{{rowData.data.abogado.nombre}}</td>
           <td>{{rowData.data.cliente.nombre}}</td>
           <td>{{rowData.data.estado.estado}}</td>
+          <td>{{rowData.data.fecha_inicio}}</td>
+          <!-- <td>{{rowData.data.estado.fechaFin}}</td> -->
         </tr>
       </ng-template>
     </p-table>

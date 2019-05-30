@@ -38,7 +38,8 @@ export class ClienteComponent implements OnInit {
     ban2: '0',
     ban3: '0',
     ban4: '0',
-    ban5: '0'
+    ban5: '0',
+    ban6: '0',
   };
   fileImagen: File = null;
   listaCliente: any = [];
@@ -58,16 +59,6 @@ export class ClienteComponent implements OnInit {
     public notifyService: NotificacionesService
   ) {
     this.cols = [];
-    this.cols = [
-      { field: 'cedula', header: 'Cédula' },
-      { field: 'nombre', header: 'Nombres' },
-      { field: 'direccion', header: 'Dirección' },
-      { field: 'telefono', header: 'Teléfono' },
-      { field: 'mail', header: 'Email' },
-      { field: 'numeroCarpeta', header: 'No. Carpeta' },
-      { field: 'sexo', header: 'Sexo' },
-      { field: 'estado', header: 'Estado' },
-    ];
     this.inicio();
   }
   //#endregion
@@ -80,7 +71,8 @@ export class ClienteComponent implements OnInit {
       ban2: '0',
       ban3: '0',
       ban4: '0',
-      ban5: '0'
+      ban5: '0',
+      ban6: '0',
     };
     this.listaCliente = [];
     this.showDialog = false;
@@ -111,7 +103,16 @@ export class ClienteComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this.cols = [
+      { field: 'cedula', header: 'Cédula' },
+      { field: 'nombre', header: 'Nombres' },
+      { field: 'direccion', header: 'Dirección' },
+      { field: 'telefono', header: 'Teléfono' },
+      { field: 'mail', header: 'Email' },
+      { field: 'numeroCarpeta', header: 'No. Carpeta' },
+      { field: 'sexo', header: 'Sexo' },
+      { field: 'estado', header: 'Estado' },
+    ];
   }
   //#endregion
 
@@ -119,7 +120,7 @@ export class ClienteComponent implements OnInit {
   // Añadir un cliente
   addCliente() {
     if (this.bandera.ban1 === '1' && this.bandera.ban2 === '1' && this.bandera.ban3 === '1' && this.bandera.ban4 === '1' &&
-      this.bandera.ban5 === '1') {
+      this.bandera.ban5 === '1' && this.bandera.ban6 === '1') {
       this.cliente.foto = this.urlImagen;
       if (this.selectSexo === true) {
         this.cliente.sexo = '0';
@@ -196,7 +197,7 @@ export class ClienteComponent implements OnInit {
     this.inicializarCampos();
     this.showDialog = false;
     this.showDialogMod = false;
-    this.inicio();
+    // this.inicio();
   }
 
   // Cargar imagen
@@ -221,7 +222,8 @@ export class ClienteComponent implements OnInit {
       ban2: '0',
       ban3: '0',
       ban4: '0',
-      ban5: '0'
+      ban5: '0',
+      ban6: '0',
     };
     this.selectEstado = true;
     this.selectSexo = true;
@@ -240,7 +242,8 @@ export class ClienteComponent implements OnInit {
       ban2: '1',
       ban3: '1',
       ban4: '1',
-      ban5: '1'
+      ban5: '1',
+      ban6: '1',
     };
     this.selectCliente = event.data;
     this.urlImagen = event.data.foto;
@@ -361,6 +364,26 @@ export class ClienteComponent implements OnInit {
       } else {
         document.getElementById('direccionMod').style.borderColor = '#5ff442'; // green
         this.bandera.ban5 = '1';
+      }
+    }
+  }
+  // verifica numero carpeta
+  verificaNumeroCarpeta() {
+    if (this.cliente.numeroCarpeta !== '' || this.cliente.numeroCarpeta === '') {
+      if (this.cliente.numeroCarpeta.length < 1) {
+        document.getElementById('numCarpeta').style.borderColor = '#FE2E2E';
+        this.bandera.ban6 = '0';
+      } else {
+        document.getElementById('numCarpeta').style.borderColor = '#5ff442'; // green
+        this.bandera.ban6 = '1';
+      }
+    } else if (this.selectCliente.numeroCarpeta !== '' || this.selectCliente.numeroCarpeta === '') {
+      if (this.selectCliente.numeroCarpeta.length < 1) {
+        document.getElementById('numCarpetaMod').style.borderColor = '#FE2E2E';
+        this.bandera.ban6 = '0';
+      } else {
+        document.getElementById('numCarpetaMod').style.borderColor = '#5ff442'; // green
+        this.bandera.ban6 = '1';
       }
     }
   }

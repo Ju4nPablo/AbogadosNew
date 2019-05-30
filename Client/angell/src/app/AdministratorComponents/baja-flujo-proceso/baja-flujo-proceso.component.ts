@@ -273,39 +273,61 @@ export class BajaFlujoProcesoComponent implements OnInit {
       children: []
     };
     this.caso.node.children.push(this.selectNode);
+    this.caso.node.expanded = true;
     this.showDialog = false;
     this.showDialogHijos = false;
   }
   // modifica los datos del nodo seleccionado
   updateNodo() {
-    if (!this.campoVacio(this.fechaInicio) && !this.campoVacio(this.info.label) && this.selectAbogado._id !== '-1') {
-      let newData = {};
-      const abo = {
-        id: this.selectAbogado._id,
-        cedula: this.selectAbogado.cedula,
-        nombre: this.selectAbogado.nombre,
-        mail: this.selectAbogado.mail
-      };
-      this.node.label = this.info.label;
-      if (this.casoTree[0].data.id === this.info.data.id) {
-        if (this.selectCliente._id !== '-1') {
-          this.fechaFin = this.fechaInicio;
-          const cli = {
-            id: this.selectCliente._id,
-            cedula: this.selectCliente.cedula,
-            nombre: this.selectCliente.nombre,
-            mail: this.selectCliente.mail
-          };
+    if (this.validarFecha()) {
+      if (!this.campoVacio(this.fechaInicio) && !this.campoVacio(this.fechaFin) && !this.campoVacio(this.info.label) && this.selectAbogado._id !== '-1') {
+        let newData = {};
+        const abo = {
+          id: this.selectAbogado._id,
+          cedula: this.selectAbogado.cedula,
+          nombre: this.selectAbogado.nombre,
+          mail: this.selectAbogado.mail
+        };
+        this.node.label = this.info.label;
+        if (this.casoTree[0].data.id === this.info.data.id) {
+          if (this.selectCliente._id !== '-1') {
+            this.fechaFin = this.fechaInicio;
+            const cli = {
+              id: this.selectCliente._id,
+              cedula: this.selectCliente.cedula,
+              nombre: this.selectCliente.nombre,
+              mail: this.selectCliente.mail
+            };
+            newData = {
+              id: this.node.data.id,
+              fecha_inicio: this.fechaInicio,
+              fecha_fin: this.fechaFin,
+              descripcion_abogado: this.info.data.descripcion_abogado,
+              descripcion_cliente: this.info.data.descripcion_cliente,
+              precio: this.info.data.precio,
+              cliente: cli,
+              abogado: abo,
+              estado: this.selectEstado,
+              imagenes: this.info.data.imagenes,
+            };
+            this.node.data = newData;
+            this.fechaInicio = '';
+            this.fechaFin = '';
+            this.showDialog = false;
+            this.showDialogHijos = false;
+          } else {
+            this.notifyService.notify('error', 'ERROR', 'SELECCIONE UN CLIENTE!');
+          }
+        } else {
           newData = {
             id: this.node.data.id,
             fecha_inicio: this.fechaInicio,
             fecha_fin: this.fechaFin,
             descripcion_abogado: this.info.data.descripcion_abogado,
             descripcion_cliente: this.info.data.descripcion_cliente,
-            precio: this.info.data.precio,
-            cliente: cli,
             abogado: abo,
             estado: this.selectEstado,
+            precio: this.info.data.precio,
             imagenes: this.info.data.imagenes,
           };
           this.node.data = newData;
@@ -313,29 +335,10 @@ export class BajaFlujoProcesoComponent implements OnInit {
           this.fechaFin = '';
           this.showDialog = false;
           this.showDialogHijos = false;
-        } else {
-          this.notifyService.notify('error', 'ERROR', 'SELECCIONE UN CLIENTE!');
         }
       } else {
-        newData = {
-          id: this.node.data.id,
-          fecha_inicio: this.fechaInicio,
-          fecha_fin: this.fechaFin,
-          descripcion_abogado: this.info.data.descripcion_abogado,
-          descripcion_cliente: this.info.data.descripcion_cliente,
-          abogado: abo,
-          estado: this.selectEstado,
-          precio: this.info.data.precio,
-          imagenes: this.info.data.imagenes,
-        };
-        this.node.data = newData;
-        this.fechaInicio = '';
-        this.fechaFin = '';
-        this.showDialog = false;
-        this.showDialogHijos = false;
+        this.notifyService.notify('error', 'ERROR', 'EXISTEN CAMPOS VACÍOS!');
       }
-    } else {
-      this.notifyService.notify('error', 'ERROR', 'EXISTEN CAMPOS VACÍOS!');
     }
   }
 
@@ -402,6 +405,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
       children: []
     };
     this.caso.node.children.push(this.selectNode);
+    this.caso.node.expanded = true;
     this.showDialogIngNodo = false;
     this.activaBotonGuardarFlujo = false;
   }
@@ -434,7 +438,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
   }
   //#endregion
 
-  //#region Guardar Diagrama
+  //#region Guardar Casos
   saveCaso() {
     this.verificarCasoRecursive(this.casoTree[0]);
     if (this.banValidar) {
@@ -450,7 +454,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
         this.ngOnInit();
         this.notifyService.notify('success', 'Exito', 'INGRESO EXITOSO!');
       }, err => {
-        this.notifyService.notify('error', 'ERROR', 'ERROR AL INGRESAR!');
+        this.notifyService.notify('error', 'ERROR', 'ERROR AL INGRESAR O CASO YA EXISTE!');
       });
     } else {
       this.notifyService.notify('error', 'ERROR', 'EXISTEN CAMPOS VACÍOS!');
@@ -481,7 +485,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
       'fecha_fin': datosCalendario.data.fecha_fin,
       'prioridad': 'yellow',
       'abogado': datosCalendario.data.abogado.id,
-      'hora_inicio': '8:00',
+      'hora_inicio': '08:00',
       'hora_fin': '16:00',
       'repetir': 'Nunca',
       'recordatorio': '1 hora antes'
@@ -706,6 +710,18 @@ export class BajaFlujoProcesoComponent implements OnInit {
     this.urlImagen2 = 'assets/papel.png';
     this.urlImagen3 = 'assets/papel.png';
     this.showDialogImagenes = false;
+  }
+  //validar fecha
+  validarFecha() {
+    if (this.casoTree[0].data.id === this.node.data.id) {
+      this.fechaFin = this.fechaInicio;
+    }
+    if (this.fechaInicio > this.fechaFin) {
+      this.notifyService.notify('error', 'ERROR', 'Rango de fechas INCORRECTO!');
+      return false;
+    } else {
+      return true;
+    }
   }
   //#endregion
   //#region Funciones de habilitar y desabilitar botones.

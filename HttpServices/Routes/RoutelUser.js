@@ -12,14 +12,11 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var url = require('../Config/config').database;
 
-
 //modelos
 
 var User = require('../Models/ModelUser');
 
-
 //acciones
-
 
 //service jwt
 
@@ -64,7 +61,6 @@ api.post('/saveUser', (req, res) => {
 
     } else {
         res.status(401).send({ message: 'Llenar los parametros de forma adecuada' })
-
     }
 
 });
@@ -103,18 +99,15 @@ api.post('/updateUserPassword', (req, res) => {
         res.status(401).send({ message: 'Llenar los parametros de forma adecuada' })
 
     }
-
 });
 
 //login
 
-
 api.post('/login', (req, res) => {
-
     var user = new User();
     if (req.body.user_name && req.body.password) {
 
-        User.findOne({ user_name: req.body.user_name.toLowerCase(), estado: 1 }, (err, issetUser) => {
+        User.findOne({ user_name: req.body.user_name, estado: 1 }, (err, issetUser) => {
 
             if (err) {
                 res.status(500).send({ message: 'Error al guardar el usuario' });
@@ -123,7 +116,6 @@ api.post('/login', (req, res) => {
                     res.status(404).send({ message: 'No se ha registrado el usuario' })
                 } else {
                     bcrypt.compare(req.body.password, issetUser.password, (err, check) => {
-
 
                         if (check) {
                             console.log(req.body.token)
@@ -140,9 +132,6 @@ api.post('/login', (req, res) => {
                         }
 
                     });
-
-
-
                 }
             }
 
@@ -156,7 +145,6 @@ api.post('/login', (req, res) => {
 /*los url debe tener este formato para que funcione localhost:3001/api/updateUser/5aab2bdd16991a4d482007b2*/
 api.put('/updateUser/:id', mdAuth.ensureAut, (req, res) => {
     var userId = req.params.id;
-    console.log(req);
     if (userId != req.user.sub) {
         return res.status(500).send({ messsage: "no tiene permiso para actualizar el usuario" })
     }
@@ -172,8 +160,6 @@ api.put('/updateUser/:id', mdAuth.ensureAut, (req, res) => {
             }
         }
     })
-
-
 });
 
 

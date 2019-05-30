@@ -134,11 +134,16 @@ export class DashboardComponent implements OnInit {
   cargarCaso(notificacion: any) {
     localStorage.setItem('caso', JSON.stringify(notificacion.caso));
     const pag = window.location;
-    if (pag.pathname === '/dashboard/caso') {
+    if (pag.hash === '#/dashboard/caso') {
       location.reload(true);
     } else {
       this.router.navigateByUrl('/dashboard/caso');
     }
+  }
+
+  logout(){
+    localStorage.setItem('userLogin', JSON.stringify(''));
+    localStorage.setItem('caso', JSON.stringify(''));
   }
 
 }

@@ -48,6 +48,7 @@ export class UserComponent implements OnInit {
   showDialogMod: boolean;
   urlImagen: any = 'assets/perfil.png';
   uploadedFiles: any;
+  totalRecords: number;
   //#endregion
 
   //#region CONSTRUCTOR
@@ -72,6 +73,7 @@ export class UserComponent implements OnInit {
 
   //#region INICIALIZAR VARIABLES
   inicio() {
+    this.totalRecords = 0;
     this.inicializarUser();
     this.bandera = {
       ban1: '0',
@@ -88,6 +90,7 @@ export class UserComponent implements OnInit {
 
     this.userService.listUser().subscribe(data => {
       const d: any = data;
+      this.totalRecords = d.length;
       for (const us of d) {
         if (us.tipo === '1') {
           us.tipo = 'Administrador';
@@ -145,7 +148,7 @@ export class UserComponent implements OnInit {
         this.notifyService.notify('success', 'Exito', 'Ingreso Existoso!');
         this.inicio();
       }, err => {
-        this.notifyService.notify('error', 'ERROR', 'User ya existe!');
+        this.notifyService.notify('error', 'ERROR', 'Usuario ya existe!');
       });
     } else {
       this.notifyService.notify('error', 'ERROR', 'Revise Campos!');

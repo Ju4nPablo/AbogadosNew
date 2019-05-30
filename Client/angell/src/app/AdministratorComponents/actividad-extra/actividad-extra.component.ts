@@ -53,6 +53,10 @@ export class ActividadExtraComponent implements OnInit {
   listRepetir: any[] = [];
   listRecordatorio: any[] = [];
   listHoras: any[] = [];
+  showButton: any = {
+    bttnUpdate : true,
+    bttnDelete : true
+  };
   //#endregion
 
   //#region CONSTRUCTOR
@@ -73,6 +77,13 @@ export class ActividadExtraComponent implements OnInit {
   //#region INICIO DE VARIABLES
 
   inicio() {
+    const us = JSON.parse(localStorage.getItem('userLogin'));
+    if (us) {
+      this.showButton = {
+        bttnUpdate : false,
+        bttnDelete : false
+      }
+    }
     this.events = [];
     this.listActividad = [];
     this.selectPrioridad = '';
@@ -153,18 +164,18 @@ export class ActividadExtraComponent implements OnInit {
     });
     this.listRepetir = [{ descripcion: 'Nunca' }, { descripcion: 'Todos los días' }, { descripcion: 'Todas las semanas' },
     { descripcion: 'Todos los meses' }, { descripcion: 'Todos los años' }];
-    this.listRecordatorio = [{ descripcion: '5 minutos antes' }, { descripcion: '15 minutos antes' },
+    this.listRecordatorio = [{ descripcion: 'Nunca' }, { descripcion: '5 minutos antes' }, { descripcion: '15 minutos antes' },
     { descripcion: '30 minutos antes' }, { descripcion: '1 hora antes' }, { descripcion: '2 horas antes' }];
     this.selectRepetir = this.listRepetir[0];
-    this.selectRecordatorio = this.listRecordatorio[1];
-    /* this.listHoras = [{ hora: '00:00' }, { hora: '00:30' }, { hora: '1:00' }, { hora: '1:30' }, { hora: '2:00' }, { hora: '2:30' },
-    { hora: '03:00' }, { hora: '3:30' }, { hora: '4:00' }, { hora: '4:30' }, { hora: '5:00' }, { hora: '5:30' }, { hora: '6:00' },
-    { hora: '6:30' }, { hora: '7:00' }, { hora: '7:30' }, { hora: '8:00' }, { hora: '8:30' }, { hora: '9:00' }, { hora: '9:30' },
+    this.selectRecordatorio = this.listRecordatorio[0];
+    /* this.listHoras = [{ hora: '00:00' }, { hora: '00:30' }, { hora: '01:00' }, { hora: '01:30' }, { hora: '02:00' }, { hora: '02:30' },
+    { hora: '03:00' }, { hora: '03:30' }, { hora: '04:00' }, { hora: '04:30' }, { hora: '05:00' }, { hora: '05:30' }, { hora: '06:00' },
+    { hora: '06:30' }, { hora: '07:00' }, { hora: '07:30' }, { hora: '08:00' }, { hora: '08:30' }, { hora: '09:00' }, { hora: '09:30' },
     { hora: '10:00' }, { hora: '10:30' }, { hora: '11:00' }, { hora: '11:30' }, { hora: '12:00' }, { hora: '12:30' }, { hora: '13:00' },
     { hora: '13:30' }, { hora: '14:00' }, { hora: '14:30' }, { hora: '15:00' }, { hora: '15:30' }, { hora: '16:00' }, { hora: '16:30' },
     { hora: '17:00' }, { hora: '17:30' }, { hora: '18:00' }, { hora: '18:30' }, { hora: '19:00' }, { hora: '19:30' }, { hora: '20:00' },
     { hora: '20:30' }, { hora: '21:00' }, { hora: '21:30' }, { hora: '22:00' }, { hora: '22:30' }, { hora: '23:00' }, { hora: '23:30' }]; */
-    this.listHoras = [{ hora: '8:00' }, { hora: '8:30' }, { hora: '9:00' }, { hora: '9:30' }, { hora: '10:00' }, { hora: '10:30' },
+    this.listHoras = [{ hora: '08:00' }, { hora: '08:30' }, { hora: '09:00' }, { hora: '09:30' }, { hora: '10:00' }, { hora: '10:30' },
     { hora: '11:00' }, { hora: '11:30' }, { hora: '12:00' }, { hora: '12:30' }, { hora: '13:00' }, { hora: '13:30' }, { hora: '14:00' },
     { hora: '14:30' }, { hora: '15:00' }, { hora: '15:30' }, { hora: '16:00' }, { hora: '16:30' },
     { hora: '17:00' }, { hora: '17:30' }, { hora: '18:00' }];

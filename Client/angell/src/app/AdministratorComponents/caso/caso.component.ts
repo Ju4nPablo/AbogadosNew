@@ -67,6 +67,7 @@ export class CasoComponent implements OnInit {
   };
   showButon: any = {
     showAnadir: true,
+    showAnadirCaso: true,
     showQuitar: true,
     showAnadirFoto: true,
     showMail: true,
@@ -76,7 +77,12 @@ export class CasoComponent implements OnInit {
 
   // agregar caso nuevo.
   showDialogIng: any = false;
-  casoTreeNew: TreeNode[];
+  showDialogIngNodo: any = false;
+  showDialogIngNodoHijo: any = false;
+  casoTreeInsert: TreeNode[];
+  nodeInsert: any;
+  banValidar: any = '';
+  activaBotonGuardarFlujo: boolean = false;
 
   constructor(
     private casoService: CasoService,
@@ -133,6 +139,7 @@ export class CasoComponent implements OnInit {
         showQuitar: true,
         showAnadirFoto: true,
         showMail: true,
+        showAnadirCaso: true,
       };
     }
     if (us.tipo === '2') {
@@ -155,7 +162,7 @@ export class CasoComponent implements OnInit {
       };
       this.showButon = {
         showAnadir: false,
-        showQuitar: false
+        showQuitar: false,
       };
     }
     if (us.tipo === '3') {
@@ -211,6 +218,22 @@ export class CasoComponent implements OnInit {
         cliente: '',
         abogado: '',
         fecha: '',
+        estado: this.listEstado[0],
+        imagenes: ['assets/papel.png', 'assets/papel.png', 'assets/papel.png'],
+      }
+    };
+    this.nodeInsert = {
+      label: '',
+      data: {
+        id: '',
+        fecha_inicio: '',
+        fecha_fin: '',
+        cliente: '',
+        abogado: '',
+        descripcion_abogado: '',
+        descripcion_cliente: '',
+        precio: '0',
+        imagenes: ['assets/papel.png', 'assets/papel.png', 'assets/papel.png'],
         estado: this.listEstado[0]
       }
     };
@@ -254,6 +277,7 @@ export class CasoComponent implements OnInit {
       }
     };
     this.cliente = '';
+    this.banValidar = false;
   }
 
   cargarCaso() {
@@ -297,17 +321,19 @@ export class CasoComponent implements OnInit {
       clear: 'Borrar'
     };
 
-    this.casoTreeNew = [
+    this.casoTreeInsert = [
       {
         label: 'Nombre del flujo',
         data: {
           id: this.generarID(),
           fecha_inicio: new Date,
           fecha_fin: new Date,
-          abogado: Object,
+          abogado: this.listAbogado[0],
+          cliente: this.listCliente[0],
           descripcion_abogado: '',
           descripcion_cliente: '',
-          imagenes: [],
+          precio: 0,
+          imagenes: ['assets/papel.png', 'assets/papel.png', 'assets/papel.png'],
           estado: this.listEstado[0]
         },
         children: []
@@ -331,17 +357,77 @@ export class CasoComponent implements OnInit {
       }
     });
   }
-
+  ///////////////////////////////////////////////////////////
   //#region Ingresar nuevo caso
+
+  saveCaso() {
+    this.verificarCasoRecursive(this.casoTreeInsert[0]);
+    if (this.banValidar) {
+      const casoSave = {
+        label: this.casoTreeInsert[0].label,
+        data: this.casoTreeInsert[0].data,
+        children: this.casoTreeInsert[0].children
+      };
+      this.numeroCaso = this.casoTreeInsert[0].label;
+      this.casoService.addCaso(casoSave).subscribe(data => {
+        this.recorrerAddActividades(this.casoTreeInsert[0]);
+        this.inicio();
+        this.ngOnInit();
+        this.notifyService.notify('success', 'Exito', 'INGRESO EXITOSO!');
+      }, err => {
+        this.notifyService.notify('error', 'ERROR', 'ERROR AL INGRESAR!');
+      });
+    } else {
+      this.notifyService.notify('error', 'ERROR', 'EXISTEN CAMPOS VACÍOS!');
+    }
+  }
+
+  // recorrer el nodo para guardar las actividades.
+  recorrerAddActividades(nodoActividad: TreeNode) {
+    const act = {
+      label: nodoActividad.label,
+      data: nodoActividad.data
+    };
+    this.addActividad(act);
+    if (nodoActividad.children) {
+      nodoActividad.children.forEach(childNode => {
+        this.recorrerAddActividades(childNode);
+      });
+    }
+  }
+
+  // Guadar actividad en la agenda.
+  addActividad(datosCalendario) {
+    const actividad = {
+      'id_actividad_caso': datosCalendario.data.id.toString(),
+      'caso_numero': this.numeroCaso,
+      'actividad': datosCalendario.label,
+      'fecha_inicio': datosCalendario.data.fecha_inicio,
+      'fecha_fin': datosCalendario.data.fecha_fin,
+      'prioridad': 'yellow',
+      'abogado': datosCalendario.data.abogado.id,
+      'hora_inicio': '08:00',
+      'hora_fin': '16:00',
+      'repetir': 'Nunca',
+      'recordatorio': '1 hora antes'
+    };
+    this.actividadAgenda.addActividadExtra(actividad).subscribe(data => {
+      // this.numeroCaso = '';
+    }, err => {
+      // this.notifyService.notify('error', 'ERROR', 'Error Conexión!');
+    });
+  }
+
   showDialogAdd() {
-    this.casoTreeNew = [
+    this.casoTreeInsert = [
       {
-        label: 'Nombre del flujo',
+        label: 'Numero Caso',
         data: {
           id: this.generarID(),
           fecha_inicio: new Date,
           fecha_fin: new Date,
-          abogado: Object,
+          abogado: this.listAbogado[0],
+          cliente: this.listCliente[0],
           descripcion_abogado: '',
           descripcion_cliente: '',
           imagenes: [],
@@ -353,8 +439,129 @@ export class CasoComponent implements OnInit {
     this.showDialogIng = true;
   }
 
-  //#endregion
+  selectNodoIng(event) {
+    if (event.node.data.imagenes.length === 0) {
+      event.node.data.imagenes = ['assets/papel.png', 'assets/papel.png', 'assets/papel.png']
+    }
+    this.fechaInicio = new Date(event.node.data.fecha_inicio);
+    this.fechaFin = new Date(event.node.data.fecha_fin);
+    this.caso = event;
+    this.node = event.node;
+    this.nodeInsert.label = this.node.label;
+    this.nodeInsert.data = this.node.data;
+    if (this.selectAbogado) {
+      this.buscarAbogado(this.selectAbogado.cedula);
+    } else {
+      this.selectAbogado = this.listAbogado[0];
+    }
+    this.buscarCliente(this.selectCliente.cedula);
+    this.selectEstado = this.node.data.estado;
+    this.caso.node = this.node;
+    event = this.caso;
+    if (this.casoTreeInsert[0].data.id === event.node.data.id) {
+      this.showDialogIngNodo = true;
+    } else {
+      this.showDialogIngNodoHijo = true;
+    }
 
+    // this.activaBotonGuardaNodoFlujo = true;
+  }
+
+  // Boton salir formulario inseert
+  exitFormInsert() {
+    this.showDialogIngNodo = false;
+    this.showDialogIngNodoHijo = false;
+  }
+  // Eliminar un nodo insert
+  deleteNodoInsert() {
+    this.casoTreeInsert.forEach(nodes => {
+      this.buscarQuitarNodo(nodes, this.node.data.id);
+    });
+    this.showDialogIngNodo = false;
+    this.showDialogIngNodoHijo = false;
+  }
+  // Añadir un nodo.
+  addNodoInsert() {
+    this.selectNode = {
+      label: 'Nodo New',
+      data: {
+        id: this.generarID(),
+        fecha_inicio: new Date,
+        fecha_fin: new Date,
+        abogado: Object,
+        descripcion_abogado: '',
+        descripcion_cliente: '',
+        imagenes: [],
+        estado: this.listEstado[0]
+      },
+      children: []
+    };
+    this.caso.node.children.push(this.selectNode);
+    this.caso.node.expanded = true;
+    this.showDialogIngNodo = false;
+    this.showDialogIngNodoHijo = false;
+  }
+  // Modificar un nodo
+  updateNodoInsert() {
+    let fech = '';
+    if (this.validarFecha()) {
+      if (!this.campoVacio(this.fechaInicio) && !this.campoVacio(this.fechaFin) &&
+        !this.campoVacio(this.nodeInsert.label) && !this.campoVacio(this.selectAbogado)) {
+        if (this.casoTreeInsert[0].label === this.nodeInsert.label) {
+          fech = this.fechaInicio;
+        } else {
+          fech = this.fechaFin;
+        }
+        const cli = {
+          id: this.selectCliente._id,
+          cedula: this.selectCliente.cedula,
+          nombre: this.selectCliente.nombre,
+          mail: this.selectCliente.mail
+        };
+        const abo = {
+          id: this.selectAbogado._id,
+          cedula: this.selectAbogado.cedula,
+          nombre: this.selectAbogado.nombre,
+          mail: this.selectAbogado.mail
+        };
+        this.node.label = this.nodeInsert.label;
+        const newData = {
+          id: this.node.data.id,
+          fecha_inicio: this.fechaInicio,
+          fecha_fin: fech,
+          descripcion_abogado: this.nodeInsert.data.descripcion_abogado,
+          descripcion_cliente: this.nodeInsert.data.descripcion_cliente,
+          cliente: cli,
+          abogado: abo,
+          estado: this.selectEstado,
+          precio: this.nodeInsert.data.precio,
+          imagenes: this.nodeInsert.data.imagenes,
+        };
+
+        this.node.data = newData;
+        this.fechaInicio = '';
+        this.fechaFin = '';
+        this.showDialogIngNodo = false;
+        this.showDialogIngNodoHijo = false;
+      } else {
+        this.notifyService.notify('error', 'ERROR', 'EXISTEN CAMPOS VACÍOS!');
+      }
+    }
+  }
+  // Anadir imagenes
+  showFormImagenesInsert() {
+    this.urlImagen1 = this.nodeInsert.data.imagenes[0];
+    this.urlImagen2 = this.nodeInsert.data.imagenes[1];
+    this.urlImagen3 = this.nodeInsert.data.imagenes[2];
+    this.showDialogImagenes = true;
+  }
+  // Guardar imagenes
+  saveImagenInsert() {
+    this.nodeInsert.data.imagenes = [this.urlImagen1, this.urlImagen2, this.urlImagen3];
+    this.exitImagenes();
+  }
+  //#endregion
+  ///////////////////////////////////////////////////////////////////
   //#region Trabajo con el nodo add, uptade, delete, carga
   loadNode(event) {
     this.selectNode = {};
@@ -380,6 +587,7 @@ export class CasoComponent implements OnInit {
       children: []
     };
     this.caso.node.children.push(this.selectNode);
+    this.caso.node.expanded = true;
     this.showDialog = false;
     this.showDialogHijos = false;
   }
@@ -387,46 +595,49 @@ export class CasoComponent implements OnInit {
   // Modificar un nodo
   updateNodo() {
     let fech = '';
-    if (!this.campoVacio(this.fechaInicio) && !this.campoVacio(this.fechaFin) &&
-      !this.campoVacio(this.info.label) && !this.campoVacio(this.selectAbogado)) {
-      if (this.casoTree[0].label === this.info.label) {
-        fech = this.fechaInicio;
-      } else {
-        fech = this.fechaFin;
-      }
-      const cli = {
-        id: this.selectCliente._id,
-        cedula: this.selectCliente.cedula,
-        nombre: this.selectCliente.nombre,
-        mail: this.selectCliente.mail
-      };
-      const abo = {
-        id: this.selectAbogado._id,
-        cedula: this.selectAbogado.cedula,
-        nombre: this.selectAbogado.nombre,
-        mail: this.selectAbogado.mail
-      };
-      this.node.label = this.info.label;
-      const newData = {
-        id: this.node.data.id,
-        fecha_inicio: this.fechaInicio,
-        fecha_fin: fech,
-        descripcion_abogado: this.info.data.descripcion_abogado,
-        descripcion_cliente: this.info.data.descripcion_cliente,
-        cliente: cli,
-        abogado: abo,
-        estado: this.selectEstado,
-        precio: this.info.data.precio,
-        imagenes: this.info.data.imagenes,
-      };
+    if (this.validarFecha()) {
+      if (!this.campoVacio(this.fechaInicio) && !this.campoVacio(this.fechaFin) &&
+        !this.campoVacio(this.info.label) && !this.campoVacio(this.selectAbogado)) {
+        if (this.casoTree[0].label === this.info.label) {
+          fech = this.fechaInicio;
+        } else {
+          fech = this.fechaFin;
+        }
+        const cli = {
+          id: this.selectCliente._id,
+          cedula: this.selectCliente.cedula,
+          nombre: this.selectCliente.nombre,
+          mail: this.selectCliente.mail
+        };
+        const abo = {
+          id: this.selectAbogado._id,
+          cedula: this.selectAbogado.cedula,
+          nombre: this.selectAbogado.nombre,
+          mail: this.selectAbogado.mail
+        };
+        this.node.label = this.info.label;
+        const newData = {
+          id: this.node.data.id,
+          fecha_inicio: this.fechaInicio,
+          fecha_fin: fech,
+          descripcion_abogado: this.info.data.descripcion_abogado,
+          descripcion_cliente: this.info.data.descripcion_cliente,
+          cliente: cli,
+          abogado: abo,
+          estado: this.selectEstado,
+          precio: this.info.data.precio,
+          imagenes: this.info.data.imagenes,
+        };
 
-      this.node.data = newData;
-      this.fechaInicio = '';
-      this.fechaFin = '';
-      this.showDialog = false;
-      this.showDialogHijos = false;
-    } else {
-      this.notifyService.notify('error', 'ERROR', 'EXISTEN CAMPOS VACÍOS!');
+        this.node.data = newData;
+        this.fechaInicio = '';
+        this.fechaFin = '';
+        this.showDialog = false;
+        this.showDialogHijos = false;
+      } else {
+        this.notifyService.notify('error', 'ERROR', 'EXISTEN CAMPOS VACÍOS!');
+      }
+
     }
   }
   // Eliminar un nodo
@@ -460,22 +671,6 @@ export class CasoComponent implements OnInit {
   //#endregion
 
   //#region Guardar Diagrama
-  saveCaso() {
-    const caso = {
-      label: this.casoTree[0].label,
-      data: this.casoTree[0].data,
-      children: this.casoTree[0].children
-    };
-    this.casoService.addCaso(caso).subscribe(data => {
-      this.listaEliminarActividad.forEach(act => {
-        const actividad = {
-          id_actividad_caso: act
-        };
-        this.actividadAgenda.deleteActividadExtraIdCaso(actividad).subscribe();
-      });
-      this.inicio();
-    });
-  }
   updateCaso() {
     const caso = {
       _id: this.idCaso,
@@ -606,16 +801,15 @@ export class CasoComponent implements OnInit {
   }
   // Verificar caso recursivo.
   private verificarCasoRecursive(node: TreeNode) {
-    if (!this.campoVacio(node.data.abogado && !this.campoVacio(node.data.fecha_inicio) && !this.campoVacio(node.data.fecha_fin))) {
+    this.banValidar = false;
+    if (!this.campoVacio(node.data.abogado) && !this.campoVacio(node.data.fecha_inicio)) {
       if (node.children.length > 0) {
         node.children.forEach(childNode => {
           this.verificarCasoRecursive(childNode);
         });
       } else {
-        return true;
+        this.banValidar = true;
       }
-    } else {
-      return false;
     }
   }
   // recorrer el nodo para guardar las actividades.
@@ -702,6 +896,15 @@ export class CasoComponent implements OnInit {
   exitForm() {
     this.showDialog = false;
     this.showDialogHijos = false;
+  }
+  //validar fecha
+  validarFecha() {
+    if (this.fechaInicio > this.fechaFin) {
+      this.notifyService.notify('error', 'ERROR', 'Rango de fechas INCORRECTO!');
+      return false;
+    } else {
+      return true;
+    }
   }
   //#endregion
 }

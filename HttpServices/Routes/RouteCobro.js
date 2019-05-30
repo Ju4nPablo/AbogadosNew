@@ -13,11 +13,8 @@ var routeExample = require('../Models/ModeloCobro'); //copiar el modelo de la ta
  res.send("ingresa api");
  });*/
 
-
 routeExample.methods(['get', 'put', 'post', 'delete', 'search']);
 routeExample.register(router, '/cobro'); //nombre ruta para acceder por web
-
-
 
 // </editor-fold>
 

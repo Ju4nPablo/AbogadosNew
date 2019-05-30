@@ -88,10 +88,24 @@ export class ReporteComponent implements OnInit {
       { field: 'abogado', header: 'Abogado' },
       { field: 'cliente', header: 'Cliente' },
       { field: 'estado', header: 'Estado' },
+      { field: 'fecha', header: 'Fecha Inicio' },
+      //{ field: 'fechaFin', header: 'Fecha Fin' },
     ];
   }
 
   generar() {
+    // rango de fechas
+    if (this.fechaInicio > this.fechaFin) {
+      this.notifyService.notify('error', 'ERROR', 'Rango de fecha incorrecto!');
+    }
+    /*
+        // Validacion de fechas fechas
+        if (this.fechaInicio == '' || this.fechaFin == '' || this.fechaInicio == '' || this.fechaFin == '') {
+          this.fechaInicio = '';
+          this.fechaFin = '';
+          this.notifyService.notify('error', 'ERROR', 'Campos vacios en fechas!');
+        }
+    */
     // todos
     if (this.selectEstado.id === '-1' && this.selectAbogado._id === '-1' && this.selectCliente._id === '-1' && this.fechaInicio === '' &&
       this.fechaFin === '') {
@@ -99,91 +113,93 @@ export class ReporteComponent implements OnInit {
         this.listCaso = data;
       });
     }
+
     // Abogado
-    if (this.selectAbogado._id !== '-1' && this.selectCliente._id === '-1' && this.selectEstado.id === '-1' && this.fechaInicio === '' &&
-      this.fechaFin === '') {
-        const abo = {
-          idAbogado: this.selectAbogado._id
-        };
-        this.casoService.allCasoAbogado(abo).subscribe(data => {
-          this.listCaso = data;
-        });
+    if (this.selectAbogado._id !== '-1' && this.selectCliente._id === '-1' && this.selectEstado.id === '-1' ) {
+      const abo = {
+        idAbogado: this.selectAbogado._id,
+        fecha_inicio: this.fechaInicio,
+        fecha_fin: this.fechaFin
+      };
+      this.casoService.allCasoAbogado(abo).subscribe(data => {
+        this.listCaso = data;
+      });
     }
     // Abogado y estado
     if (this.selectAbogado._id !== '-1' && this.selectCliente._id === '-1' && this.selectEstado.id !== '-1' && this.fechaInicio === '' &&
       this.fechaFin === '') {
-        const abo = {
-          idAbogado: this.selectAbogado._id,
-          idEstado: this.selectEstado.id
-        };
-        this.casoService.allCasoAbogadoEstado(abo).subscribe(data => {
-          this.listCaso = data;
-        });
+      const abo = {
+        idAbogado: this.selectAbogado._id,
+        idEstado: this.selectEstado.id
+      };
+      this.casoService.allCasoAbogadoEstado(abo).subscribe(data => {
+        this.listCaso = data;
+      });
     }
     // Cliente
     if (this.selectAbogado._id === '-1' && this.selectCliente._id !== '-1' && this.selectEstado.id === '-1' && this.fechaInicio === '' &&
       this.fechaFin === '') {
-        const cli = {
-          idCliente: this.selectCliente._id
-        };
-        this.casoService.allCasoCliente(cli).subscribe(data => {
-          this.listCaso = data;
-        });
+      const cli = {
+        idCliente: this.selectCliente._id
+      };
+      this.casoService.allCasoCliente(cli).subscribe(data => {
+        this.listCaso = data;
+      });
     }
     // Cliente y estado
     if (this.selectAbogado._id === '-1' && this.selectCliente._id !== '-1' && this.selectEstado.id !== '-1' && this.fechaInicio === '' &&
       this.fechaFin === '') {
-        const cli = {
-          idCliente: this.selectCliente._id,
-          idEstado: this.selectEstado.id
-        };
-        this.casoService.allCasoClienteEstado(cli).subscribe(data => {
-          this.listCaso = data;
-        });
+      const cli = {
+        idCliente: this.selectCliente._id,
+        idEstado: this.selectEstado.id
+      };
+      this.casoService.allCasoClienteEstado(cli).subscribe(data => {
+        this.listCaso = data;
+      });
     }
     // Abogado y cliente
     if (this.selectAbogado._id !== '-1' && this.selectCliente._id !== '-1' && this.selectEstado.id === '-1' && this.fechaInicio === '' &&
       this.fechaFin === '') {
-        const obj = {
-          idCliente: this.selectCliente._id,
-          idAbogado: this.selectAbogado._id
-        };
-        this.casoService.allCasoAbogadoCliente(obj).subscribe(data => {
-          this.listCaso = data;
-        });
+      const obj = {
+        idCliente: this.selectCliente._id,
+        idAbogado: this.selectAbogado._id
+      };
+      this.casoService.allCasoAbogadoCliente(obj).subscribe(data => {
+        this.listCaso = data;
+      });
     }
     // Estados
     if (this.selectAbogado._id === '-1' && this.selectCliente._id === '-1' && this.selectEstado.id !== '-1' && this.fechaInicio === '' &&
       this.fechaFin === '') {
-        this.casoService.allCasoEstado(this.selectEstado).subscribe(data => {
-          this.listCaso = data;
-        });
+      this.casoService.allCasoEstado(this.selectEstado).subscribe(data => {
+        this.listCaso = data;
+      });
     }
     // cliente abogado estado
     if (this.selectAbogado._id !== '-1' && this.selectCliente._id !== '-1' && this.selectEstado.id !== '-1' && this.fechaInicio === '' &&
       this.fechaFin === '') {
-        const obj = {
-          idCliente: this.selectCliente._id,
-          idAbogado: this.selectAbogado._id,
-          idEstado: this.selectEstado.id
-        };
-        this.casoService.allCasoAbogadoClienteEstado(obj).subscribe(data => {
-          this.listCaso = data;
-        });
+      const obj = {
+        idCliente: this.selectCliente._id,
+        idAbogado: this.selectAbogado._id,
+        idEstado: this.selectEstado.id
+      };
+      this.casoService.allCasoAbogadoClienteEstado(obj).subscribe(data => {
+        this.listCaso = data;
+      });
     }
     // Abogado cliente y fechas
     if (this.selectAbogado._id !== '-1' && this.selectCliente._id !== '-1' && this.selectEstado.id !== '-1' && this.fechaInicio !== '' &&
       this.fechaFin !== '' && this.fechaInicio <= this.fechaFin) {
-        const obj = {
-          idCliente: this.selectCliente._id,
-          idAbogado: this.selectAbogado._id,
-          idEstado: this.selectEstado.id,
-          fechaInicio: this.fechaInicio,
-          fechaFin: this.fechaFin
-        };
-        this.casoService.allCasoAbogadoClienteEstadoFecha(obj).subscribe(data => {
-          this.listCaso = data;
-        });
+      const obj = {
+        idCliente: this.selectCliente._id,
+        idAbogado: this.selectAbogado._id,
+        idEstado: this.selectEstado.id,
+        fechaInicio: this.fechaInicio,
+        fechaFin: this.fechaFin
+      };
+      this.casoService.allCasoAbogadoClienteEstadoFecha(obj).subscribe(data => {
+        this.listCaso = data;
+      });
     }
   }
 

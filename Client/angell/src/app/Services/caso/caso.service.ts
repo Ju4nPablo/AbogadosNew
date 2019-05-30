@@ -29,7 +29,7 @@ export class CasoService {
   allCaso() {
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
-    return this.http.get(this.url + 'caso', { headers });
+    return this.http.get(this.url + 'getAllCasos', { headers });
   }
 
   allCasoPendientes() {

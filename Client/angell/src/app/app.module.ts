@@ -9,8 +9,6 @@ import { routing, appRoutingProviders } from './app.routes';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './AdministratorComponents/login/login.component';
 import { InicioComponent } from './AdministratorComponents/inicio/inicio.component';
-import { DashboardclienteComponent } from './ClientComponents/dashboardcliente/dashboardcliente.component';
-import { InicioClienteComponent } from './ClientComponents/inicio-cliente/inicio-cliente.component';
 import { HttpModule } from '@angular/http';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
@@ -55,12 +53,9 @@ import { LoginService } from './Services/login/login.service';
 import { UserService } from './Services/user/user.service';
 import { SendEmailService } from './Services/send-email/send-email.service';
 import { RouterModule, Routes } from '@angular/router';
-import { CasoClienteComponent } from './ClientComponents/caso-cliente/caso-cliente.component';
-import { DashboardabogadoComponent } from './AbogadoComponents/dashboardabogado/dashboardabogado.component';
-import { CasoAbogadoComponent } from './AbogadoComponents/caso-abogado/caso-abogado.component';
-import { InicioAbogadoComponent } from './AbogadoComponents/inicio-abogado/inicio-abogado.component';
 import { SpinnerModule } from 'primeng/spinner';
 import { GalleriaModule } from 'primeng/galleria';
+import { InputMaskModule } from 'primeng/inputmask';
 
 /*Navigation*/
 /* const appRoutes: Routes = [
@@ -118,8 +113,6 @@ import { GalleriaModule } from 'primeng/galleria';
     DashboardComponent,
     LoginComponent,
     InicioComponent,
-    DashboardclienteComponent,
-    InicioClienteComponent,
     ClienteComponent,
     AbogadoComponent,
     NotificationComponent,
@@ -129,10 +122,6 @@ import { GalleriaModule } from 'primeng/galleria';
     CasoComponent,
     ReporteComponent,
     UserComponent,
-    CasoClienteComponent,
-    DashboardabogadoComponent,
-    CasoAbogadoComponent,
-    InicioAbogadoComponent,
 
   ],
   imports: [
@@ -166,7 +155,7 @@ import { GalleriaModule } from 'primeng/galleria';
     TooltipModule,
     SpinnerModule,
     GalleriaModule,
-    // RouterModule.forRoot(appRoutes),
+    InputMaskModule,
 
   ],
   providers: [

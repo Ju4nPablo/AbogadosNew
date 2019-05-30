@@ -3,7 +3,7 @@
   <p-panel header="TABLA FLUJOS">
     <p>
       <b>Nota:</b> Click en un registro para crear un CASO.</p>
-    <p-table #dt [columns]="cols" [value]="listTabla" selectionMode="single" [(selection)]="selectProceso"
+    <p-table #dt [columns]="cols" [value]="listTabla" selectionMode="single" [responsive]="true" [(selection)]="selectProceso"
       (onRowSelect)="selectItem($event)" [paginator]="true" [rows]="10">
       <ng-template pTemplate="caption">
         <div class="ui-g">
@@ -23,18 +23,9 @@
             {{col.header}}
           </th>
         </tr>
-
-        <tr>
-          <th *ngFor="let col of columns" [ngSwitch]="col.field">
-            <!-- <input *ngSwitchCase="'label'" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
-            <input *ngSwitchCase="'descripcion'" pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)"> -->
-          </th>
-        </tr>
-
       </ng-template>
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr [pSelectableRow]="rowData">
-          <!-- <td>{{rowData.data.id}}</td> -->
           <td>{{rowData.label}}</td>
           <td>{{rowData.descripcion}}</td>
         </tr>
@@ -47,7 +38,7 @@
   </p-panel>
 </form>
 
-<p-dialog header="FLUJO PROCESO" [(visible)]="showDialogMod" [responsive]="true" showEffect="fade" [modal]="true"
+<p-dialog header="CREAR CASO" [(visible)]="showDialogMod" [responsive]="true" showEffect="fade" [modal]="true"
   [width]="1200" [height]="500">
   <div class="ui-g ui-fluid" *ngIf="casoTree">
     <div class="ui-g-12">
@@ -56,7 +47,7 @@
     </div>
   </div>
 
-  <button pButton type="button" (click)="saveCaso()" label="Guardar Caso"></button>
+  <button pButton type="button" (click)="saveCaso()" label="Generar Caso"></button>
   <button pButton type="button" (click)="expandAll()" [disabled]="banOpen" label="Expandir Todos" class="ui-button-success"></button>
   <button pButton type="button" (click)="collapseAll()" [disabled]="banClose" label="Ocultar Todos" class="ui-button-success"></button>
   <button pButton type="button" (click)="exitArbol()" label="Salir" class="ui-button-danger"></button>
@@ -179,13 +170,13 @@
         <label for="float-input">Fecha Inicio: *</label><br>
         <p-calendar id="fechaInicio" name="fechaInicio" [locale]="es" [(ngModel)]="fechaInicio" [showIcon]="true"
           [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
-          [disabledDays]="[0,7]" readonlyInput="true"></p-calendar>
+          [disabledDays]="[0,7]" readonlyInput="true" (onSelect)="validarFecha()"></p-calendar>
       </div>
       <div class="ui-g-6 ui-md-6">
         <label for="float-input">Fecha Fin: *</label>
         <p-calendar id="fechaFin" name="fechaFin" [locale]="es" [(ngModel)]="fechaFin" [showIcon]="true"
           [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
-          [disabledDays]="[0,7]" readonlyInput="true"></p-calendar>
+          [disabledDays]="[0,7]" readonlyInput="true" (onSelect)="validarFecha()"></p-calendar>
       </div>
       <div class="ui-g-6 ui-md-6">
         <label for="float-input">Descripción: *</label>
