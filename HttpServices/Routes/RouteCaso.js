@@ -13,7 +13,53 @@ var routeExample = require('../Models/ModeloCaso'); //copiar el modelo de la tab
 routeExample.methods(['get', 'put', 'post', 'delete', 'search']);
 routeExample.register(router, '/caso'); //nombre ruta para acceder por web
 
-// casos pendeintes 
+// Todos los casos 
+router.get('/getAllCasos', function (req, res) {
+    var resultArray = [];
+    MongoClient.connect(url, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("angell");
+        var casos = dbo.collection("casos").find();
+
+        casos.forEach(function (doc, err) {
+            assert.equal(null, err);
+            list = doc.data.fecha_inicio.split('T');
+            doc.data.fecha_inicio = list[0];
+            resultArray.push(doc);
+        }, function () {
+            db.close();
+            res.send(resultArray);
+        });
+    });
+});
+
+// Todos los casos entre fechas
+router.post('/getAllCasosFechas', function (req, res) {
+    var resultArray = [];
+    MongoClient.connect(url, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("angell");
+        var casos = dbo.collection("casos").find();
+
+        fib = new Date(req.body.fechaInicio).getTime();
+        ffb = new Date(req.body.fechaFin).getTime();
+        casos.forEach(function (doc, err) {
+            assert.equal(null, err);
+            fi = new Date(doc.data.fecha_inicio).getTime();
+            ff = new Date(doc.data.fecha_fin).getTime();
+            if (fi >= fib && ff <= ffb) {
+                list = doc.data.fecha_inicio.split('T');
+                doc.data.fecha_inicio = list[0];
+                resultArray.push(doc);
+            }
+        }, function () {
+            db.close();
+            res.send(resultArray);
+        });
+    });
+});
+
+// casos pendientes 
 router.get('/getAllCasosPendientes', function (req, res) {
     var resultArray = [];
     MongoClient.connect(url, function (err, db) {
@@ -23,8 +69,11 @@ router.get('/getAllCasosPendientes', function (req, res) {
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.estado.id == '1')
+            if (doc.data.estado.id == '1') {
+                list = doc.data.fecha_inicio.split('T');
+                doc.data.fecha_inicio = list[0];
                 resultArray.push(doc);
+            }
         }, function () {
             db.close();
             res.send(resultArray);
@@ -42,8 +91,11 @@ router.post('/getAllCasosPorAbogado', function (req, res) {
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.abogado.id == req.body.idAbogado)
+            if (doc.data.abogado.id == req.body.idAbogado) {
+                list = doc.data.fecha_inicio.split('T');
+                doc.data.fecha_inicio = list[0];
                 resultArray.push(doc);
+            }
         }, function () {
             db.close();
             res.send(resultArray);
@@ -61,8 +113,11 @@ router.post('/getAllCasosPorAbogadoEstado', function (req, res) {
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.abogado.id == req.body.idAbogado && doc.data.estado.id == req.body.idEstado)
+            if (doc.data.abogado.id == req.body.idAbogado && doc.data.estado.id == req.body.idEstado) {
+                list = doc.data.fecha_inicio.split('T');
+                doc.data.fecha_inicio = list[0];
                 resultArray.push(doc);
+            }
         }, function () {
             db.close();
             res.send(resultArray);
@@ -80,8 +135,11 @@ router.post('/getAllCasosPorCliente', function (req, res) {
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.cliente.id == req.body.idCliente)
+            if (doc.data.cliente.id == req.body.idCliente) {
+                list = doc.data.fecha_inicio.split('T');
+                doc.data.fecha_inicio = list[0];
                 resultArray.push(doc);
+            }
         }, function () {
             db.close();
             res.send(resultArray);
@@ -99,8 +157,11 @@ router.post('/getAllCasosPorClienteEstado', function (req, res) {
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.cliente.id == req.body.idCliente && doc.data.estado.id == req.body.idEstado)
+            if (doc.data.cliente.id == req.body.idCliente && doc.data.estado.id == req.body.idEstado) {
+                list = doc.data.fecha_inicio.split('T');
+                doc.data.fecha_inicio = list[0];
                 resultArray.push(doc);
+            }
         }, function () {
             db.close();
             res.send(resultArray);
@@ -118,8 +179,11 @@ router.post('/getAllCasosPorEstado', function (req, res) {
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.estado.id == req.body.id)
+            if (doc.data.estado.id == req.body.id) {
+                list = doc.data.fecha_inicio.split('T');
+                doc.data.fecha_inicio = list[0];
                 resultArray.push(doc);
+            }
         }, function () {
             db.close();
             res.send(resultArray);
@@ -137,8 +201,11 @@ router.post('/getAllCasosAbogadoCliente', function (req, res) {
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.cliente.id == req.body.idCliente && doc.data.abogado.id == req.body.idAbogado)
+            if (doc.data.cliente.id == req.body.idCliente && doc.data.abogado.id == req.body.idAbogado) {
+                list = doc.data.fecha_inicio.split('T');
+                doc.data.fecha_inicio = list[0];
                 resultArray.push(doc);
+            }
         }, function () {
             db.close();
             res.send(resultArray);
@@ -156,8 +223,37 @@ router.post('/getAllCasosAbogadoClienteEstado', function (req, res) {
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.cliente.id == req.body.idCliente && doc.data.abogado.id == req.body.idAbogado && doc.data.estado.id == req.body.idEstado)
+            if (doc.data.cliente.id == req.body.idCliente && doc.data.abogado.id == req.body.idAbogado && doc.data.estado.id == req.body.idEstado) {
+                list = doc.data.fecha_inicio.split('T');
+                doc.data.fecha_inicio = list[0];
                 resultArray.push(doc);
+            }
+        }, function () {
+            db.close();
+            res.send(resultArray);
+        });
+    });
+});
+
+
+// consulta por abogado, cliente y fechas
+router.post('/getAllCasosAbogadoClienteFecha', function (req, res) {
+    var resultArray = [];
+    MongoClient.connect(url, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("angell");
+        var casos = dbo.collection("casos").find();
+        fib = new Date(req.body.fechaInicio).getTime();
+        ffb = new Date(req.body.fechaFin).getTime();
+        casos.forEach(function (doc, err) {
+            assert.equal(null, err);
+            fi = new Date(doc.data.fecha_inicio).getTime();
+            ff = new Date(doc.data.fecha_fin).getTime();
+            if (doc.data.cliente.id == req.body.idCliente && doc.data.abogado.id == req.body.idAbogado && fi >= fib && ff <= ffb) {
+                list = doc.data.fecha_inicio.split('T');
+                doc.data.fecha_inicio = list[0];
+                resultArray.push(doc);
+            }
         }, function () {
             db.close();
             res.send(resultArray);
@@ -179,8 +275,11 @@ router.post('/getAllCasosAbogadoClienteEstadoFecha', function (req, res) {
             fi = new Date(doc.data.fecha_inicio).getTime();
             ff = new Date(doc.data.fecha_fin).getTime();
             if (doc.data.cliente.id == req.body.idCliente && doc.data.abogado.id == req.body.idAbogado &&
-                doc.data.estado.id == req.body.idEstado && fi >= fib && ff <= ffb)
+                doc.data.estado.id == req.body.idEstado && fi >= fib && ff <= ffb) {
+                list = doc.data.fecha_inicio.split('T');
+                doc.data.fecha_inicio = list[0];
                 resultArray.push(doc);
+            }
         }, function () {
             db.close();
             res.send(resultArray);
@@ -198,8 +297,11 @@ router.post('/getAllCasoClientePendiente', function (req, res) {
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.cliente.cedula == req.body.cedula && doc.data.estado.id == '1')
+            if (doc.data.cliente.cedula == req.body.cedula && doc.data.estado.id == '1') {
+                list = doc.data.fecha_inicio.split('T');
+                doc.data.fecha_inicio = list[0];
                 resultArray.push(doc);
+            }
         }, function () {
             db.close();
             res.send(resultArray);
@@ -217,8 +319,11 @@ router.post('/getAllCasoAbogadoPendiente', function (req, res) {
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.abogado.cedula == req.body.cedula && doc.data.estado.id == '1')
+            if (doc.data.abogado.cedula == req.body.cedula && doc.data.estado.id == '1') {
+                list = doc.data.fecha_inicio.split('T');
+                doc.data.fecha_inicio = list[0];
                 resultArray.push(doc);
+            }
         }, function () {
             db.close();
             res.send(resultArray);

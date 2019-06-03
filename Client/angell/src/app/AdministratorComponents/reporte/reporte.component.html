@@ -37,7 +37,7 @@
         <span class="ui-float-label">
           <p-calendar id="fechaInicio" name="fechaInicio" [locale]="es" [(ngModel)]="fechaInicio" [showIcon]="true"
             [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
-            [disabledDays]="[0,7]"></p-calendar>
+            [disabledDays]="[0,7]" (onSelect)="onSelectFechaIncicio($event)"></p-calendar>
           <label for="float-input">Fecha inicio: *</label>
         </span>
       </div>
@@ -45,7 +45,7 @@
         <span class="ui-float-label">
           <p-calendar id="fechaFin" name="fechaFin" [locale]="es" [(ngModel)]="fechaFin" [showIcon]="true"
             [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
-            [disabledDays]="[0,7]"></p-calendar>
+            [disabledDays]="[0,7]" (onSelect)="onSelectFechaFin($event)"></p-calendar>
           <label for="float-input">Fecha fin: *</label>
         </span>
       </div>

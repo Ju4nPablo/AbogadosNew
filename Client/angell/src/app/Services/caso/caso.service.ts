@@ -32,6 +32,12 @@ export class CasoService {
     return this.http.get(this.url + 'getAllCasos', { headers });
   }
 
+  allCasoFechas(fechas) {
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    return this.http.post(this.url + 'getAllCasosFechas', fechas, { headers });
+  }
+
   allCasoPendientes() {
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
@@ -78,6 +84,12 @@ export class CasoService {
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     return this.http.post(this.url + 'getAllCasosAbogadoClienteEstado', obj, { headers });
+  }
+
+  allCasoAbogadoClienteFecha(obj) {
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    return this.http.post(this.url + 'getAllCasosAbogadoClienteFecha', obj, { headers });
   }
 
   allCasoAbogadoClienteEstadoFecha(obj) {

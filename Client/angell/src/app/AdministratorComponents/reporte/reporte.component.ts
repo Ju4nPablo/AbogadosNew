@@ -93,11 +93,36 @@ export class ReporteComponent implements OnInit {
     ];
   }
 
+  onSelectFechaIncicio($event) {
+    if (this.fechaFin === '' || this.fechaFin === null) {
+      this.notifyService.notify('error', 'ERROR', 'Fecha de fin esta vacio!');
+      return;
+    }
+    if ($event > new Date()) {
+      this.notifyService.notify('error', 'ERROR', 'Excede al rango de la fecha actual!');
+      return;
+    }
+    if ($event > this.fechaFin) {
+      this.notifyService.notify('error', 'ERROR', 'Rango de fecha incorrecto!');
+      return;
+    }
+  }
+
+  onSelectFechaFin($event) {
+    if (this.fechaInicio === '' || this.fechaInicio === null) {
+      this.notifyService.notify('error', 'ERROR', 'Fecha de inicio esta vacio!');
+      return;
+    }
+    if ($event < this.fechaInicio) {
+      this.notifyService.notify('error', 'ERROR', 'Rango de fecha incorrecto!');
+      return;
+    }
+  }
+
   generar() {
     // rango de fechas
-    if (this.fechaInicio > this.fechaFin) {
-      this.notifyService.notify('error', 'ERROR', 'Rango de fecha incorrecto!');
-    }
+    this.onSelectFechaIncicio(this.fechaInicio);
+    this.onSelectFechaFin(this.fechaFin);
     /*
         // Validacion de fechas fechas
         if (this.fechaInicio == '' || this.fechaFin == '' || this.fechaInicio == '' || this.fechaFin == '') {
@@ -114,8 +139,20 @@ export class ReporteComponent implements OnInit {
       });
     }
 
+    // todos rango de fechas.
+    if (this.selectEstado.id === '-1' && this.selectAbogado._id === '-1' && this.selectCliente._id === '-1' && this.fechaInicio !== '' &&
+      this.fechaFin !== '' && this.fechaFin >= this.fechaInicio) {
+      const fechas = {
+        fechaInicio: this.fechaInicio,
+        fechaFin: this.fechaFin
+      };
+      this.casoService.allCasoFechas(fechas).subscribe(data => {
+        this.listCaso = data;
+      });
+    }
+
     // Abogado
-    if (this.selectAbogado._id !== '-1' && this.selectCliente._id === '-1' && this.selectEstado.id === '-1' ) {
+    if (this.selectAbogado._id !== '-1' && this.selectCliente._id === '-1' && this.selectEstado.id === '-1') {
       const abo = {
         idAbogado: this.selectAbogado._id,
         fecha_inicio: this.fechaInicio,
@@ -187,7 +224,22 @@ export class ReporteComponent implements OnInit {
         this.listCaso = data;
       });
     }
-    // Abogado cliente y fechas
+    // Abogado cliente sin estado y fechas
+    if (this.selectAbogado._id !== '-1' && this.selectCliente._id !== '-1' && this.selectEstado.id === '-1' && this.fechaInicio !== '' &&
+      this.fechaFin !== '' && this.fechaInicio <= this.fechaFin) {
+      const obj = {
+        idCliente: this.selectCliente._id,
+        idAbogado: this.selectAbogado._id,
+        idEstado: this.selectEstado.id,
+        fechaInicio: this.fechaInicio,
+        fechaFin: this.fechaFin
+      };
+      this.casoService.allCasoAbogadoClienteFecha(obj).subscribe(data => {
+        this.listCaso = data;
+      });
+    }
+
+    // Abogado cliente estado y fechas
     if (this.selectAbogado._id !== '-1' && this.selectCliente._id !== '-1' && this.selectEstado.id !== '-1' && this.fechaInicio !== '' &&
       this.fechaFin !== '' && this.fechaInicio <= this.fechaFin) {
       const obj = {
@@ -201,6 +253,7 @@ export class ReporteComponent implements OnInit {
         this.listCaso = data;
       });
     }
+
   }
 
 }
