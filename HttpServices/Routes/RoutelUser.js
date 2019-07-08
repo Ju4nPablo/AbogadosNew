@@ -118,7 +118,6 @@ api.post('/login', (req, res) => {
                     bcrypt.compare(req.body.password, issetUser.password, (err, check) => {
 
                         if (check) {
-                            console.log(req.body.token)
                             var aux = req.body.token == "true";
                             if (aux) {
                                 res.status(200).send({

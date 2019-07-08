@@ -61,9 +61,10 @@ app.use('/api', require('./Routes/RouteCobro'));
 app.use('/api', require('./Routes/RouteFlujoProceso'));
 app.use('/api', require('./Routes/RouteUser'));
 app.use('/api', require('./Routes/RouteMail'));
+app.use('/api', require('./Routes/RouteLogCambio'));
 
 app.listen(port, () => {
-    console.log('Server run on port ' + port);
+    console.log('Server run on port ' + port + ' XD');
 });
 
 //config cabeceras y cors

@@ -120,9 +120,8 @@ export class ReporteComponent implements OnInit {
   }
 
   generar() {
+    this.listCaso = [];
     // rango de fechas
-    this.onSelectFechaIncicio(this.fechaInicio);
-    this.onSelectFechaFin(this.fechaFin);
     /*
         // Validacion de fechas fechas
         if (this.fechaInicio == '' || this.fechaFin == '' || this.fechaInicio == '' || this.fechaFin == '') {
@@ -135,7 +134,7 @@ export class ReporteComponent implements OnInit {
     if (this.selectEstado.id === '-1' && this.selectAbogado._id === '-1' && this.selectCliente._id === '-1' && this.fechaInicio === '' &&
       this.fechaFin === '') {
       this.casoService.allCaso().subscribe(data => {
-        this.listCaso = data;
+        this.cargarTabla(data);
       });
     }
 
@@ -147,7 +146,7 @@ export class ReporteComponent implements OnInit {
         fechaFin: this.fechaFin
       };
       this.casoService.allCasoFechas(fechas).subscribe(data => {
-        this.listCaso = data;
+        this.cargarTabla(data);
       });
     }
 
@@ -159,7 +158,7 @@ export class ReporteComponent implements OnInit {
         fecha_fin: this.fechaFin
       };
       this.casoService.allCasoAbogado(abo).subscribe(data => {
-        this.listCaso = data;
+        this.cargarTabla(data);
       });
     }
     // Abogado y estado
@@ -170,7 +169,7 @@ export class ReporteComponent implements OnInit {
         idEstado: this.selectEstado.id
       };
       this.casoService.allCasoAbogadoEstado(abo).subscribe(data => {
-        this.listCaso = data;
+        this.cargarTabla(data);
       });
     }
     // Cliente
@@ -180,7 +179,7 @@ export class ReporteComponent implements OnInit {
         idCliente: this.selectCliente._id
       };
       this.casoService.allCasoCliente(cli).subscribe(data => {
-        this.listCaso = data;
+        this.cargarTabla(data);
       });
     }
     // Cliente y estado
@@ -191,7 +190,7 @@ export class ReporteComponent implements OnInit {
         idEstado: this.selectEstado.id
       };
       this.casoService.allCasoClienteEstado(cli).subscribe(data => {
-        this.listCaso = data;
+        this.cargarTabla(data);
       });
     }
     // Abogado y cliente
@@ -202,14 +201,14 @@ export class ReporteComponent implements OnInit {
         idAbogado: this.selectAbogado._id
       };
       this.casoService.allCasoAbogadoCliente(obj).subscribe(data => {
-        this.listCaso = data;
+        this.cargarTabla(data);
       });
     }
     // Estados
     if (this.selectAbogado._id === '-1' && this.selectCliente._id === '-1' && this.selectEstado.id !== '-1' && this.fechaInicio === '' &&
       this.fechaFin === '') {
       this.casoService.allCasoEstado(this.selectEstado).subscribe(data => {
-        this.listCaso = data;
+        this.cargarTabla(data);
       });
     }
     // cliente abogado estado
@@ -221,12 +220,14 @@ export class ReporteComponent implements OnInit {
         idEstado: this.selectEstado.id
       };
       this.casoService.allCasoAbogadoClienteEstado(obj).subscribe(data => {
-        this.listCaso = data;
+        this.cargarTabla(data);
       });
     }
     // Abogado cliente sin estado y fechas
     if (this.selectAbogado._id !== '-1' && this.selectCliente._id !== '-1' && this.selectEstado.id === '-1' && this.fechaInicio !== '' &&
       this.fechaFin !== '' && this.fechaInicio <= this.fechaFin) {
+      this.onSelectFechaIncicio(this.fechaInicio);
+      this.onSelectFechaFin(this.fechaFin);
       const obj = {
         idCliente: this.selectCliente._id,
         idAbogado: this.selectAbogado._id,
@@ -235,13 +236,15 @@ export class ReporteComponent implements OnInit {
         fechaFin: this.fechaFin
       };
       this.casoService.allCasoAbogadoClienteFecha(obj).subscribe(data => {
-        this.listCaso = data;
+        this.cargarTabla(data);
       });
     }
 
     // Abogado cliente estado y fechas
     if (this.selectAbogado._id !== '-1' && this.selectCliente._id !== '-1' && this.selectEstado.id !== '-1' && this.fechaInicio !== '' &&
       this.fechaFin !== '' && this.fechaInicio <= this.fechaFin) {
+      this.onSelectFechaIncicio(this.fechaInicio);
+      this.onSelectFechaFin(this.fechaFin);
       const obj = {
         idCliente: this.selectCliente._id,
         idAbogado: this.selectAbogado._id,
@@ -250,10 +253,26 @@ export class ReporteComponent implements OnInit {
         fechaFin: this.fechaFin
       };
       this.casoService.allCasoAbogadoClienteEstadoFecha(obj).subscribe(data => {
-        this.listCaso = data;
+        this.cargarTabla(data);
       });
     }
 
+  }
+
+  cargarTabla(lista) {
+    lista.forEach(item => {
+      // let cli = this.buscarCliente(item.data.cliente.cedula);
+      let fech = new Date(item.data.fecha_inicio);
+      let fec = fech.getDate() + "/" + (((fech.getMonth() + 1) < 10) ? ('0' + (fech.getMonth() + 1)) : (fech.getMonth() + 1)) + "/" + fech.getFullYear();
+      this.listCaso.push({
+        id: item._id,
+        label: item.label,
+        cliente: item.data.cliente.nombre,
+        abogado: item.data.abogado.nombre,
+        estado: item.data.estado.estado,
+        fecha: fec,
+      });
+    });
   }
 
 }

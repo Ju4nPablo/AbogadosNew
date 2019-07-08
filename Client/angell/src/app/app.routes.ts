@@ -14,6 +14,7 @@ import { BajaFlujoProcesoComponent } from './AdministratorComponents/baja-flujo-
 import { CasoComponent } from './AdministratorComponents/caso/caso.component';
 import { ReporteComponent } from './AdministratorComponents/reporte/reporte.component';
 import { UserComponent } from './AdministratorComponents/user/user.component';
+import { GraficosComponent } from './AdministratorComponents/graficos/graficos.component';
 
 const appRoutes: Routes = [
   {
@@ -54,6 +55,10 @@ const appRoutes: Routes = [
       {
         path: 'reporte',
         component: ReporteComponent
+      },
+      {
+        path: 'graficas',
+        component: GraficosComponent
       },
 
     ]

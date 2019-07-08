@@ -10,8 +10,8 @@
   <div class="col-1"></div>
   <div class="col-10">
     <div style="width: 100%; height: 100%;" id="calendar">
-      <p-schedule [events]="events" [header]="headerConfig" [eventLimit]="4" [editable]="false" locale="es" weekends="false"
-        (onDayClick)="showDialogAdd($event)" (onEventClick)="editActividad($event)"></p-schedule>
+      <p-schedule [events]="events" [header]="headerConfig" [eventLimit]="4" [editable]="false" locale="es"
+        weekends="false" (onDayClick)="showDialogAdd($event)" (onEventClick)="editActividad($event)"></p-schedule>
     </div>
   </div>
 </div>
@@ -31,9 +31,9 @@
       <div class="ui-g-12 ui-md-12">
         <div class="ui-g-5 ui-md-5">
           <span class="ui-float-label">
-            <p-calendar id="fechaIni" name="fechaIni" [locale]="es" [(ngModel)]="actividad.fecha_inicio" [showIcon]="true"
-              [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
-              [disabledDays]="[0,7]" readonlyInput="true"></p-calendar>
+            <p-calendar id="fechaIni" name="fechaIni" [locale]="es" [(ngModel)]="actividad.fecha_inicio"
+              [showIcon]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050"
+              dateFormat="dd/mm/yy" tabindex="0" [disabledDays]="[0,7]" readonlyInput="true"></p-calendar>
             <label for="float-input">Fecha inicio: *</label>
           </span>
         </div>
@@ -42,8 +42,8 @@
         </div>
         <div class="ui-g-5 ui-md-5">
           <span class="ui-float-label">
-            <p-dropdown id="horaInicio" name="horaInicio" [options]="listHoras" [(ngModel)]="selectHoraIni" optionLabel="hora"
-              [showClear]="true" [style]="{'width':'100%'}" scrollHeight="200px"></p-dropdown>
+            <p-dropdown id="horaInicio" name="horaInicio" [options]="listHoras" [(ngModel)]="selectHoraIni"
+              optionLabel="hora" [showClear]="true" [style]="{'width':'100%'}" scrollHeight="200px"></p-dropdown>
             <label for="float-input">Hora inicio: *</label>
           </span>
         </div>
@@ -80,8 +80,9 @@
         </div>
         <div class="ui-g-5 ui-md-5">
           <span class="ui-float-label">
-            <p-dropdown id="abogado" name="abogado" [options]="listAbogado" [(ngModel)]="selectAbogado" optionLabel="nombre"
-              [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
+            <p-dropdown id="abogado" name="abogado" [options]="listAbogado" [(ngModel)]="selectAbogado"
+              optionLabel="nombre" [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px">
+            </p-dropdown>
             <label for="float-input">Seleccione abogado: *</label>
           </span>
         </div>
@@ -89,8 +90,8 @@
       <div class="ui-g-12 ui-md-12">
         <div class="ui-g-5 ui-md-5">
           <span class="ui-float-label">
-            <p-dropdown id="repetir" name="repetir" [options]="listRepetir" [(ngModel)]="selectRepetir" optionLabel="descripcion"
-              [showClear]="true"[style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
+            <p-dropdown id="repetir" name="repetir" [options]="listRepetir" [(ngModel)]="selectRepetir"
+              optionLabel="descripcion" [showClear]="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
             <label for="float-input">Repetir: *</label>
           </span>
         </div>
@@ -98,24 +99,27 @@
         </div>
         <div class="ui-g-5 ui-md-5">
           <span class="ui-float-label">
-            <p-dropdown id="recordatorio" name="recordatorio" [options]="listRecordatorio" [(ngModel)]="selectRecordatorio"
-              optionLabel="descripcion" [showClear]="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
+            <p-dropdown id="recordatorio" name="recordatorio" [options]="listRecordatorio"
+              [(ngModel)]="selectRecordatorio" optionLabel="descripcion" [showClear]="true" [style]="{'width':'100%'}"
+              scrollHeight="150px"></p-dropdown>
             <label for="float-input">Recordatorio: *</label>
           </span>
         </div>
       </div>
     </div>
     <div class="ui-dialog-buttonpane ui-helper-clearfix">
-      <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar" class="ui-button-danger"></button>
-      <button type="button" pButton icon="fa fa-check" (click)="addActividad()" label="Guardar" class="ui-button-success"></button>
+      <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar"
+        class="ui-button-danger"></button>
+      <button type="button" pButton icon="fa fa-check" (click)="addActividad()" label="Guardar"
+        class="ui-button-primary"></button>
     </div>
   </p-dialog>
 </form>
 <form>
   <br>
   <br>
-  <p-dialog header="MODIFICAR ACTIVIDAD" [(visible)]="showDialogMod" [responsive]="true" showEffect="fade" [modal]="true"
-    [width]="600" [height]="520">
+  <p-dialog header="MODIFICAR ACTIVIDAD" [(visible)]="showDialogMod" [responsive]="true" showEffect="fade"
+    [modal]="true" [width]="600" [height]="520">
     <div class="ui-g ui-fluid" *ngIf="actividad">
       <div class="ui-g-12  ui-md-12">
         <label for="float-input">Los campos con * son obligatorio: </label>
@@ -129,7 +133,8 @@
         <div class="ui-g-5  ui-md-5">
           <span class="ui-float-label">
             <p-calendar id="fechaIniMod" name="fechaIniMod" [locale]="es" [(ngModel)]="actividad.fecha_inicio"
-              [showIcon]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy"></p-calendar>
+              [showIcon]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050"
+              dateFormat="dd/mm/yy"></p-calendar>
             <label for="float-input">Fecha inicio: *</label>
           </span>
         </div>
@@ -147,9 +152,9 @@
       <div class="ui-g-12 ui-md-12">
         <div class="ui-g-5 ui-md-5">
           <span class="ui-float-label">
-            <p-calendar id="fechaFinMod" name="fechaFinMod" [locale]="es" [(ngModel)]="actividad.fecha_fin" [showIcon]="true"
-              [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
-              [disabledDays]="[0,7]" readonlyInput="true"></p-calendar>
+            <p-calendar id="fechaFinMod" name="fechaFinMod" [locale]="es" [(ngModel)]="actividad.fecha_fin"
+              [showIcon]="true" [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050"
+              dateFormat="dd/mm/yy" tabindex="0" [disabledDays]="[0,7]" readonlyInput="true"></p-calendar>
             <label for="float-input">Fecha fin: *</label>
           </span>
         </div>
@@ -158,8 +163,8 @@
         </div>
         <div class="ui-g-5 ui-md-5">
           <span class="ui-float-label">
-            <p-dropdown id="horaFinMod" name="horaFinMod" [options]="listHoras" [(ngModel)]="selectHoraFin" optionLabel="hora"
-              [showClear]="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
+            <p-dropdown id="horaFinMod" name="horaFinMod" [options]="listHoras" [(ngModel)]="selectHoraFin"
+              optionLabel="hora" [showClear]="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
             <label for="float-input">Hora fin: *</label>
           </span>
         </div>
@@ -178,7 +183,8 @@
         <div class="ui-g-5  ui-md-5">
           <span class="ui-float-label">
             <p-dropdown id="abogadoMod" name="abogadoMod" [options]="listAbogado" [(ngModel)]="selectAbogado"
-              optionLabel="nombre" [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
+              optionLabel="nombre" [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px">
+            </p-dropdown>
             <label for="float-input">Seleccione abogado: *</label>
           </span>
         </div>
@@ -195,8 +201,9 @@
         </div>
         <div class="ui-g-5 ui-md-5">
           <span class="ui-float-label">
-            <p-dropdown id="recordatorioMod" name="recordatorioMod" [options]="listRecordatorio" [(ngModel)]="selectRecordatorio"
-              optionLabel="descripcion" [showClear]="true" filter="true" [style]="{'width':'100%'}"></p-dropdown>
+            <p-dropdown id="recordatorioMod" name="recordatorioMod" [options]="listRecordatorio"
+              [(ngModel)]="selectRecordatorio" optionLabel="descripcion" [showClear]="true" filter="true"
+              [style]="{'width':'100%'}"></p-dropdown>
             <label for="float-input">Recordatorio: *</label>
           </span>
         </div>
@@ -204,9 +211,14 @@
     </div>
     <p-footer>
       <div class="ui-dialog-buttonpane ui-helper-clearfix">
-        <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar" class="ui-button-danger"></button>
-        <button type="button" pButton icon="fa fa-check" (click)="updateActividad()" label="Modificar" class="ui-button-success" *ngIf="showButton.bttnUpdate"></button>
-        <button type="button" pButton icon="fa fa-trash" (click)="deleteActividad()" label="Eliminar" class="ui-button-danger" *ngIf="showButton.bttnDelete"></button>
+        <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar"
+          class="ui-button-danger"></button>
+        <button type="button" pButton icon="fa fa-check" (click)="updateActividad()" label="Modificar"
+          class="ui-button-primary" *ngIf="showButton.bttnUpdate"></button>
+        <button type="button" pButton icon="fa fa-trash" (click)="deleteActividad()" label="Eliminar"
+          class="ui-button-danger" *ngIf="showButton.bttnDelete"></button>
+        <button type="button" pButton icon="fa fa-trash" (click)="restaurarActividad()" label="Restaurar"
+          class="ui-button-success" *ngIf="showButton.bttnRestaurar"></button>
       </div>
     </p-footer>
   </p-dialog>

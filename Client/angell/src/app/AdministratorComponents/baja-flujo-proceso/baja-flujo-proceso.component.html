@@ -1,19 +1,19 @@
 <form>
   <br>
-  <p-panel header="TABLA FLUJOS">
+  <p-panel header="TABLA DE PLANTILLAS">
     <p>
       <b>Nota:</b> Click en un registro para crear un CASO.</p>
-    <p-table #dt [columns]="cols" [value]="listTabla" selectionMode="single" [responsive]="true" [(selection)]="selectProceso"
-      (onRowSelect)="selectItem($event)" [paginator]="true" [rows]="10">
+    <p-table #dt [columns]="cols" [value]="listTabla" selectionMode="single" [responsive]="true"
+      [(selection)]="selectProceso" (onRowSelect)="selectItem($event)" [paginator]="true" [rows]="10">
       <ng-template pTemplate="caption">
         <div class="ui-g">
           <div class="ui-g-6" style="text-align:left">
-            <button type="button" pButton icon="fa fa-plus" (click)="showDialogAdd()" label="Añadir flujo"></button>
+            <button type="button" pButton icon="fa fa-plus" (click)="showDialogAdd()" label="Añadir Plantilla"></button>
           </div>
           <div class="ui-g-6" style="text-align: right">
             <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-            <input type="text" pInputText size="50" placeholder="Buscar" (input)="dt.filterGlobal($event.target.value, 'contains')"
-              style="width:auto">
+            <input type="text" pInputText size="50" placeholder="Buscar"
+              (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
           </div>
         </div>
       </ng-template>
@@ -39,179 +39,228 @@
 </form>
 
 <p-dialog header="CREAR CASO" [(visible)]="showDialogMod" [responsive]="true" showEffect="fade" [modal]="true"
-  [width]="1200" [height]="500">
+  [width]="1200">
+  <!--  [height]="700" -->
   <div class="ui-g ui-fluid" *ngIf="casoTree">
     <div class="ui-g-12">
-      <p-tree [value]="casoTree" layout="horizontal" selectionMode="single" [(selection)]="selectNode" (onNodeSelect)="selectNodo($event)"
-        (onNodeExpand)="loadNode($event)" (onNodeCollapse)="loadNode($event)"></p-tree>
+      <p-tree [value]="casoTree" layout="horizontal" selectionMode="single" [(selection)]="selectNode"
+        (onNodeSelect)="selectNodo($event)" (onNodeExpand)="loadNode($event)" (onNodeCollapse)="loadNode($event)">
+      </p-tree>
     </div>
   </div>
 
   <button pButton type="button" (click)="saveCaso()" label="Generar Caso"></button>
-  <button pButton type="button" (click)="expandAll()" [disabled]="banOpen" label="Expandir Todos" class="ui-button-success"></button>
-  <button pButton type="button" (click)="collapseAll()" [disabled]="banClose" label="Ocultar Todos" class="ui-button-success"></button>
-  <button pButton type="button" (click)="exitArbol()" label="Salir" class="ui-button-danger"></button>
+  <button pButton type="button" (click)="expandAll()" [disabled]="banOpen" label="Expandir Todos"
+    class="ui-button-success"></button>
+  <button pButton type="button" (click)="collapseAll()" [disabled]="banClose" label="Ocultar Todos"
+    class="ui-button-success"></button>
+  <button pButton type="button" (click)="exitArbol()" label="Cancelar" class="ui-button-danger"></button>
 </p-dialog>
 
-<p-dialog header="CREAR NUEVO FLUJO" [(visible)]="showDialogIng" [responsive]="true" showEffect="fade" [modal]="true"
-  [width]="1200" [height]="500">
+<p-dialog header="NUEVA PLANTILLA" [(visible)]="showDialogIng" [responsive]="true" showEffect="fade" [modal]="true"
+  [width]="1200">
+  <!--  [height]="700" -->
   <div class="ui-g ui-fluid" *ngIf="casoTreeNew">
     <div class="ui-g-12">
-      <p><b>Nota: </b>Seleccione un nodo para modificar y agregar mas nodos.</p>
+      <p><b>Nota: </b>Seleccione un nodo para modificar o agregar.</p>
       <p-tree [value]="casoTreeNew" layout="horizontal" selectionMode="single" [(selection)]="selectNode"
         (onNodeSelect)="selectNodoIng($event)" (onNodeExpand)="loadNodeIng($event)"></p-tree>
     </div>
   </div>
-  <button pButton type="button" (click)="saveFlujo()" label="Guardar flujo" [(disabled)]="activaBotonGuardarFlujo"></button>
+  <button pButton type="button" (click)="saveFlujo()" label="Guardar Plantilla"
+    [(disabled)]="activaBotonGuardarFlujo"></button>
   <button pButton type="button" (click)="expandAll()" label="Expandir" class="ui-button-success"></button>
   <button pButton type="button" (click)="collapseAll()" label="Ocultar" class="ui-button-danger"></button>
-  <button pButton type="button" (click)="exitArbol()" label="Salir" class="ui-button-danger"></button>
+  <button pButton type="button" (click)="exitArbol()" label="Cancelar" class="ui-button-danger"></button>
 </p-dialog>
 
-<p-dialog header="MODIFICAR NODO" [(visible)]="showDialogIngNodo" [responsive]="true" showEffect="fade" [modal]="true"
-  [width]="475" [height]="300">
+<p-dialog header="MODIFICAR" [(visible)]="showDialogIngNodo" [responsive]="true" showEffect="fade" [modal]="true"
+  [width]="500" [height]="320">
   <div class="ui-g ui-fluid" *ngIf="node">
     <div class="ui-g-11 ui-md-11">
-      <span class="ui-float-label">
-        <input id="etiqueta" type="text" pInputText id="etiqueta" [(ngModel)]="nodeNew.label" name="etiqueta"
-          (ngModelChange)="verificaEtiqueta()" class="form-control input-sm">
-        <label for="float-input">Etiqueta: *</label>
-      </span>
+      <label for="float-input">Etiqueta: *</label>
+      <input pInputText id="etiqueta" type="text" [(ngModel)]="nodeNew.label" name="etiqueta"
+        (ngModelChange)="verificaEtiqueta()" class="form-control input-sm">
     </div>
     <div class="ui-g-11 ui-md-11">
-      <span class="ui-float-label">
-        <input pInputText type="text" id="dato" [(ngModel)]="nodeNew.data.descripcion" name="dato" maxlength="150"
-          class="form-control  input-sm">
-        <label for="float-input">descripción: *</label>
-      </span>
+      <label for="float-input">Descripción de la diligencia: *</label>
+      <textarea id="dato" [(ngModel)]="nodeNew.data.descripcion" name="dato" rows="2" cols="47"
+        pInputTextarea></textarea>
     </div>
   </div>
   <div class="ui-dialog-buttonpane ui-helper-clearfix">
-    <button type="button" pButton icon="fa fa-close" (click)="exit()" label="Salir" class="ui-button-danger"></button>
-    <button type="button" pButton icon="fa fa-trash" (click)="deleteNodoIng()" label="Quitar" class="ui-button-danger"></button>
-    <button type="button" pButton icon="fa fa-plus-square" (click)="addNodoIng()" label="Añadir" class="ui-button-success"></button>
-    <button type="button" pButton icon="fa fa-save" (click)="updateNodoIng()" label="Guardar" [(disabled)]="activaBotonGuardaNodoFlujo"></button>
+    <button type="button" pButton icon="fa fa-close" (click)="exit()" label="Cancelar"
+      class="ui-button-danger"></button>
+    <button type="button" pButton icon="fa fa-trash" (click)="deleteNodoIng()" label="Quitar"
+      class="ui-button-danger"></button>
+    <button type="button" pButton icon="fa fa-plus-square" (click)="addNodoIng()" label="Añadir"
+      class="ui-button-success"></button>
+    <button type="button" pButton icon="fa fa-save" (click)="updateNodoIng()" label="Guardar"
+      [(disabled)]="activaBotonGuardaNodoFlujo"></button>
   </div>
 </p-dialog>
 
-<p-dialog header="MODIFICAR NODO" [(visible)]="showDialog" [responsive]="true" showEffect="fade" [modal]="true" [width]="575">
+<p-dialog header="MODIFICAR DILIGENCIA" [(visible)]="showDialog" [responsive]="true" showEffect="fade" [modal]="true"
+  [width]="750">
   <div class="ui-g ui-fluid" *ngIf="node">
     <div class="ui-g ui-md">
-      <div class="ui-g-4 ui-md-4">
+      <div class="ui-g-3 ui-md-3">
         <label for="float-input">Fecha inicio: *</label><br>
         <p-calendar id="fechaInicio" name="fechaInicio" [locale]="es" [(ngModel)]="fechaInicio" [showIcon]="true"
           [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
           [disabledDays]="[0,7]" readonlyInput="true"></p-calendar>
       </div>
-      <!-- <div class="ui-g-6 ui-md-6">
-        <label for="float-input">Fecha fin: *</label>
-        <p-calendar id="fechaFin" name="fechaFin" [locale]="es" [(ngModel)]="fechaFin" [showIcon]="true" [monthNavigator]="true"
-          [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0" [disabledDays]="[0,7]" readonlyInput="true"></p-calendar>
-      </div> -->
       <div class="ui-g-4 ui-md-4">
-        <label for="float-input">Número caso: *</label>
-        <input id="etiqueta" type="text" pInputText [(ngModel)]="info.label" name="etiqueta" class="form-control  input-sm">
-      </div>
-      <div class="ui-g-4">
-        <label for="float-input">Precio: *</label>
-        <!-- <input pInputText id="precio" [(ngModel)]="info.data.precio" name="precio" onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-          maxlength="10" class="form-control input-sm"> -->
-        <p-spinner size="30" [(ngModel)]="info.data.precio" [min]="0" [max]="100000000" onkeypress='return event.charCode >= 48 && event.charCode <= 57'></p-spinner>
-      </div>
-      <div class="ui-g-6 ui-md-6">
         <label for="float-input">Cliente: *</label>
         <p-dropdown id="cliente" name="cliente" [options]="listCliente" [(ngModel)]="selectCliente" optionLabel="nombre"
           [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
       </div>
-      <div class="ui-g-6 ui-md-6">
+      <div class="ui-g-2 ui-md-2">
         <label for="float-input">No. Carpeta: *</label>
         <input pInputText type="number" id="numCarpeta" [(ngModel)]="selectCliente.numeroCarpeta" name="numCarpeta"
           class="form-control input-sm" disabled>
       </div>
-      <div class="ui-g-6 ui-md-6">
+      <div class="ui-g-3 ui-md-3">
+        <label for="float-input">Número caso: *</label>
+        <input id="etiqueta" type="text" pInputText [(ngModel)]="info.label" name="etiqueta"
+          class="form-control  input-sm">
+      </div>
+      <div class="ui-g-2 ui-md-2">
+        <label for="float-input">Precio: *</label>
+        <p-spinner size="30" [(ngModel)]="info.data.precio" [min]="0" [max]="100000000"
+          onkeypress='return event.charCode >= 48 && event.charCode <= 57'></p-spinner>
+      </div>
+      <div class="ui-g-3 ui-md-3">
         <label for="float-input">Abogado: *</label>
         <p-dropdown id="abogado" name="abogado" [options]="listAbogado" [(ngModel)]="selectAbogado" optionLabel="nombre"
           [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
       </div>
-      <div class="ui-g-6 ui-md-6">
+      <div class="ui-g-3 ui-md-3">
         <label for="float-input">Estado: *</label>
         <p-dropdown id="estado" name="estado" [options]="listEstado" [(ngModel)]="selectEstado" optionLabel="estado"
           [showClear]="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
       </div>
+      <div class="ui-g-2 ui-md-2">
+        <label for="float-input">Hora inicio: *</label>
+        <p-dropdown id="horaInicio" name="horaInicio" [options]="listHoras" [(ngModel)]="selectHoraIni"
+          optionLabel="hora" [showClear]="true" [style]="{'width':'100%'}" scrollHeight="200px"></p-dropdown>
+      </div>
+      <div class="ui-g-2 ui-md-2">
+        <label for="float-input">Ing. Actividad:</label>
+        <p-checkbox id="ingAct" name="ingAct" [(ngModel)]="info.data.ingresar_actividad" binary="true">
+        </p-checkbox>
+        <label>Ingresar</label>
+      </div>
+      <div class="ui-g-12 ui-md-12" *ngIf="visibleCampos.campoObserAdmin">
+        <label for="float-input">Observación Administrador: </label>
+        <textarea id="obserAdmin" [(ngModel)]="info.data.descripcion_Administrador" name="obserAdmin" rows="2" cols="82"
+          [(disabled)]="blockCampos.blockDescripcionAdmin" pInputTextarea></textarea>
+      </div>
       <div class="ui-g-12 ui-md-12">
         <label for="float-input">Observación abogado: </label>
-        <textarea id="dato" [(ngModel)]="info.data.descripcion_abogado" name="dato" rows="2" cols="63" pInputTextarea></textarea>
+        <textarea id="obserAbogado" [(ngModel)]="info.data.descripcion_abogado" name="obserAbogado" rows="2" cols="82"
+          [(disabled)]="blockCampos.blockDescripcionAbogado" pInputTextarea></textarea>
       </div>
       <div class="ui-g-12 ui-md-12">
         <label for="float-input">Observación cliente: </label>
-        <textarea id="dato" [(ngModel)]="info.data.descripcion_cliente" name="dato" rows="2" cols="63" pInputTextarea></textarea>
+        <textarea id="obserCliente" [(ngModel)]="info.data.descripcion_cliente" name="obserCliente" rows="2" cols="82"
+          [(disabled)]="blockCampos.blockDescripcionCliente" pInputTextarea></textarea>
       </div>
       <div class="ui-g-12 ui-md-12">
-        <label for="float-input">Descripción del evento: </label>
-        <textarea id="dato" [(ngModel)]="info.data.descripcion" name="dato" rows="2" cols="63" pInputTextarea disabled></textarea>
+        <label for="float-input">Descripción de la diligencia: </label>
+        <textarea id="descripDilig" [(ngModel)]="info.data.descripcion" name="descripDilig" rows="2" cols="82"
+          pInputTextarea disabled></textarea>
       </div>
     </div>
   </div>
   <div class="ui-dialog-buttonpane ui-helper-clearfix">
-    <button type="button" pButton icon="fa fa-close" (click)="exitForm()" label="Salir" class="ui-button-danger"></button>
-    <button type="button" pButton icon="fa fa-trash" (click)="deleteNodo()" label="Quitar nodo" class="ui-button-danger"></button>
-    <button type="button" pButton icon="fa fa-plus-square" (click)="addNodo()" label="Añadir nodo" class="ui-button-success"></button>
-    <button type="button" pButton icon="fa fa-save" (click)="updateNodo()" label="Guardar" [(disabled)]="activaBotonGuardarNodo"></button>
+    <button type="button" pButton icon="fa fa-close" (click)="exitForm()" label="Cancelar"
+      class="ui-button-danger"></button>
+    <button type="button" pButton icon="fa fa-trash" (click)="deleteNodo()" label="Quitar"
+      class="ui-button-danger"></button>
+    <button type="button" pButton icon="fa fa-plus-square" (click)="addNodo()" label="Añadir"
+      class="ui-button-success"></button>
+    <button type="button" pButton icon="fa fa-save" (click)="updateNodo()" label="Guardar"
+      [(disabled)]="activaBotonGuardarNodo"></button>
     <!-- <button type="button" pButton icon="fa fa-envelope" (click)="enviarMail()" label="Email"></button> -->
     <button type="button" pButton icon="fa fa-image" (click)="showFormImagenes()" label="Añadir imágenes"></button>
   </div>
 </p-dialog>
 
-<p-dialog header="MODIFICAR NODO" [(visible)]="showDialogHijos" [responsive]="true" showEffect="fade" [modal]="true"
-  [width]="575">
+<p-dialog header="MODIFICAR DILIGENCIA" [(visible)]="showDialogHijos" [responsive]="true" showEffect="fade"
+  [modal]="true" [width]="750">
   <div class="ui-g ui-fluid" *ngIf="node">
     <div class="ui-g ui-md">
-      <div class="ui-g-6 ui-md-6">
+      <div class="ui-g-4 ui-md-4">
         <label for="float-input">Fecha Inicio: *</label><br>
         <p-calendar id="fechaInicio" name="fechaInicio" [locale]="es" [(ngModel)]="fechaInicio" [showIcon]="true"
           [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
           [disabledDays]="[0,7]" readonlyInput="true" (onSelect)="validarFecha()"></p-calendar>
       </div>
-      <div class="ui-g-6 ui-md-6">
+      <div class="ui-g-4 ui-md-4">
         <label for="float-input">Fecha Fin: *</label>
         <p-calendar id="fechaFin" name="fechaFin" [locale]="es" [(ngModel)]="fechaFin" [showIcon]="true"
           [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
           [disabledDays]="[0,7]" readonlyInput="true" (onSelect)="validarFecha()"></p-calendar>
       </div>
-      <div class="ui-g-6 ui-md-6">
+      <div class="ui-g-4 ui-md-4">
         <label for="float-input">Descripción: *</label>
-        <input id="etiqueta" type="text" pInputText [(ngModel)]="info.label" name="etiqueta" class="form-control  input-sm">
+        <input id="etiqueta" type="text" pInputText [(ngModel)]="info.label" name="etiqueta"
+          class="form-control  input-sm">
       </div>
-      <div class="ui-g-6 ui-md-6">
-        <label for="float-input">Estado: *</label>
-        <p-dropdown id="estado" name="estado" [options]="listEstado" [(ngModel)]="selectEstado" optionLabel="estado"
-          [showClear]="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
-      </div>
-      <div class="ui-g-12">
+      <div class="ui-g-4 ui-md-4">
         <label for="float-input">Abogado: *</label>
         <p-dropdown id="abogado" name="abogado" [options]="listAbogado" [(ngModel)]="selectAbogado" optionLabel="nombre"
           [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
       </div>
+      <div class="ui-g-4 ui-md-4">
+        <label for="float-input">Estado: *</label>
+        <p-dropdown id="estado" name="estado" [options]="listEstado" [(ngModel)]="selectEstado" optionLabel="estado"
+          [showClear]="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
+      </div>
+      <div class="ui-g-2 ui-md-2">
+        <label for="float-input">Hora inicio: *</label>
+        <p-dropdown id="horaInicio" name="horaInicio" [options]="listHoras" [(ngModel)]="selectHoraIni"
+          optionLabel="hora" [showClear]="true" [style]="{'width':'100%'}" scrollHeight="200px"></p-dropdown>
+      </div>
+      <div class="ui-g-2 ui-md-2">
+        <label for="float-input">Ing. Actividad: </label>
+        <p-checkbox id="ingAct" name="ingAct" [(ngModel)]="info.data.ingresar_actividad" binary="true">
+        </p-checkbox>
+        <label>Ingresar</label>
+      </div>
+      <div class="ui-g-12 ui-md-12" *ngIf="visibleCampos.campoObserAdmin">
+        <label for="float-input">Observación Administrador: </label>
+        <textarea id="obserAdmin" [(ngModel)]="info.data.descripcion_Administrador" name="obserAdmin" rows="2" cols="82"
+          [(disabled)]="blockCampos.blockDescripcionAdmin" pInputTextarea></textarea>
+      </div>
       <div class="ui-g-12 ui-md-12">
         <label>Observación abogado: </label>
-        <textarea id="dato" [(ngModel)]="info.data.descripcion_abogado" name="dato" rows="2" cols="63"></textarea>
+        <textarea id="obserAbogado" [(ngModel)]="info.data.descripcion_abogado" name="obserAbogado" rows="2" cols="82"
+          [(disabled)]="blockCampos.blockDescripcionAbogado" pInputTextarea></textarea>
       </div>
       <div class="ui-g-12 ui-md-12">
         <label>Observación cliente: </label>
-        <textarea id="dato" [(ngModel)]="info.data.descripcion_cliente" name="dato" rows="2" cols="63"></textarea>
+        <textarea id="obserCliente" [(ngModel)]="info.data.descripcion_cliente" name="obserCliente" rows="2" cols="82"
+          [(disabled)]="blockCampos.blockDescripcionCliente" pInputTextarea></textarea>
       </div>
       <div class="ui-g-12 ui-md-12">
-        <label for="float-input">Descripción del evento: </label>
-        <textarea id="dato" [(ngModel)]="info.data.descripcion" name="dato" rows="2" cols="63" pInputTextarea disabled></textarea>
+        <label for="float-input">Descripción de la diligencia: </label>
+        <textarea id="descripDilig" [(ngModel)]="info.data.descripcion" name="descripDilig" rows="2" cols="82"
+          pInputTextarea disabled></textarea>
       </div>
     </div>
   </div>
   <div class="ui-dialog-buttonpane ui-helper-clearfix">
 
-    <button type="button" pButton icon="fa fa-close" (click)="exitForm()" label="Salir" class="ui-button-danger"></button>
-    <button type="button" pButton icon="fa fa-trash" (click)="deleteNodo()" label="Quitar nodo" class="ui-button-danger"></button>
-    <button type="button" pButton icon="fa fa-plus-square" (click)="addNodo()" label="Añadir nodo" class="ui-button-success"></button>
-    <button type="button" pButton icon="fa fa-save" (click)="updateNodo()" label="Guardar" [(disabled)]="activaBotonGuardarNodo"></button>
+    <button type="button" pButton icon="fa fa-close" (click)="exitForm()" label="Cancelar"
+      class="ui-button-danger"></button>
+    <button type="button" pButton icon="fa fa-trash" (click)="deleteNodo()" label="Quitar"
+      class="ui-button-danger"></button>
+    <button type="button" pButton icon="fa fa-plus-square" (click)="addNodo()" label="Añadir"
+      class="ui-button-success"></button>
+    <button type="button" pButton icon="fa fa-save" (click)="updateNodo()" label="Guardar"
+      [(disabled)]="activaBotonGuardarNodo"></button>
     <!-- <button type="button" pButton icon="fa fa-envelope" (click)="enviarMail()" label="Email"></button> -->
     <button type="button" pButton icon="fa fa-image" (click)="showFormImagenes()" label="Añadir imágenes"></button>
   </div>
@@ -241,14 +290,14 @@
         <img [(src)]="urlImagen3" style="width: 100px; height: 75px;" (click)="showImgen(urlImagen3)">
       </div>
       <div class="ui-g-9">
-        <input type="file" #Image3 pButton (change)="cargaImagen($event.target.files,3)" style="width: 155px;" label="Añadir"
-          value="Añadir">
+        <input type="file" #Image3 pButton (change)="cargaImagen($event.target.files,3)" style="width: 155px;"
+          label="Añadir" value="Añadir">
       </div>
     </div>
   </form>
 
   <button pButton type="button" (click)="saveImagen()" label="Guardar imágenes"></button>
-  <button pButton type="button" (click)="exitImagenes()" label="Salir" class="ui-button-danger"></button>
+  <button pButton type="button" (click)="exitImagenes()" label="Cancelar" class="ui-button-danger"></button>
 </p-dialog>
 
 <p-dialog header="IMAGEN" [(visible)]="showImagen" [responsive]="true" showEffect="fade" [modal]="true" [width]="600">

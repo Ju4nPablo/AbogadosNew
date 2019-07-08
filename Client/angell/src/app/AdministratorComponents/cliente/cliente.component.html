@@ -3,17 +3,17 @@
   <p-panel header="LISTA CLIENTES">
     <p>
       <b>Nota:</b> Click en un registro para modificar.</p>
-    <p-table #dt [columns]="cols" [value]="listaCliente" selectionMode="single" [responsive]="true" [(selection)]="selectCliente"
-      (onRowSelect)="onRowSelect($event)" [paginator]="true" [rows]="10">
+    <p-table #dt [columns]="cols" [value]="listaCliente" selectionMode="single" [responsive]="true"
+      [(selection)]="selectCliente" (onRowSelect)="onRowSelect($event)" [paginator]="true" [rows]="10">
       <ng-template pTemplate="caption">
         <div class="ui-g">
           <div class="ui-g-6" style="text-align:left">
-            <button type="button" pButton icon="fa fa-plus" (click)="showDialogAdd()" label="Añadir"></button>
+            <button type="button" pButton icon="fa fa-plus" (click)="showDialogAdd()" label="Añadir Cliente"></button>
           </div>
           <div class="ui-g-6" style="text-align: right">
             <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-            <input type="text" pInputText size="50" placeholder="Buscar" (input)="dt.filterGlobal($event.target.value, 'contains')"
-              style="width:auto">
+            <input type="text" pInputText size="50" placeholder="Buscar"
+              (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
           </div>
         </div>
       </ng-template>
@@ -56,37 +56,40 @@
           <div class="ui-g-4">
             <span class="ui-float-label">
               <input id="cedula" type="text" pInputText id="cedula" [(ngModel)]="cliente.cedula" name="cedula"
-                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10" (ngModelChange)="verificaCedula()"
-                class="form-control  input-sm">
+                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"
+                (ngModelChange)="verificaCedula()" class="form-control  input-sm">
               <label for="float-input">Cédula: *</label>
             </span>
           </div>
           <div class="ui-g-4">
             <span class="ui-float-label">
               <input pInputText type="text" id="numCarpeta" [(ngModel)]="cliente.numeroCarpeta" name="numCarpeta"
-                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10" (ngModelChange)="verificaNumeroCarpeta()">
+                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"
+                (ngModelChange)="verificaNumeroCarpeta()">
               <label for="float-input">Número carpeta: *</label>
             </span>
           </div>
           <div class="ui-g-8">
             <span class="ui-float-label">
-              <input pInputText type="text" id="nombre" [(ngModel)]="cliente.nombre" name="nombre" onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
-              event.charCode === 241 || event.charCode === 32 || event.charCode === 209 || event.charCode >= 65 && event.charCode <= 90'
-                maxlength="50" (ngModelChange)="verificaNombres()" class="form-control  input-sm">
+              <input pInputText type="text" id="nombre" [(ngModel)]="cliente.nombre" name="nombre"
+                onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
+              event.charCode === 241 || event.charCode === 32 || event.charCode === 209 || event.charCode >= 65 && event.charCode <= 90' maxlength="50" (ngModelChange)="verificaNombres()"
+                class="form-control  input-sm">
               <label for="float-input">Nombres: *</label>
             </span>
           </div>
           <div class="ui-g-8">
             <span class="ui-float-label">
-              <input pInputText type="text" id="telefono" [(ngModel)]="cliente.telefono" name="telefono" onkeypress='return event.charCode >= 48 && event.charCode <= 57'
-                maxlength="10" (ngModelChange)="verificaTelefono()" class="form-control  input-sm">
+              <input pInputText type="text" id="telefono" [(ngModel)]="cliente.telefono" name="telefono"
+                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"
+                (ngModelChange)="verificaTelefono()" class="form-control  input-sm">
               <label for="float-input">Teléfono: *</label>
             </span>
           </div>
           <div class="ui-g-8">
             <span class="ui-float-label">
-              <input pInputText type="text" id="mail" [(ngModel)]="cliente.mail" name="mail" (ngModelChange)="verificaEmail()"
-                class="form-control  input-sm">
+              <input pInputText type="text" id="mail" [(ngModel)]="cliente.mail" name="mail"
+                (ngModelChange)="verificaEmail()" class="form-control  input-sm">
               <label for="float-input">Email: *</label>
             </span>
           </div>
@@ -102,7 +105,8 @@
               <label for="color">Sexo: *</label>
             </div>
             <div class="ui-g-3">
-              <p-inputSwitch pInputText id="sexo" [(ngModel)]="selectSexo" name="sexo" onLabel="Hombre" offLabel="Mujer"></p-inputSwitch>
+              <p-inputSwitch pInputText id="sexo" [(ngModel)]="selectSexo" name="sexo" onLabel="Hombre"
+                offLabel="Mujer"></p-inputSwitch>
             </div>
           </div>
         </div>
@@ -110,14 +114,16 @@
       </div>
       <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix">
-          <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar" class="ui-button-danger"></button>
-          <button type="button" pButton icon="fa fa-check" (click)="addCliente()" label="Guardar"></button>
+          <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar"
+            class="ui-button-danger" [disabled]="blockBotones.cancelar"></button>
+          <button type="button" pButton icon="fa fa-save" (click)="addCliente()" label="Guardar"
+            [disabled]="blockBotones.guardar"></button>
         </div>
       </p-footer>
     </p-dialog>
 
-    <p-dialog header="MODIFICAR CLIENTE" [(visible)]="showDialogMod" [responsive]="true" showEffect="fade" [modal]="true"
-      [width]="800">
+    <p-dialog header="MODIFICAR CLIENTE" [(visible)]="showDialogMod" [responsive]="true" showEffect="fade"
+      [modal]="true" [width]="800">
       <div class="ui-g ui-fluid" *ngIf="selectCliente">
         <div class="ui-g-12">
           <form #imagenForm=ngForm>
@@ -134,14 +140,16 @@
           <div class="ui-g-4">
             <span class="ui-float-label">
               <input pInputText type="text" id="cedulaMod" [(ngModel)]="selectCliente.cedula" name="cedulaMod"
-                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10" (ngModelChange)="verificaCedula()">
+                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"
+                (ngModelChange)="verificaCedula()">
               <label for="float-input">Cédula: *</label>
             </span>
           </div>
           <div class="ui-g-4">
             <span class="ui-float-label">
-              <input pInputText type="text" id="numCarpetaMod" [(ngModel)]="selectCliente.numeroCarpeta" name="numCarpetaMod"
-                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10" (ngModelChange)="verificaNumeroCarpeta()">
+              <input pInputText type="text" id="numCarpetaMod" [(ngModel)]="selectCliente.numeroCarpeta"
+                name="numCarpetaMod" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"
+                (ngModelChange)="verificaNumeroCarpeta()">
               <label for="float-input">Numero carpeta: *</label>
             </span>
           </div>
@@ -157,7 +165,8 @@
           <div class="ui-g-8">
             <span class="ui-float-label">
               <input pInputText type="text" id="telefonoMod" [(ngModel)]="selectCliente.telefono" name="telefonoMod"
-                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10" (ngModelChange)="verificaTelefono()">
+                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"
+                (ngModelChange)="verificaTelefono()">
               <label for="float-input">Teléfono: *</label>
             </span>
           </div>
@@ -180,7 +189,8 @@
               <label for="color">Sexo: *</label>
             </div>
             <div class="ui-g-4">
-              <p-inputSwitch pInputText id="sexoMod" [(ngModel)]="selectSexo" name="sexoMod" onLabel="Hombre" offLabel="Mujer"></p-inputSwitch>
+              <p-inputSwitch pInputText id="sexoMod" [(ngModel)]="selectSexo" name="sexoMod" onLabel="Hombre"
+                offLabel="Mujer"></p-inputSwitch>
             </div>
           </div>
           <div class="ui-g-4">
@@ -196,8 +206,10 @@
       </div>
       <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix">
-          <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar" class="ui-button-danger"></button>
-          <button type="button" pButton icon="fa fa-check" (click)="updateCliente()" label="Modificar"></button>
+          <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar"
+            class="ui-button-danger" [disabled]="blockBotones.cancelar"></button>
+          <button type="button" pButton icon="fa fa-save" (click)="updateCliente()" label="Guardar"
+            [disabled]="blockBotones.guardar"></button>
         </div>
       </p-footer>
     </p-dialog>

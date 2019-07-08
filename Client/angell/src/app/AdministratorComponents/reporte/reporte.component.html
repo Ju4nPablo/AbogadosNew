@@ -50,7 +50,7 @@
         </span>
       </div>
     </div>
-    <button pButton type="button" icon="pi pi-search" label="Generar" class="ui-button-success"
+    <button pButton type="button" icon="fa fa-search" label="Generar" class="ui-button-success"
       (click)="generar()"></button>
   </p-panel>
 </form>
@@ -76,10 +76,10 @@
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr [pSelectableRow]="rowData">
           <td>{{rowData.label}}</td>
-          <td>{{rowData.data.abogado.nombre}}</td>
-          <td>{{rowData.data.cliente.nombre}}</td>
-          <td>{{rowData.data.estado.estado}}</td>
-          <td>{{rowData.data.fecha_inicio}}</td>
+          <td>{{rowData.abogado}}</td>
+          <td>{{rowData.cliente}}</td>
+          <td>{{rowData.estado}}</td>
+          <td>{{rowData.fecha}}</td>
           <!-- <td>{{rowData.data.estado.fechaFin}}</td> -->
         </tr>
       </ng-template>

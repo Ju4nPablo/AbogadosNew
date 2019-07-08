@@ -16,7 +16,7 @@ routeExample.register(router, '/caso'); //nombre ruta para acceder por web
 // Todos los casos 
 router.get('/getAllCasos', function (req, res) {
     var resultArray = [];
-    MongoClient.connect(url, function (err, db) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("angell");
         var casos = dbo.collection("casos").find();
@@ -36,7 +36,7 @@ router.get('/getAllCasos', function (req, res) {
 // Todos los casos entre fechas
 router.post('/getAllCasosFechas', function (req, res) {
     var resultArray = [];
-    MongoClient.connect(url, function (err, db) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("angell");
         var casos = dbo.collection("casos").find();
@@ -62,18 +62,14 @@ router.post('/getAllCasosFechas', function (req, res) {
 // casos pendientes 
 router.get('/getAllCasosPendientes', function (req, res) {
     var resultArray = [];
-    MongoClient.connect(url, function (err, db) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("angell");
-        var casos = dbo.collection("casos").find();
+        var casos = dbo.collection("casos").find({ 'data.estado.id': { $in: ["1", "2", '4'] } });
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.estado.id == '1') {
-                list = doc.data.fecha_inicio.split('T');
-                doc.data.fecha_inicio = list[0];
-                resultArray.push(doc);
-            }
+            resultArray.push(doc);
         }, function () {
             db.close();
             res.send(resultArray);
@@ -84,18 +80,14 @@ router.get('/getAllCasosPendientes', function (req, res) {
 // todos los casos por abogado
 router.post('/getAllCasosPorAbogado', function (req, res) {
     var resultArray = [];
-    MongoClient.connect(url, function (err, db) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("angell");
-        var casos = dbo.collection("casos").find();
+        var casos = dbo.collection("casos").find({ 'data.abogado.id': req.body.idAbogado });
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.abogado.id == req.body.idAbogado) {
-                list = doc.data.fecha_inicio.split('T');
-                doc.data.fecha_inicio = list[0];
-                resultArray.push(doc);
-            }
+            resultArray.push(doc);
         }, function () {
             db.close();
             res.send(resultArray);
@@ -106,18 +98,14 @@ router.post('/getAllCasosPorAbogado', function (req, res) {
 // todos los casos por abogado y estado
 router.post('/getAllCasosPorAbogadoEstado', function (req, res) {
     var resultArray = [];
-    MongoClient.connect(url, function (err, db) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("angell");
-        var casos = dbo.collection("casos").find();
+        var casos = dbo.collection("casos").find({ 'data.abogado.id': req.body.idAbogado, 'data.estado.id': req.body.idEstado });
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.abogado.id == req.body.idAbogado && doc.data.estado.id == req.body.idEstado) {
-                list = doc.data.fecha_inicio.split('T');
-                doc.data.fecha_inicio = list[0];
-                resultArray.push(doc);
-            }
+            resultArray.push(doc);
         }, function () {
             db.close();
             res.send(resultArray);
@@ -128,18 +116,14 @@ router.post('/getAllCasosPorAbogadoEstado', function (req, res) {
 // Todos los casos de Cliente.
 router.post('/getAllCasosPorCliente', function (req, res) {
     var resultArray = [];
-    MongoClient.connect(url, function (err, db) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("angell");
-        var casos = dbo.collection("casos").find();
+        var casos = dbo.collection("casos").find({ 'data.cliente.id': req.body.idCliente });
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.cliente.id == req.body.idCliente) {
-                list = doc.data.fecha_inicio.split('T');
-                doc.data.fecha_inicio = list[0];
-                resultArray.push(doc);
-            }
+            resultArray.push(doc);
         }, function () {
             db.close();
             res.send(resultArray);
@@ -150,18 +134,14 @@ router.post('/getAllCasosPorCliente', function (req, res) {
 // Todos los casos de Cliente y estado.
 router.post('/getAllCasosPorClienteEstado', function (req, res) {
     var resultArray = [];
-    MongoClient.connect(url, function (err, db) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("angell");
-        var casos = dbo.collection("casos").find();
+        var casos = dbo.collection("casos").find({ 'data.cliente.id': req.body.idCliente, 'data.estado.id': req.body.idEstado });
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.cliente.id == req.body.idCliente && doc.data.estado.id == req.body.idEstado) {
-                list = doc.data.fecha_inicio.split('T');
-                doc.data.fecha_inicio = list[0];
-                resultArray.push(doc);
-            }
+            resultArray.push(doc);
         }, function () {
             db.close();
             res.send(resultArray);
@@ -172,18 +152,14 @@ router.post('/getAllCasosPorClienteEstado', function (req, res) {
 // consulta por estado
 router.post('/getAllCasosPorEstado', function (req, res) {
     var resultArray = [];
-    MongoClient.connect(url, function (err, db) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("angell");
-        var casos = dbo.collection("casos").find();
+        var casos = dbo.collection("casos").find({ 'data.estado.id': req.body.id });
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.estado.id == req.body.id) {
-                list = doc.data.fecha_inicio.split('T');
-                doc.data.fecha_inicio = list[0];
-                resultArray.push(doc);
-            }
+            resultArray.push(doc);
         }, function () {
             db.close();
             res.send(resultArray);
@@ -194,18 +170,14 @@ router.post('/getAllCasosPorEstado', function (req, res) {
 // consulta por abogado y cliente
 router.post('/getAllCasosAbogadoCliente', function (req, res) {
     var resultArray = [];
-    MongoClient.connect(url, function (err, db) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("angell");
-        var casos = dbo.collection("casos").find();
+        var casos = dbo.collection("casos").find({ 'data.cliente.id': req.body.idCliente, 'data.abogado.id': req.body.idAbogado });
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.cliente.id == req.body.idCliente && doc.data.abogado.id == req.body.idAbogado) {
-                list = doc.data.fecha_inicio.split('T');
-                doc.data.fecha_inicio = list[0];
-                resultArray.push(doc);
-            }
+            resultArray.push(doc);
         }, function () {
             db.close();
             res.send(resultArray);
@@ -216,18 +188,14 @@ router.post('/getAllCasosAbogadoCliente', function (req, res) {
 // consulta por abogado, cliente y estado
 router.post('/getAllCasosAbogadoClienteEstado', function (req, res) {
     var resultArray = [];
-    MongoClient.connect(url, function (err, db) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("angell");
-        var casos = dbo.collection("casos").find();
+        var casos = dbo.collection("casos").find({ 'data.abogado.id': req.body.idAbogado, 'data.cliente.id': req.body.idAbogado, 'data.estado.id': req.body.idEstado });
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.cliente.id == req.body.idCliente && doc.data.abogado.id == req.body.idAbogado && doc.data.estado.id == req.body.idEstado) {
-                list = doc.data.fecha_inicio.split('T');
-                doc.data.fecha_inicio = list[0];
-                resultArray.push(doc);
-            }
+            resultArray.push(doc);
         }, function () {
             db.close();
             res.send(resultArray);
@@ -239,7 +207,7 @@ router.post('/getAllCasosAbogadoClienteEstado', function (req, res) {
 // consulta por abogado, cliente y fechas
 router.post('/getAllCasosAbogadoClienteFecha', function (req, res) {
     var resultArray = [];
-    MongoClient.connect(url, function (err, db) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("angell");
         var casos = dbo.collection("casos").find();
@@ -264,7 +232,7 @@ router.post('/getAllCasosAbogadoClienteFecha', function (req, res) {
 // consulta por abogado, cliente, estado y fechas
 router.post('/getAllCasosAbogadoClienteEstadoFecha', function (req, res) {
     var resultArray = [];
-    MongoClient.connect(url, function (err, db) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("angell");
         var casos = dbo.collection("casos").find();
@@ -290,7 +258,7 @@ router.post('/getAllCasosAbogadoClienteEstadoFecha', function (req, res) {
 // consulta todos los casos pendientes del cliente
 router.post('/getAllCasoClientePendiente', function (req, res) {
     var resultArray = [];
-    MongoClient.connect(url, function (err, db) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("angell");
         var casos = dbo.collection("casos").find();
@@ -312,18 +280,14 @@ router.post('/getAllCasoClientePendiente', function (req, res) {
 // consulta todos los casos pendientes del abogado.
 router.post('/getAllCasoAbogadoPendiente', function (req, res) {
     var resultArray = [];
-    MongoClient.connect(url, function (err, db) {
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("angell");
-        var casos = dbo.collection("casos").find();
+        var casos = dbo.collection("casos").find({ 'data.abogado.cedula': req.body.cedula, 'data.estado.id': '1' });
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.abogado.cedula == req.body.cedula && doc.data.estado.id == '1') {
-                list = doc.data.fecha_inicio.split('T');
-                doc.data.fecha_inicio = list[0];
-                resultArray.push(doc);
-            }
+            resultArray.push(doc);
         }, function () {
             db.close();
             res.send(resultArray);

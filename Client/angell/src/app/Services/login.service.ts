@@ -15,7 +15,7 @@ export class LoginService {
     this.url = GLOBAL.urlLogin;
 
   }
-
+  
   login(user: User) {
     const headers = new Headers({ 'Content-Type': 'application/json' });
     return this.http.post(this.url, user, { headers: headers }).map(res => res.json());

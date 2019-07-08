@@ -4,12 +4,11 @@
     <p>
       <b>Nota:</b> Click en un registro para modificar.</p>
     <p-table #dt [columns]="cols" [value]="listaAbogado" selectionMode="single" [responsive]="true"
-      [(selection)]="selectAbogado" (onRowSelect)="onRowSelect($event)" [paginator]="true"
-      [rows]="10">
+      [(selection)]="selectAbogado" (onRowSelect)="onRowSelect($event)" [paginator]="true" [rows]="10">
       <ng-template pTemplate="caption">
         <div class="ui-g">
           <div class="ui-g-6" style="text-align:left">
-            <button type="button" pButton icon="fa fa-plus" (click)="showDialogAdd()" label="Añadir"></button>
+            <button type="button" pButton icon="fa fa-plus" (click)="showDialogAdd()" label="Añadir Abogado"></button>
           </div>
           <div class="ui-g-6" style="text-align: right">
             <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
@@ -109,8 +108,9 @@
       <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix">
           <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar"
-            class="ui-button-danger"></button>
-          <button type="button" pButton icon="fa fa-check" (click)="addAbogado()" label="Guardar"></button>
+            class="ui-button-danger" [disabled]="blockBotones.cancelar"></button>
+          <button type="button" pButton icon="fa fa-save" (click)="addAbogado()" label="Guardar"
+            [disabled]="blockBotones.guardar"></button>
         </div>
       </p-footer>
     </p-dialog>
@@ -192,8 +192,9 @@
       <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix">
           <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar"
-            class="ui-button-danger"></button>
-          <button type="button" pButton icon="fa fa-check" (click)="updateAbogado()" label="Modificar"></button>
+            class="ui-button-danger" [disabled]="blockBotones.cancelar"></button>
+          <button type="button" pButton icon="fa fa-save" (click)="updateAbogado()" label="Guardar"
+            [disabled]="blockBotones.guardar"></button>
         </div>
       </p-footer>
     </p-dialog>

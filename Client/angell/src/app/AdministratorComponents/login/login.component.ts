@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../../Models/User';
 import { LoginService } from '../../Services/login.service';
+import { LogCambiosService } from '../../Services/log-Cambios/log-cambios.service';
 import { consoleTestResultHandler } from 'tslint/lib/test';
 import { Message } from 'primeng/components/common/api';
 import { MessageService } from 'primeng/components/common/messageservice';
@@ -21,6 +22,7 @@ export class LoginComponent implements OnInit {
     // private _route: ActivatedRouter,
     private router: Router,
     private _serviceLogin: LoginService,
+    private _servicioLogCambios: LogCambiosService,
     private messageService: MessageService
   ) {
     // this.title='Login'
@@ -35,7 +37,19 @@ export class LoginComponent implements OnInit {
       this._serviceLogin.login(this.user).subscribe(response => {
         if (response.user._id) {
           localStorage.setItem('userLogin', JSON.stringify(response.user));
-          this.messageService.add({ severity: 'success', summary: 'Ingreso Correcto', detail: 'Bienvenido' });
+          // this.messageService.add({ severity: 'success', summary: 'Ingreso Correcto', detail: 'Bienvenido' });
+          const log = {
+            usuario: response.user.user_name,
+            cedula: response.user.cedula,
+            fecha: new Date(),
+            transaccion: 'LOGIN-CORRECTO',
+            cambio_json: {
+              mensaje: 'Ingreso correcto!',
+              data: response
+            }
+          }
+          this._servicioLogCambios.addLogCambio(log).subscribe(data => {
+          });
           if (response.user.tipo === '1') {
             this.router.navigateByUrl('/dashboard/actividadExtra');
           } else {
@@ -63,6 +77,18 @@ export class LoginComponent implements OnInit {
             this.messageService.add({
               severity: 'error', summary: 'ERROR AL INGRESAR',
               detail: 'Usuario o contraseña INCORRECTOS'
+            });
+            const log = {
+              usuario: this.user.user_name,
+              cedula: '',
+              fecha: new Date(),
+              transaccion: 'ERROR-LOGIN',
+              cambio_json: {
+                mensaje: 'Usuario o contraseña INCORRECTOS',
+                data: error
+              }
+            }
+            this._servicioLogCambios.addLogCambio(log).subscribe(data => {
             });
           }
         } else {

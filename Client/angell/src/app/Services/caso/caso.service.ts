@@ -26,6 +26,12 @@ export class CasoService {
     return this.http.put(this.url + 'caso/' + caso._id, caso, { headers });
   }
 
+  allCasoGraficos() {
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    return this.http.get(this.url + 'caso/', { headers });
+  }
+
   allCaso() {
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');

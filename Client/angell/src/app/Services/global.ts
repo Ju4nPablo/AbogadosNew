@@ -2,8 +2,8 @@
  * Created by xaipo on 4/9/2018.
  */
 export const GLOBAL = {
-    // url: 'http://178.128.194.111:3000/api/',
+    // url: 'http://142.93.57.213:3000/api/',
     url: 'http://localhost:3000/api/',
-    // urlLogin: 'http://178.128.194.111:3000/api/login'
+    // urlLogin: 'http://142.93.57.213:3000/api/login'
     urlLogin: 'http://localhost:3000/api/login'
 };

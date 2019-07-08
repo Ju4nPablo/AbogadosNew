@@ -37,6 +37,24 @@ export class ActividadExtraService {
     return this.http.get(this.url + 'actividad_extra', { headers });
   }
 
+  listActividadExtraPorCedula(abogado) {
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    return this.http.post(this.url + 'getAllActividadesPorCedula', abogado, { headers });
+  }
+
+  listActividadExtraPorCedulaUsuario(user) {
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    return this.http.post(this.url + 'getAllActividadesPorCedulaUsuario', user, { headers });
+  }
+
+  listActividadExtraPorUsuario(user) {
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    return this.http.post(this.url + 'getAllActividadesPorUsuario', user, { headers });
+  }
+
   urlAcceso() {
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
@@ -53,6 +71,12 @@ export class ActividadExtraService {
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     return this.http.post(this.url + 'deleteActividad', actividadExtra, { headers });
+  }
+
+  deleteActividadExtraIdEstado(actividadExtra) {
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    return this.http.post(this.url + 'deleteActividadEstado', actividadExtra, { headers });
   }
 
 }

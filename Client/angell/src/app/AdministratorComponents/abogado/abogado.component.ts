@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { AbogadoService } from '../../Services/abogado/abogado.service';
 import { ValidacioneService } from '../../Services/validaciones/validacione.service';
 import { NotificacionesService } from '../../Services/notificaciones/notificaciones.service';
+import { LogCambiosService } from '../../Services/log-Cambios/log-cambios.service';
+import { Router } from '@angular/router';
+import { BotonesService } from '../../Services/botones/botones.service';
 
 @Component({
   selector: 'app-abogado',
@@ -38,7 +41,7 @@ export class AbogadoComponent implements OnInit {
     ban4: '0',
     ban5: '0'
   };
-
+  logAbogado: any = {};
   fileImagen: File = null;
   listaAbogado: any[];
   selectSexo: any = '';
@@ -49,13 +52,17 @@ export class AbogadoComponent implements OnInit {
   urlImagen: any = 'assets/perfil.png';
   uploadedFiles: any;
   totalRecords: number;
+  blockBotones: any = {};
   //#endregion
 
   //#region CONSTRUCTOR
   constructor(
     public abogadoService: AbogadoService,
     public validarService: ValidacioneService,
-    public notifyService: NotificacionesService
+    public notifyService: NotificacionesService,
+    private _servicioLogCambios: LogCambiosService,
+    private router: Router,
+    private _serviceBotones: BotonesService,
   ) {
     this.inicio();
   }
@@ -63,6 +70,11 @@ export class AbogadoComponent implements OnInit {
 
   //#region INICIO DE VARIABLES
   inicio() {
+    this.blockBotones = this._serviceBotones.blockBotonesGene;
+    const user = JSON.parse(localStorage.getItem('userLogin'));
+    if (user.tipo !== '1') {
+      this.router.navigateByUrl('/dashboard/caso');
+    }
     this.totalRecords = 0;
     // this.cols = [];
     this.abogado = {
@@ -137,6 +149,7 @@ export class AbogadoComponent implements OnInit {
   //#region INGRESO Y MODIFICACION
   // Añadir un abogado
   addAbogado() {
+    this.blockBotones = this._serviceBotones.disabledBotonesGene;
     if (this.bandera.ban1 === '1' && this.bandera.ban2 === '1' && this.bandera.ban3 === '1' && this.bandera.ban4 === '1' &&
       this.bandera.ban5 === '1') {
       this.abogado.foto = this.urlImagen;
@@ -145,20 +158,64 @@ export class AbogadoComponent implements OnInit {
       } else {
         this.abogado.sexo = '1';
       }
-      this.abogadoService.addAbogado(this.abogado).subscribe(dat => {
+      this.abogadoService.addAbogado(this.abogado).subscribe(data => {
+        this.blockBotones = this._serviceBotones.blockBotonesGene;
         this.showDialog = false;
+        const log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ADD-ABOGADO',
+          cambio_json: {
+            mensaje: 'Ingreso existoso!',
+            data: data
+          }
+        }
+        this._servicioLogCambios.addLogCambio(log).subscribe();
         this.inicio();
-
         this.notifyService.notify('success', 'Exito', 'Ingreso existoso!');
       }, err => {
-        this.notifyService.notify('error', 'ERROR', 'Abogado ya existe!');
+        this.blockBotones = this._serviceBotones.blockBotonesGene;
+        let abogadoLog = {
+          respuestaBDD: err,
+          data: this.abogado
+        };
+        if (err.status !== 0) {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-ADD-ABOGADO',
+            cambio_json: {
+              mensaje: 'Abogado ya existe!',
+              data: abogadoLog
+            }
+          };
+          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'Abogado ya existe!');
+        } else {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-ADD-ABOGADO',
+            cambio_json: {
+              mensaje: 'ERROR DE CONEXIÓN!',
+              data: abogadoLog
+            }
+          }
+          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
+        };
       });
     } else {
+      this.blockBotones = this._serviceBotones.blockBotonesGene;
       this.notifyService.notify('error', 'ERROR', 'Revise Campos!');
     }
   }
   // Modificar un abogado
   updateAbogado() {
+    this.blockBotones = this._serviceBotones.disabledBotonesGene;
     if (this.bandera.ban1 === '1' && this.bandera.ban2 === '1' && this.bandera.ban3 === '1' && this.bandera.ban4 === '1' &&
       this.bandera.ban5 === '1') {
       this.selectAbogado.foto = this.urlImagen;
@@ -173,13 +230,69 @@ export class AbogadoComponent implements OnInit {
         this.selectAbogado.estado = '1';
       }
       this.abogadoService.updateAbogado(this.selectAbogado).subscribe(data => {
+        this.blockBotones = this._serviceBotones.blockBotonesGene;
         this.showDialogMod = false;
+        let abogadoLog = {
+          respuestaBDD: data,
+          data: this.selectAbogado
+        }
+        const log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'UPDATE-ABOGADO',
+          cambio_json: {
+            mensaje: 'Modificación existosa!',
+            data: abogadoLog
+          }
+        }
+        this._servicioLogCambios.addLogCambio(log).subscribe();
         this.inicio();
+        this.logAbogado = {};
         this.notifyService.notify('success', 'Exito', 'Modificación existosa!');
       }, err => {
+        this.blockBotones = this._serviceBotones.blockBotonesGene;
+        let abogadoLog = {
+          respuestaBDD: err,
+          data: this.abogado
+        }
+        const log = {
+
+        }
+        this._servicioLogCambios.addLogCambio(log).subscribe();
         this.notifyService.notify('error', 'ERROR', 'Abogado ya existe!');
+
+        if (err.status !== 0) {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-UPDATE-ABOGADO',
+            cambio_json: {
+              mensaje: 'Abogado-cedula ya existe!',
+              data: abogadoLog
+            }
+          };
+          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'Abogado ya existe!');
+        } else {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-UPDATE-ABOGADO',
+            cambio_json: {
+              mensaje: 'ERROR DE CONEXIÓN!',
+              data: abogadoLog
+            }
+          }
+          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
+        };
+
       });
     } else {
+      this.blockBotones = this._serviceBotones.blockBotonesGene;
       this.notifyService.notify('error', 'ERROR', 'Revise campos!');
     }
   }
@@ -281,6 +394,7 @@ export class AbogadoComponent implements OnInit {
       ban5: '1'
     };
     this.selectAbogado = event.data;
+    this.logAbogado = event.data;
     this.urlImagen = event.data.foto;
     if (event.data.sexo === 'Hombre') {
       this.selectSexo = true;

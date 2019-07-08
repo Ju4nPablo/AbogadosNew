@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ClienteService } from '../../Services/cliente/cliente.service';
 import { ValidacioneService } from '../../Services/validaciones/validacione.service';
 import { NotificacionesService } from '../../Services/notificaciones/notificaciones.service';
+import { LogCambiosService } from '../../Services/log-Cambios/log-cambios.service';
+import { Router } from '@angular/router';
+import { BotonesService } from '../../Services/botones/botones.service';
 
 @Component({
   selector: 'app-cliente',
@@ -50,13 +53,17 @@ export class ClienteComponent implements OnInit {
   showDialogMod: boolean;
   urlImagen: any = 'assets/perfil.png';
   uploadedFiles: any;
+  blockBotones: any = {};
   //#endregion
 
   //#region CONSTRUCTOR
   constructor(
     public clienteService: ClienteService,
     public validarService: ValidacioneService,
-    public notifyService: NotificacionesService
+    public notifyService: NotificacionesService,
+    private _servicioLogCambios: LogCambiosService,
+    private router: Router,
+    private _serviceBotones: BotonesService,
   ) {
     this.cols = [];
     this.inicio();
@@ -65,6 +72,12 @@ export class ClienteComponent implements OnInit {
 
   //#region INICIALIZAR VARIABLES
   inicio() {
+    this.blockBotones = this._serviceBotones.blockBotonesGene;
+    const user = JSON.parse(localStorage.getItem('userLogin'));
+    if (user.tipo !== '1') {
+      this.router.navigateByUrl('/dashboard/caso');
+    }
+
     this.inicializarCampos();
     this.bandera = {
       ban1: '0',
@@ -119,6 +132,7 @@ export class ClienteComponent implements OnInit {
   //#region INGRESO Y MADIFICAR CLIENTE
   // Añadir un cliente
   addCliente() {
+    this.blockBotones = this._serviceBotones.disabledBotonesGene;
     if (this.bandera.ban1 === '1' && this.bandera.ban2 === '1' && this.bandera.ban3 === '1' && this.bandera.ban4 === '1' &&
       this.bandera.ban5 === '1' && this.bandera.ban6 === '1') {
       this.cliente.foto = this.urlImagen;
@@ -129,17 +143,62 @@ export class ClienteComponent implements OnInit {
       }
       this.clienteService.addCliente(this.cliente).subscribe(data => {
         this.showDialog = false;
+        const log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ADD-CLIENTE',
+          cambio_json: {
+            mensaje: 'Ingreso existoso!',
+            data: data
+          }
+        }
+        this._servicioLogCambios.addLogCambio(log).subscribe();
+
         this.notifyService.notify('success', 'Exito', 'Ingreso Existoso!');
         this.inicio();
       }, err => {
-        this.notifyService.notify('error', 'ERROR', 'Cliente ya existe!');
+        this.blockBotones = this._serviceBotones.blockBotonesGene;
+        let clienteLog = {
+          respuestaBDD: err,
+          data: this.cliente
+        }
+        if (err.status !== 0) {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-ADD-CLIENTE',
+            cambio_json: {
+              mensaje: 'Cliente-Cedula ya existe!',
+              data: clienteLog
+            }
+          }
+          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'Cliente ya existe!');
+        } else {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-ADD-CLIENTE',
+            cambio_json: {
+              mensaje: 'ERROR DE CONEXIÓN!',
+              data: clienteLog
+            }
+          }
+          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
+        };
       });
     } else {
+      this.blockBotones = this._serviceBotones.blockBotonesGene;
       this.notifyService.notify('error', 'ERROR', 'Revise Campos!');
     }
   }
   // Modificar un cliente
   updateCliente() {
+    this.blockBotones = this._serviceBotones.disabledBotonesGene;
     if (this.bandera.ban1 === '1' && this.bandera.ban2 === '1' && this.bandera.ban3 === '1' && this.bandera.ban4 === '1' &&
       this.bandera.ban5 === '1') {
       this.selectCliente.foto = this.urlImagen;
@@ -154,13 +213,61 @@ export class ClienteComponent implements OnInit {
         this.selectCliente.estado = '1';
       }
       this.clienteService.updateCliente(this.selectCliente).subscribe(data => {
+        this.blockBotones = this._serviceBotones.blockBotonesGene;
         this.showDialogMod = false;
+        let clienteLog = {
+          respuestaBDD: data,
+          data: this.selectCliente
+        }
+        let log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ERROR-UPDATE-CLIENTE',
+          cambio_json: {
+            mensaje: 'Modificación Existosa!',
+            data: clienteLog
+          }
+        }
+        this._servicioLogCambios.addLogCambio(log).subscribe();
         this.inicio();
         this.notifyService.notify('success', 'Exito', 'Modificación Existosa!');
       }, err => {
-        this.notifyService.notify('error', 'ERROR', 'Cliente ya Existe!');
+        this.blockBotones = this._serviceBotones.blockBotonesGene;
+        let clienteLog = {
+          respuestaBDD: err,
+          data: this.selectCliente
+        }
+        if (err.status !== 0) {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-UPDATE-CLIENTE',
+            cambio_json: {
+              mensaje: 'Cliente-Cedula ya existe!',
+              data: clienteLog
+            }
+          }
+          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'Cliente ya existe!');
+        } else {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-UPDATE-CLIENTE',
+            cambio_json: {
+              mensaje: 'ERROR DE CONEXIÓN!',
+              data: clienteLog
+            }
+          }
+          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
+        };
       });
     } else {
+      this.blockBotones = this._serviceBotones.blockBotonesGene;
       this.notifyService.notify('error', 'ERROR', 'Revise Campos!');
     }
   }

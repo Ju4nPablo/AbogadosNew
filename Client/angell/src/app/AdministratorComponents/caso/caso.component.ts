@@ -7,6 +7,10 @@ import { NotificacionesService } from '../../Services/notificaciones/notificacio
 import { SendEmailService } from '../../Services/send-email/send-email.service';
 import { ActividadExtraService } from '../../Services/actividad-extra/actividad-extra.service';
 import { nodeValue } from '@angular/core/src/view';
+import { LogCambiosService } from '../../Services/log-Cambios/log-cambios.service';
+import { ListaCombosService } from '../../Services/listas-Combos/lista-combos.service';
+import { BotonesService } from '../../Services/botones/botones.service';
+import { EtiquetasService } from '../../Services/etiquetas/etiquetas.service';
 
 @Component({
   selector: 'app-caso',
@@ -39,40 +43,24 @@ export class CasoComponent implements OnInit {
   showDialogMod: Boolean = false;
   showDialogHijos: Boolean = false;
   showDialogImagenes: Boolean = false;
+  showDialogMail: Boolean = false;
+  showDialogMailCliente: Boolean = false;
   showImagen: Boolean = false;
   caso: any = {};
-  selectEstado: any = {};
-  selectCliente: any = {};
-  selectAbogado: any = {};
   listEstado: any = [];
-  banClose: Boolean = true;
-  banOpen: Boolean = false;
   idCaso: any = '';
 
   numCaso: any = '';
   fechaInicio: any = '';
   fechaFin: any = '';
+  selectEstado: any = {};
+  selectCliente: any = {};
+  selectAbogado: any = {};
   info: any = '';
   infoNodo: any = '';
   cliente: any = '';
-  blockCampos: any = {
-    blockFechIni: false,
-    blockFechFin: false,
-    blockCaso: false,
-    blockCliente: true,
-    blockAbogado: false,
-    blockDescripcionAbogado: false,
-    blockDescripcionCliente: false,
-    blockEstado: false,
-  };
-  showButon: any = {
-    showAnadir: true,
-    showAnadirCaso: true,
-    showQuitar: true,
-    showAnadirFoto: true,
-    showMail: true,
-  };
-  listaEliminarActividad: any = [];
+  blockCampos: any = {};
+  showButon: any = {};
   numeroCaso: any = '';
 
   // agregar caso nuevo.
@@ -82,7 +70,17 @@ export class CasoComponent implements OnInit {
   casoTreeInsert: TreeNode[];
   nodeInsert: any;
   banValidar: any = '';
-  activaBotonGuardarFlujo: boolean = false;
+  activaBotonGuardarCaso: boolean = false;
+
+  visibleCampos: any = {};
+  selectHoraIni: any = '';
+  listHoras: any[] = [];
+  datosMail: any = {};
+  listActividadEliminar: any = [];
+  listActividadIngresar: any = [];
+  etiquetasFormCaso: any = {};
+  etiquetasBotones: any = {};
+  blockBotones: any = {};
 
   constructor(
     private casoService: CasoService,
@@ -90,7 +88,11 @@ export class CasoComponent implements OnInit {
     private abogadoService: AbogadoService,
     private notifyService: NotificacionesService,
     private sendEmailService: SendEmailService,
-    private actividadAgenda: ActividadExtraService
+    private actividadAgenda: ActividadExtraService,
+    private _serviceLogCambios: LogCambiosService,
+    private _serviceListaCombos: ListaCombosService,
+    private _serviceBotones: BotonesService,
+    private _serviceEtiquetas: EtiquetasService,
   ) {
     this.inicio();
   }
@@ -98,9 +100,21 @@ export class CasoComponent implements OnInit {
   inicio() {
 
     this.showDialogIng = false;
+    this.listHoras = this._serviceListaCombos.listacomboHoras;
+    this.selectHoraIni = this.listHoras[1];
+    this.listActividadEliminar = [];
+    this.listActividadIngresar = [];
+    this.etiquetasFormCaso = {};
+    this.etiquetasBotones = {};
+    this.blockBotones = this._serviceBotones.blockBotones;
+
+    this.datosMail = {
+      para: [],
+      asunto: '',
+      body: ''
+    };
 
     const us = JSON.parse(localStorage.getItem('userLogin'));
-    this.listaEliminarActividad = [];
     this.listCaso = [];
     this.listAbogado = [];
     this.listCliente = [];
@@ -119,30 +133,21 @@ export class CasoComponent implements OnInit {
       this.selectAbogado = this.listAbogado[0];
     });
     if (us.tipo === '1') {
+      this.visibleCampos = this._serviceBotones.visibleCamposAdministrador;
+      this.etiquetasFormCaso = this._serviceEtiquetas.etiquetasCasoAdministrador;
+      this.etiquetasBotones = this._serviceBotones.etiquetasBotonesAdministrador;
       this.casoService.allCasoPendientes().subscribe(data => {
         this.listCaso = data;
         this.cargarTabla(this.listCaso);
         this.cargarCaso();
       });
-      this.blockCampos = {
-        blockFechIni: false,
-        blockFechFin: false,
-        blockCaso: false,
-        blockCliente: true,
-        blockAbogado: false,
-        blockDescripcionAbogado: false,
-        blockDescripcionCliente: false,
-        blockEstado: false,
-      };
-      this.showButon = {
-        showAnadir: true,
-        showQuitar: true,
-        showAnadirFoto: true,
-        showMail: true,
-        showAnadirCaso: true,
-      };
+      this.blockCampos = this._serviceBotones.bloquearCamposAdministrador;
+      this.showButon = this._serviceBotones.visibleBotonesAdministrador;
     }
-    if (us.tipo === '2') {
+    if (us.tipo === '2') {  //cliente
+      this.visibleCampos = this._serviceBotones.visibleCamposCliente;
+      this.etiquetasFormCaso = this._serviceEtiquetas.etiquetasCasoCliente;
+      this.etiquetasBotones = this._serviceBotones.etiquetasBotonesCliente;
       const obj = {
         cedula: us.cedula
       };
@@ -150,22 +155,13 @@ export class CasoComponent implements OnInit {
         this.listCaso = data;
         this.cargarTabla(this.listCaso);
       });
-      this.blockCampos = {
-        blockFechIni: true,
-        blockFechFin: true,
-        blockCaso: true,
-        blockCliente: true,
-        blockAbogado: true,
-        blockDescripcionAbogado: true,
-        blockDescripcionCliente: false,
-        blockEstado: true,
-      };
-      this.showButon = {
-        showAnadir: false,
-        showQuitar: false,
-      };
+      this.blockCampos = this._serviceBotones.bloquearCamposCliente;
+      this.showButon = this._serviceBotones.visibleBotonesCliente;
     }
-    if (us.tipo === '3') {
+    if (us.tipo === '3') { //abogado
+      this.visibleCampos = this._serviceBotones.visibleCamposAbogado;
+      this.etiquetasFormCaso = this._serviceEtiquetas.etiquetasCasoAbogado;
+      this.etiquetasBotones = this._serviceBotones.etiquetasBotonesAbogado;
       const obj = {
         cedula: us.cedula
       };
@@ -173,42 +169,20 @@ export class CasoComponent implements OnInit {
         this.listCaso = data;
         this.cargarTabla(this.listCaso);
       });
-      this.blockCampos = {
-        blockFechIni: true,
-        blockFechFin: true,
-        blockCaso: true,
-        blockCliente: true,
-        blockAbogado: true,
-        blockDescripcionAbogado: false,
-        blockDescripcionCliente: true,
-        blockEstado: true,
-      };
-      this.showButon = {
-        showAnadir: false,
-        showQuitar: false
-      };
+      this.blockCampos = this._serviceBotones.bloquearCamposAbogado;
+      this.showButon = this._serviceBotones.visibleBotonesAbogado;
     }
     this.cols = [
+      { field: 'numeroCarpeta', header: 'Número Carpeta' },
+      { field: 'cliente', header: 'Cliente' },
       { field: 'label', header: 'Número caso' },
       { field: 'abogado', header: 'Abogado' },
-      { field: 'cliente', header: 'Cliente' },
-      { field: 'numeroCarpeta', header: 'Número Carpeta' },
+      { field: 'fecha', header: 'Fecha' },
+      { field: 'estado', header: 'Estado' },
     ];
     this.selectProceso = {};
     // Agregados
-    this.listEstado = [
-      {
-        id: '1',
-        estado: 'Pendiente'
-      },
-      {
-        id: '2',
-        estado: 'Abandono'
-      },
-      {
-        id: '3',
-        estado: 'Terminado'
-      }];
+    this.listEstado = this._serviceListaCombos.listacomboEstadoCaso;
     this.node = {
       label: '',
       data: {
@@ -228,11 +202,16 @@ export class CasoComponent implements OnInit {
         id: '',
         fecha_inicio: '',
         fecha_fin: '',
-        cliente: '',
-        abogado: '',
+        hora_inicio: '09:00',
+        precio: 0,
+        ingresar_actividad: false,
+        validar_diligencia: false,
+        modificar_actividad: false,
+        descripcion_Administrador: '',
         descripcion_abogado: '',
         descripcion_cliente: '',
-        precio: '0',
+        cliente: '',
+        abogado: '',
         imagenes: ['assets/papel.png', 'assets/papel.png', 'assets/papel.png'],
         estado: this.listEstado[0]
       }
@@ -243,9 +222,9 @@ export class CasoComponent implements OnInit {
     this.showDialogMod = false;
     this.showDialogImagenes = false;
     this.showImagen = false;
+    this.showDialogMail = false;
+    this.showDialogMailCliente = false;
     this.caso = {};
-    this.banClose = true;
-    this.banOpen = false;
     this.idCaso = '';
     this.info = {
       label: '',
@@ -253,11 +232,16 @@ export class CasoComponent implements OnInit {
         id: '',
         fecha_inicio: '',
         fecha_fin: '',
-        cliente: '',
-        abogado: '',
+        hora_inicio: '09:00',
+        precio: 0,
+        ingresar_actividad: false,
+        validar_diligencia: false,
+        modificar_actividad: false,
+        descripcion_Administrador: '',
         descripcion_abogado: '',
         descripcion_cliente: '',
-        precio: '0',
+        cliente: '',
+        abogado: '',
         imagenes: ['assets/papel.png', 'assets/papel.png', 'assets/papel.png'],
         estado: this.listEstado[0]
       }
@@ -268,10 +252,16 @@ export class CasoComponent implements OnInit {
         id: '',
         fecha_inicio: '',
         fecha_fin: '',
-        abogado: '',
+        hora_inicio: '09:00',
+        precio: 0,
+        ingresar_actividad: false,
+        validar_diligencia: false,
+        modificar_actividad: false,
+        descripcion_Administrador: '',
         descripcion_abogado: '',
         descripcion_cliente: '',
-        precio: '0',
+        cliente: '',
+        abogado: '',
         imagenes: ['assets/papel.png', 'assets/papel.png', 'assets/papel.png'],
         estado: this.listEstado[0]
       }
@@ -287,8 +277,8 @@ export class CasoComponent implements OnInit {
       this.cliente = this.buscarCliente(caso.data.cliente.cedula);
       this.casoTree = [caso];
       this.expandAll();
-      this.banClose = false;
-      this.banOpen = true;
+      this.blockBotones.contraer = false;
+      this.blockBotones.expandir = true;
       this.showDialogMod = true;
       this.showDialogMod = true;
       localStorage.setItem('caso', null);
@@ -298,12 +288,16 @@ export class CasoComponent implements OnInit {
   cargarTabla(lista) {
     lista.forEach(item => {
       // let cli = this.buscarCliente(item.data.cliente.cedula);
+      let fech = new Date(item.data.fecha_inicio);
+      let fec = fech.getDate() + "/" + (((fech.getMonth() + 1) < 10) ? ('0' + (fech.getMonth() + 1)) : (fech.getMonth() + 1)) + "/" + fech.getFullYear();
       this.listTabla.push({
         id: item._id,
         label: item.label,
         cliente: item.data.cliente.nombre,
         abogado: item.data.abogado.nombre,
-        numeroCarpeta: this.buscarCliente(item.data.cliente.cedula).numeroCarpeta
+        numeroCarpeta: this.buscarCliente(item.data.cliente.cedula).numeroCarpeta,
+        fecha: fec,
+        estado: item.data.estado.estado
       });
     });
   }
@@ -326,13 +320,18 @@ export class CasoComponent implements OnInit {
         label: 'Nombre del flujo',
         data: {
           id: this.generarID(),
-          fecha_inicio: new Date,
-          fecha_fin: new Date,
-          abogado: this.listAbogado[0],
-          cliente: this.listCliente[0],
+          fecha_inicio: new Date(),
+          fecha_fin: new Date(),
+          hora_inicio: '09:00',
+          precio: 0,
+          ingresar_actividad: false,
+          validar_diligencia: false,
+          modificar_actividad: false,
+          descripcion_Administrador: '',
           descripcion_abogado: '',
           descripcion_cliente: '',
-          precio: 0,
+          abogado: this.listAbogado[0],
+          cliente: this.listCliente[0],
           imagenes: ['assets/papel.png', 'assets/papel.png', 'assets/papel.png'],
           estado: this.listEstado[0]
         },
@@ -351,16 +350,18 @@ export class CasoComponent implements OnInit {
         this.idCaso = item._id;
         this.cliente = this.buscarCliente(item.data.cliente.cedula);
         this.casoTree = [item];
+        this.listActividadEliminar = [];
+        this.listActividadIngresar = [];
         this.expandAll();
-        this.banClose = false;
-        this.banOpen = true;
+        this.blockBotones.contraer = false;
+        this.blockBotones.expandir = true;
       }
     });
   }
   ///////////////////////////////////////////////////////////
   //#region Ingresar nuevo caso
-
   saveCaso() {
+    this.blockBotones = this._serviceBotones.disabledBotonesCaso;
     this.verificarCasoRecursive(this.casoTreeInsert[0]);
     if (this.banValidar) {
       const casoSave = {
@@ -370,14 +371,39 @@ export class CasoComponent implements OnInit {
       };
       this.numeroCaso = this.casoTreeInsert[0].label;
       this.casoService.addCaso(casoSave).subscribe(data => {
+        this.blockBotones = this._serviceBotones.blockBotones;
         this.recorrerAddActividades(this.casoTreeInsert[0]);
+        const log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ADD-CASO',
+          cambio_json: {
+            mensaje: 'Ingreso existoso!',
+            data: data
+          }
+        }
+        this._serviceLogCambios.addLogCambio(log).subscribe();
         this.inicio();
         this.ngOnInit();
         this.notifyService.notify('success', 'Exito', 'INGRESO EXITOSO!');
       }, err => {
+        this.blockBotones = this._serviceBotones.blockBotones;
+        const log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ERROR-ADD-CASO',
+          cambio_json: {
+            mensaje: 'ERROR AL INGRESAR!',
+            data: casoSave
+          }
+        }
+        this._serviceLogCambios.addLogCambio(log).subscribe();
         this.notifyService.notify('error', 'ERROR', 'ERROR AL INGRESAR!');
       });
     } else {
+      this.blockBotones = this._serviceBotones.blockBotones;
       this.notifyService.notify('error', 'ERROR', 'EXISTEN CAMPOS VACÍOS!');
     }
   }
@@ -388,7 +414,8 @@ export class CasoComponent implements OnInit {
       label: nodoActividad.label,
       data: nodoActividad.data
     };
-    this.addActividad(act);
+    if (nodoActividad.data.ingresar_actividad)
+      this.addActividad(act);
     if (nodoActividad.children) {
       nodoActividad.children.forEach(childNode => {
         this.recorrerAddActividades(childNode);
@@ -406,15 +433,41 @@ export class CasoComponent implements OnInit {
       'fecha_fin': datosCalendario.data.fecha_fin,
       'prioridad': 'yellow',
       'abogado': datosCalendario.data.abogado.id,
-      'hora_inicio': '08:00',
-      'hora_fin': '16:00',
+      'hora_inicio': datosCalendario.data.hora_inicio,
+      'hora_fin': '18:00',
       'repetir': 'Nunca',
-      'recordatorio': '1 hora antes'
+      'recordatorio': '1 hora antes',
+      'estado': 'Activo',
+      'id_user': JSON.parse(localStorage.getItem('userLogin'))._id
     };
     this.actividadAgenda.addActividadExtra(actividad).subscribe(data => {
       // this.numeroCaso = '';
+      const log = {
+        usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+        cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+        fecha: new Date(),
+        transaccion: 'ADD-ACTIVIDAD',
+        cambio_json: {
+          mensaje: 'Ingreso existoso!',
+          data: actividad
+        }
+      }
+      this._serviceLogCambios.addLogCambio(log).subscribe(data => {
+      });
     }, err => {
       // this.notifyService.notify('error', 'ERROR', 'Error Conexión!');
+      const log = {
+        usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+        cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+        fecha: new Date(),
+        transaccion: 'ERROR-ADD-ACTIVIDAD',
+        cambio_json: {
+          mensaje: 'ERROR AL INGRESAR ACTIVIDAD!',
+          data: actividad
+        }
+      }
+      this._serviceLogCambios.addLogCambio(log).subscribe(data => {
+      });
     });
   }
 
@@ -424,12 +477,18 @@ export class CasoComponent implements OnInit {
         label: 'Numero Caso',
         data: {
           id: this.generarID(),
-          fecha_inicio: new Date,
-          fecha_fin: new Date,
-          abogado: this.listAbogado[0],
-          cliente: this.listCliente[0],
+          fecha_inicio: new Date(),
+          fecha_fin: new Date(),
+          hora_inicio: '09:00',
+          precio: 0,
+          ingresar_actividad: false,
+          validar_diligencia: false,
+          modificar_actividad: false,
+          descripcion_Administrador: '',
           descripcion_abogado: '',
           descripcion_cliente: '',
+          abogado: this.listAbogado[0],
+          cliente: this.listCliente[0],
           imagenes: [],
           estado: this.listEstado[0]
         },
@@ -449,6 +508,10 @@ export class CasoComponent implements OnInit {
     this.node = event.node;
     this.nodeInsert.label = this.node.label;
     this.nodeInsert.data = this.node.data;
+    this.selectHoraIni = { hora: this.node.data.hora_inicio };
+    if (this.campoVacio(this.node.data.validar_diligencia)) {
+      this.nodeInsert.data.validar_diligencia = false;
+    }
     if (this.selectAbogado) {
       this.buscarAbogado(this.selectAbogado.cedula);
     } else {
@@ -483,14 +546,20 @@ export class CasoComponent implements OnInit {
   // Añadir un nodo.
   addNodoInsert() {
     this.selectNode = {
-      label: 'Nodo New',
+      label: 'Nueva Diligencia',
       data: {
         id: this.generarID(),
-        fecha_inicio: new Date,
-        fecha_fin: new Date,
-        abogado: Object,
+        fecha_inicio: new Date(),
+        fecha_fin: new Date(),
+        hora_inicio: this.selectHoraIni.hora,
+        precio: 0,
+        ingresar_actividad: false,
+        validar_diligencia: false,
+        modificar_actividad: false,
+        descripcion_Administrador: '',
         descripcion_abogado: '',
         descripcion_cliente: '',
+        abogado: Object,
         imagenes: [],
         estado: this.listEstado[0]
       },
@@ -529,6 +598,11 @@ export class CasoComponent implements OnInit {
           id: this.node.data.id,
           fecha_inicio: this.fechaInicio,
           fecha_fin: fech,
+          hora_inicio: this.selectHoraIni.hora,
+          ingresar_actividad: this.nodeInsert.data.ingresar_actividad,
+          validar_diligencia: this.nodeInsert.data.validar_diligencia,
+          modificar_actividad: this.nodeInsert.data.ingresar_actividad,
+          descripcion_Administrador: this.nodeInsert.data.descripcion_Administrador,
           descripcion_abogado: this.nodeInsert.data.descripcion_abogado,
           descripcion_cliente: this.nodeInsert.data.descripcion_cliente,
           cliente: cli,
@@ -566,21 +640,25 @@ export class CasoComponent implements OnInit {
   loadNode(event) {
     this.selectNode = {};
     this.selectNode = event.node;
-    this.banClose = false;
-    this.banOpen = false;
   }
 
   // Añadir un nodo.
   addNodo() {
     this.selectNode = {
-      label: 'Nodo New',
+      label: 'Nueva Diligencia',
       data: {
         id: this.generarID(),
-        fecha_inicio: new Date,
-        fecha_fin: new Date,
-        abogado: Object,
+        fecha_inicio: new Date(),
+        fecha_fin: new Date(),
+        hora_inicio: this.selectHoraIni.hora,
+        precio: 0,
+        ingresar_actividad: false,
+        validar_diligencia: false,
+        modificar_actividad: false,
+        descripcion_Administrador: '',
         descripcion_abogado: '',
         descripcion_cliente: '',
+        abogado: Object,
         imagenes: [],
         estado: this.listEstado[0]
       },
@@ -595,14 +673,14 @@ export class CasoComponent implements OnInit {
   // Modificar un nodo
   updateNodo() {
     let fech = '';
+    if (this.casoTree[0].label === this.info.label) {
+      fech = this.fechaInicio;
+    } else {
+      fech = this.fechaFin;
+    }
     if (this.validarFecha()) {
       if (!this.campoVacio(this.fechaInicio) && !this.campoVacio(this.fechaFin) &&
         !this.campoVacio(this.info.label) && !this.campoVacio(this.selectAbogado)) {
-        if (this.casoTree[0].label === this.info.label) {
-          fech = this.fechaInicio;
-        } else {
-          fech = this.fechaFin;
-        }
         const cli = {
           id: this.selectCliente._id,
           cedula: this.selectCliente.cedula,
@@ -617,9 +695,14 @@ export class CasoComponent implements OnInit {
         };
         this.node.label = this.info.label;
         const newData = {
-          id: this.node.data.id,
+          id: this.info.data.id,
           fecha_inicio: this.fechaInicio,
           fecha_fin: fech,
+          hora_inicio: this.selectHoraIni.hora,
+          ingresar_actividad: this.info.data.ingresar_actividad,
+          validar_diligencia: this.info.data.validar_diligencia,
+          modificar_actividad: this.info.data.modificar_actividad,
+          descripcion_Administrador: this.info.data.descripcion_Administrador,
           descripcion_abogado: this.info.data.descripcion_abogado,
           descripcion_cliente: this.info.data.descripcion_cliente,
           cliente: cli,
@@ -629,7 +712,28 @@ export class CasoComponent implements OnInit {
           imagenes: this.info.data.imagenes,
         };
 
+        const act = {
+          data: {
+            id: this.info.data.id,
+            fecha_inicio: this.fechaInicio,
+            fecha_fin: fech,
+            hora_inicio: this.selectHoraIni.hora,
+            ingresar_actividad: this.info.data.ingresar_actividad,
+            validar_diligencia: this.info.data.validar_diligencia,
+            modificar_actividad: this.info.data.modificar_actividad,
+            descripcion_Administrador: this.info.data.descripcion_Administrador,
+            descripcion_abogado: this.info.data.descripcion_abogado,
+            descripcion_cliente: this.info.data.descripcion_cliente,
+            cliente: cli,
+            abogado: abo,
+            estado: this.selectEstado,
+            precio: this.info.data.precio,
+            imagenes: this.info.data.imagenes,
+          },
+          label: this.info.label,
+        };
         this.node.data = newData;
+        this.agregarActividadesIngresarModificar(act);
         this.fechaInicio = '';
         this.fechaFin = '';
         this.showDialog = false;
@@ -640,6 +744,25 @@ export class CasoComponent implements OnInit {
 
     }
   }
+  // anadir nodos a ingresar
+  agregarActividadesIngresarModificar(newData) {
+    let pos = this.buscarActividad();
+    if (pos === -1)
+      this.listActividadIngresar.push(newData);
+    else {
+      this.listActividadIngresar[pos] = newData;
+    }
+  }
+  // Buscar si la actibidad ya existe y remplasar
+  buscarActividad() {
+    let pos = -1;
+    for (let act of this.listActividadIngresar) {
+      if (act.data.id === this.info.data.id) {
+        pos++;
+      };
+    };
+    return pos;
+  };
   // Eliminar un nodo
   deleteNodo() {
     this.casoTree.forEach(nodes => {
@@ -656,7 +779,24 @@ export class CasoComponent implements OnInit {
     this.caso = event;
     this.node = event.node;
     this.info.label = this.node.label;
-    this.info.data = this.node.data;
+    this.info.data = {
+      id: this.node.data.id,
+      fecha_inicio: this.node.data.fecha_inicio,
+      fecha_fin: this.node.data.fecha_fin,
+      hora_inicio: this.node.data.hora_inicio,
+      precio: this.node.data.precio,
+      ingresar_actividad: this.node.data.ingresar_actividad,
+      validar_diligencia: this.node.data.validar_diligencia,
+      modificar_actividad: this.node.data.modificar_actividad,
+      descripcion_Administrador: this.node.data.descripcion_Administrador,
+      descripcion_abogado: this.node.data.descripcion_abogado,
+      descripcion_cliente: this.node.data.descripcion_cliente,
+      cliente: this.node.data.cliente,
+      abogado: this.node.data.abogado,
+      imagenes: this.node.data.imagenes,
+      estado: this.node.data.estado
+    };
+    this.selectHoraIni = { hora: this.node.data.hora_inicio };
     this.buscarAbogado(this.node.data.abogado.cedula);
     // this.buscarCliente(this.node.data.cliente.cedula);
     this.selectEstado = this.node.data.estado;
@@ -670,8 +810,10 @@ export class CasoComponent implements OnInit {
   }
   //#endregion
 
-  //#region Guardar Diagrama
+  //#region modificar caso
   updateCaso() {
+    this.blockBotones = this._serviceBotones.disabledBotonesCaso;
+    this.recorrerUpdateActividadesIngresarModificar(this.casoTree[0]);
     const caso = {
       _id: this.idCaso,
       label: this.casoTree[0].label,
@@ -680,11 +822,45 @@ export class CasoComponent implements OnInit {
     };
     this.numeroCaso = this.casoTree[0].label;
     this.casoService.updateCaso(caso).subscribe(data => {
-      this.recorrerUpdateActividades(this.casoTree[0]);
+      this.blockBotones = this._serviceBotones.blockBotones;
+      this.recorrerAddUpdateActividades(this.listActividadIngresar);
+      if (this.listActividadEliminar.length > 0)
+        this.recorrerDeleteActividades(this.listActividadEliminar);
+      let casoLog = {
+        respuestaBDD: data,
+        data: caso
+      }
+      const log = {
+        usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+        cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+        fecha: new Date(),
+        transaccion: 'UPDATE-CASO',
+        cambio_json: {
+          mensaje: 'CAMBIOS GUARDADOS!',
+          data: casoLog
+        }
+      }
+      this._serviceLogCambios.addLogCambio(log).subscribe();
       this.inicio();
       this.ngOnInit();
       this.notifyService.notify('success', 'Exito', 'CAMBIOS GUARDADOS!');
     }, err => {
+      this.blockBotones = this._serviceBotones.blockBotones;
+      let casoLog = {
+        respuestaBDD: err,
+        data: caso
+      }
+      const log = {
+        usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+        cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+        fecha: new Date(),
+        transaccion: 'ERROR-UPDATE-CASO',
+        cambio_json: {
+          mensaje: 'ERROR AL GUARDAR!',
+          data: casoLog
+        }
+      }
+      this._serviceLogCambios.addLogCambio(log).subscribe();
       this.notifyService.notify('error', 'ERROR', 'ERROR AL GUARDAR!');
     });
   }
@@ -726,16 +902,16 @@ export class CasoComponent implements OnInit {
     this.casoTree.forEach(node => {
       this.expandRecursive(node, true);
     });
-    this.banClose = false;
-    this.banOpen = true;
+    this.blockBotones.contraer = false;
+    this.blockBotones.expandir = true;
   }
   // Contrae todo el arbol de forma recursiva.
   collapseAll() {
     this.casoTree.forEach(node => {
       this.expandRecursive(node, false);
     });
-    this.banClose = true;
-    this.banOpen = false;
+    this.blockBotones.contraer = true;
+    this.blockBotones.expandir = false;
   }
   // Funsion que permite expandir de forma recursiva.
   private expandRecursive(node: TreeNode, isExpand: boolean) {
@@ -766,8 +942,8 @@ export class CasoComponent implements OnInit {
       nodes.children.forEach(childNode => {
         if (childNode.data.id === id) {
           if (childNode.children.length === 0) {
-            this.listaEliminarActividad.push(childNode.data.id);
             nodes.children.splice(i, 1);
+            this.listActividadEliminar.push(childNode.data.id);
           } else {
             this.notifyService.notify('error', 'ERROR', 'No se puede eliminar, porque contine mas actividades dentro!');
           }
@@ -818,29 +994,136 @@ export class CasoComponent implements OnInit {
       label: nodoActividad.label,
       data: nodoActividad.data
     };
-    this.updateActividad(act);
+    if (nodoActividad.data.ingresar_actividad && nodoActividad.data.modificar_actividad)
+      this.addActividad(act);
+    if (nodoActividad.data.modificar_actividad)
+      this.updateActividad(act);
     if (nodoActividad.children) {
       nodoActividad.children.forEach(childNode => {
         this.recorrerUpdateActividades(childNode);
       });
     }
   }
-  // Guadar actividad en la agenda.
+  // agregar actividades para ingreso o modificacion de la misma.
+  recorrerUpdateActividadesIngresarModificar(nodoActividad: TreeNode) {
+    if (!nodoActividad.data.modificar_actividad && nodoActividad.data.ingresar_actividad)
+      nodoActividad.data.modificar_actividad = true;
+    if (nodoActividad.children.length > 0) {
+      nodoActividad.children.forEach(childNode => {
+        this.recorrerUpdateActividadesIngresarModificar(childNode);
+      });
+    }
+  }
+  // Modificar actividad en la agenda.
   updateActividad(datosCalendario) {
     const actividad = {
-      'id_actividad_caso': datosCalendario.data.id.toString(),
+      'id_actividad_caso': datosCalendario.data.id,
       'caso_numero': this.numeroCaso,
       'actividad': datosCalendario.label,
-      'fecha_inicio': datosCalendario.data.fecha_inicio,
-      'fecha_fin': datosCalendario.data.fecha_fin,
+      'fecha_inicio': new Date(datosCalendario.data.fecha_inicio),
+      'fecha_fin': new Date(datosCalendario.data.fecha_fin),
       'prioridad': 'yellow',
       'abogado': datosCalendario.data.abogado.id,
-      'hora_inicio': '8:00',
-      'hora_fin': '16:00',
+      'hora_inicio': datosCalendario.data.hora_inicio,
+      'hora_fin': '18:00',
       'repetir': 'Nunca',
-      'recordatorio': '1 hora antes'
+      'recordatorio': '1 hora antes',
+      'estado': 'Activo'
     };
-    this.actividadAgenda.updateActividadExtraIdCaso(actividad).subscribe();
+    this.actividadAgenda.updateActividadExtraIdCaso(actividad).subscribe(data => {
+      // this.numeroCaso = '';
+      let act = {
+        respuestaBDD: data,
+        data: actividad
+      };
+      const log = {
+        usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+        cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+        fecha: new Date(),
+        transaccion: 'UPDATE-ACTIVIDAD',
+        cambio_json: {
+          mensaje: 'Modificación existosa!',
+          data: act
+        }
+      }
+      this._serviceLogCambios.addLogCambio(log).subscribe();
+    }, err => {
+      // this.notifyService.notify('error', 'ERROR', 'Error Conexión!');
+      let act = {
+        respuestaBDD: err,
+        data: actividad
+      };
+      const log = {
+        usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+        cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+        fecha: new Date(),
+        transaccion: 'ERROR-UPDATE-ACTIVIDAD',
+        cambio_json: {
+          mensaje: 'ERROR AL MODIFICAR ACTIVIDAD!',
+          data: act
+        }
+      }
+      this._serviceLogCambios.addLogCambio(log).subscribe();
+    });
+
+  }
+  // Borrado logico de las actividades
+  recorrerDeleteActividades(listActividades) {
+    for (let a of listActividades) {
+      this.deleteActividad(a);
+    }
+  }
+  // Borrado logico de las actividades
+  recorrerAddUpdateActividades(listActividadIngresar) {
+    for (let a of listActividadIngresar) {
+      if (!a.data.modificar_actividad && a.data.ingresar_actividad)
+        this.addActividad(a);
+      if (a.data.modificar_actividad)
+        this.updateActividad(a);
+    }
+  }
+  // Modificar actividad en la agenda.
+  deleteActividad(idNodoCaso) {
+    const actividad = {
+      'id_actividad_caso': idNodoCaso,
+      'prioridad': 'gray',
+      'estado': 'Eliminado'
+    };
+    this.actividadAgenda.updateActividadExtraIdCaso(actividad).subscribe(data => {
+      // this.numeroCaso = '';
+      let act = {
+        respuestaBDD: data,
+        data: actividad
+      };
+      const log = {
+        usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+        cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+        fecha: new Date(),
+        transaccion: 'DELETE-ACTIVIDAD',
+        cambio_json: {
+          mensaje: 'DELETE existosa!',
+          data: act
+        }
+      }
+      this._serviceLogCambios.addLogCambio(log).subscribe();
+    }, err => {
+      // this.notifyService.notify('error', 'ERROR', 'Error Conexión!');
+      let act = {
+        respuestaBDD: err,
+        data: actividad
+      };
+      const log = {
+        usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+        cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+        fecha: new Date(),
+        transaccion: 'ERROR-DELETE-ACTIVIDAD',
+        cambio_json: {
+          mensaje: 'ERROR AL DELETE ACTIVIDAD!',
+          data: act
+        }
+      }
+      this._serviceLogCambios.addLogCambio(log).subscribe();
+    });
 
   }
   //#endregion
@@ -854,26 +1137,79 @@ export class CasoComponent implements OnInit {
       return false;
     }
   }
+  // envio de mail administrador.
   enviarMail() {
+    this.blockBotones.enviarMail = true;
     const mailCliente = {
-      destinatario: this.cliente.mail,
-      texto: 'Estimado cliente esto es un mail de prueba.'
+      destinatario: this.datosMail.para,
+      asunto: this.datosMail.asunto,
+      texto: this.datosMail.body
     };
     this.sendEmailService.sendNotifications(mailCliente).subscribe(data => {
       if (data) {
+        this.blockBotones.enviarMail = false;
         this.notifyService.notify('success', 'Exito', 'CORREO ENVIADO!');
+        this.exitMail();
       } else {
+        this.blockBotones.enviarMail = false;
         this.notifyService.notify('error', 'ERROR', 'NO SE PUEDO ENVIAR EL CORREO!');
       }
-
     });
+  };
+  // nenvio de mail cliente
+  enviarMailCliente() {
+    this.blockBotones.enviarMail = true;
+    const mailCliente = {
+      destinatario: 'eljuanpi_01@hotmail.com',
+      asunto: 'Cliente Caso # ' + this.casoTree[0].label + ' ' + this.cliente.nombre,
+      texto: this.datosMail.body
+    };
+    this.sendEmailService.sendNotifications(mailCliente).subscribe(data => {
+      if (data) {
+        this.blockBotones.enviarMail = false;
+        this.notifyService.notify('success', 'Exito', 'CORREO ENVIADO!');
+        this.exitMailCliente();
+      } else {
+        this.blockBotones.enviarMail = false;
+        this.notifyService.notify('error', 'ERROR', 'NO SE PUEDO ENVIAR EL CORREO!');
+      }
+    });
+  };
+  // salir del formulario del administrador
+  exitMail() {
+    this.datosMail = {
+      para: [],
+      asunto: '',
+      body: ''
+    };
+    this.showDialogMail = false;
+  };
+  // saludo del formulario de mail cliente
+  exitMailCliente() {
+    this.datosMail = {
+      para: [],
+      asunto: '',
+      body: ''
+    };
+    this.showDialogMailCliente = false;
+  };
+  // mostrar formulario de mail administrador.
+  mostrarDialogMail() {
+    this.showDialogMail = true;
   }
+  // mostrar formulario de envio de mail cliente.
+  mostrarDialogMailCliente() {
+    this.showDialogMailCliente = true;
+  }
+  // mostrar formulario de imagenes.
   showFormImagenes() {
     this.urlImagen1 = this.info.data.imagenes[0];
     this.urlImagen2 = this.info.data.imagenes[1];
     this.urlImagen3 = this.info.data.imagenes[2];
     this.showDialogImagenes = true;
   }
+
+  //salir del formulario de imagenes.
   exitShowImage() {
     this.showImagen = false;
   }

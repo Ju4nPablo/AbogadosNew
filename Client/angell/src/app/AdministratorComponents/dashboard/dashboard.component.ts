@@ -11,6 +11,7 @@ import {
   transition
 } from '@angular/animations';
 import { and } from '@angular/router/src/utils/collection';
+import { BotonesService } from '../../Services/botones/botones.service';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -26,21 +27,14 @@ export class DashboardComponent implements OnInit {
   notifications: any;
   cantidad_notificaciones: number;
   msgs: any = [];
-  showMenu = {
-    showDashboard: true,
-    showUsuario: true,
-    showCliente: true,
-    showAbogado: true,
-    showFlujo: true,
-    showCasos: true,
-    showReporte: true,
-  };
+  showMenu = {};
   usuario: any = '';
   casoNotificacion: any = '';
 
   constructor(
     private casoService: CasoService,
-    private router: Router
+    private router: Router,
+    private _servicioBotones: BotonesService,
   ) {
     this.listCasos = [];
     this.notifications = [];
@@ -53,27 +47,14 @@ export class DashboardComponent implements OnInit {
     if (this.nombreUser.length > 13) {
       this.nombreUser = nombres[0];
     }
+    if (this.usuario.tipo === '1') {
+      this.showMenu = _servicioBotones.showMenuAdministrador;
+    }
     if (this.usuario.tipo === '2') {
-      this.showMenu = {
-        showDashboard: false,
-        showUsuario: false,
-        showCliente: false,
-        showAbogado: false,
-        showFlujo: false,
-        showCasos: true,
-        showReporte: false,
-      };
+      this.showMenu = _servicioBotones.showMenuCliente;
     }
     if (this.usuario.tipo === '3') {
-      this.showMenu = {
-        showDashboard: true,
-        showUsuario: false,
-        showCliente: false,
-        showAbogado: false,
-        showFlujo: false,
-        showCasos: true,
-        showReporte: false,
-      };
+      this.showMenu = _servicioBotones.showMenuAbogado;
     }
   }
 
@@ -115,7 +96,7 @@ export class DashboardComponent implements OnInit {
     const fechaNodoFin = new Date(node.data.fecha_fin);
     const res = fechaNodoFin.getTime() - fecha.getTime();
     const dias = Math.round(res / (1000 * 60 * 60 * 24));
-    if (dias >= 0 && dias < 6 && node.data.estado.id === '1') { //
+    if (dias < 6 && (node.data.estado.id === '1' || node.data.estado.id === '2' || node.data.estado.id === '4')) { //
       this.notifications.push(noti);
       return;
     }
@@ -141,7 +122,7 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  logout(){
+  logout() {
     localStorage.setItem('userLogin', JSON.stringify(''));
     localStorage.setItem('caso', JSON.stringify(''));
   }

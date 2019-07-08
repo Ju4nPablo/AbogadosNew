@@ -8,6 +8,9 @@ import { ValidacioneService } from '../../Services/validaciones/validacione.serv
 import { NotificacionesService } from '../../Services/notificaciones/notificaciones.service';
 import { SendEmailService } from '../../Services/send-email/send-email.service';
 import { ActividadExtraService } from '../../Services/actividad-extra/actividad-extra.service';
+import { LogCambiosService } from '../../Services/log-Cambios/log-cambios.service';
+import { ListaCombosService } from '../../Services/listas-Combos/lista-combos.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-baja-flujo-proceso',
@@ -60,6 +63,24 @@ export class BajaFlujoProcesoComponent implements OnInit {
   activaBotonGuardaNodoFlujo: any = '';
   banValidar: any = '';
   numeroCaso: any = '';
+  visibleCampos: any = {
+    campoObserAdmin: true
+  }
+  selectHoraIni: any = '';
+  listHoras: any[] = [];
+
+  blockCampos: any = {
+    blockFechIni: false,
+    blockFechFin: false,
+    blockCaso: false,
+    blockPrecio: false,
+    blockCliente: true,
+    blockAbogado: false,
+    blockDescripcionAdmin: false,
+    blockDescripcionAbogado: false,
+    blockDescripcionCliente: false,
+    blockEstado: false,
+  };
 
   constructor(
     private flujoProcesoService: FlujoProcesoService,
@@ -69,23 +90,37 @@ export class BajaFlujoProcesoComponent implements OnInit {
     public validarService: ValidacioneService,
     public notifyService: NotificacionesService,
     private sendEmailService: SendEmailService,
-    private agenda: ActividadExtraService
+    private agenda: ActividadExtraService,
+    private _servicioLogCambios: LogCambiosService,
+    private _servicioListaCombos: ListaCombosService,
+    private router: Router,
   ) {
     this.inicio();
   }
 
   inicio() {
+    const user = JSON.parse(localStorage.getItem('userLogin'));
+    if (user.tipo !== '1') {
+      this.router.navigateByUrl('/dashboard/caso');
+    }
+    this.listHoras = this._servicioListaCombos.listacomboHoras;
+    this.selectHoraIni = this.listHoras[2];
     this.info = {
       label: '',
       data: {
         id: '',
         fecha_inicio: '',
         fecha_fin: '',
-        cliente: Object,
-        abogado: Object,
+        hora_inicio: this.selectHoraIni.hora,
+        precio: 0,
+        ingresar_actividad: false,
+        validar_diligencia: false,
+        modificar_actividad: false,
+        descripcion_Administrador: '',
         descripcion_abogado: '',
         descripcion_cliente: '',
-        precio: 0,
+        cliente: Object,
+        abogado: Object,
         imagenes: ['assets/papel.png', 'assets/papel.png', 'assets/papel.png'],
         estado: this.listEstado[0]
       }
@@ -97,10 +132,28 @@ export class BajaFlujoProcesoComponent implements OnInit {
         fecha_inicio: '',
         fecha_fin: '',
         abogado: Object,
+        hora_inicio: this.selectHoraIni.hora,
+        ingresar_actividad: false,
+        validar_diligencia: false,
+        modificar_actividad: false,
+        descripcion_Administrador: '',
         descripcion_abogado: '',
         descripcion_cliente: '',
         estado: this.listEstado[0]
       }
+    };
+
+    this.blockCampos = {
+      blockFechIni: false,
+      blockFechFin: false,
+      blockCaso: false,
+      blockPrecio: false,
+      blockCliente: true,
+      blockAbogado: false,
+      blockDescripcionAdmin: false,
+      blockDescripcionAbogado: true,
+      blockDescripcionCliente: true,
+      blockEstado: false,
     };
 
     this.listFlujo = [];
@@ -128,14 +181,14 @@ export class BajaFlujoProcesoComponent implements OnInit {
       this.listCliente = data;
       this.listCliente.unshift({
         _id: '-1',
-        nombre: 'Seleccione cliente'
+        nombre: 'Seleccione'
       });
     });
     this.abogadoService.getAbogadoTipo().subscribe(data => {
       this.listAbogado = data;
       this.listAbogado.unshift({
         _id: '-1',
-        nombre: 'Seleccione abogado'
+        nombre: 'Seleccione'
       });
     });
     this.cols = [
@@ -145,19 +198,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
     this.showDialogMod = false;
     this.selectProceso = {};
     // Agregados
-    this.listEstado = [
-      {
-        id: '1',
-        estado: 'Pendiente'
-      },
-      {
-        id: '2',
-        estado: 'Abandono'
-      },
-      {
-        id: '3',
-        estado: 'Terminado'
-      }];
+    this.listEstado = this._servicioListaCombos.listacomboEstadoCaso;
     this.node = {
       label: '',
       data: {
@@ -208,7 +249,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
 
     this.casoTreeNew = [
       {
-        label: 'Nombre del flujo',
+        label: 'Etiqueta',
         data: {
           id: this.generarID(),
           descripcion: '',
@@ -237,7 +278,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
   showDialogAdd() {
     this.casoTreeNew = [
       {
-        label: 'Nombre del flujo',
+        label: 'Etiqueta',
         data: {
           id: this.generarID(),
           descripcion: '',
@@ -259,12 +300,16 @@ export class BajaFlujoProcesoComponent implements OnInit {
 
   addNodo() {
     this.selectNode = {
-      label: 'Nodo New',
+      label: 'Nueva Diligencia',
       data: {
-        id: this.generarID().toString(),
+        id: this.generarID(),
         fecha_inicio: '',
         fecha_fin: '',
         abogado: '',
+        hora_inicio: '09:00',
+        ingresar_actividad: false,
+        modificar_actividad: false,
+        descripcion_Administrador: '',
         descripcion_abogado: '',
         descripcion_cliente: '',
         imagenes: ['assets/papel.png', 'assets/papel.png', 'assets/papel.png'],
@@ -299,12 +344,17 @@ export class BajaFlujoProcesoComponent implements OnInit {
               mail: this.selectCliente.mail
             };
             newData = {
-              id: this.node.data.id,
+              id: this.generarID(),
               fecha_inicio: this.fechaInicio,
               fecha_fin: this.fechaFin,
+              hora_inicio: this.selectHoraIni.hora,
+              precio: this.info.data.precio,
+              ingresar_actividad: this.info.data.ingresar_actividad,
+              validar_diligencia: this.info.data.validar_diligencia,
+              modificar_actividad: this.info.data.ingresar_actividad,
+              descripcion_Administrador: this.info.data.descripcion_Administrador,
               descripcion_abogado: this.info.data.descripcion_abogado,
               descripcion_cliente: this.info.data.descripcion_cliente,
-              precio: this.info.data.precio,
               cliente: cli,
               abogado: abo,
               estado: this.selectEstado,
@@ -320,9 +370,14 @@ export class BajaFlujoProcesoComponent implements OnInit {
           }
         } else {
           newData = {
-            id: this.node.data.id,
+            id: this.generarID(),
             fecha_inicio: this.fechaInicio,
             fecha_fin: this.fechaFin,
+            hora_inicio: this.selectHoraIni.hora,
+            ingresar_actividad: this.info.data.ingresar_actividad,
+            validar_diligencia: this.info.data.validar_diligencia,
+            modificar_actividad: this.info.data.ingresar_actividad,
+            descripcion_Administrador: this.info.data.descripcion_Administrador,
             descripcion_abogado: this.info.data.descripcion_abogado,
             descripcion_cliente: this.info.data.descripcion_cliente,
             abogado: abo,
@@ -355,6 +410,13 @@ export class BajaFlujoProcesoComponent implements OnInit {
     this.node = event.node;
     this.info.label = this.node.label;
     this.info.data = this.node.data;
+    if (this.campoVacio(this.node.data.ingresar_actividad)) {
+      this.info.data.ingresar_actividad = false;
+      this.info.data.modificar_actividad = false;
+    }
+    if (this.campoVacio(this.node.data.validar_diligencia)) {
+      this.info.data.validar_diligencia = false;
+    }
     if (this.campoVacio(this.info.data.imagenes)) {
       this.info.data.imagenes = ['assets/papel.png', 'assets/papel.png', 'assets/papel.png'];
     }
@@ -369,6 +431,8 @@ export class BajaFlujoProcesoComponent implements OnInit {
       this.buscarAbogado(this.node.data.abogado.cedula);
     } else {
       this.selectAbogado = this.listAbogado[0];
+      this.fechaInicio = '';
+      this.fechaFin = '';
     }
     if (!this.campoVacio(this.node.data.cliente)) {
       this.buscarCliente(this.node.data.cliente.cedula);
@@ -388,7 +452,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
   }
   //#endregion
 
-  //#region Trabajo con el nodo Ingresar add, uptade, delete, carga
+  //#region Trabajo con el nodo Ingresar flujo add, uptade, delete, carga
   loadNodeIng(event) {
     this.selectNode = {};
     this.selectNode = event.node;
@@ -396,7 +460,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
 
   addNodoIng() {
     this.selectNode = {
-      label: 'Nodo New',
+      label: 'Nueva Etiqueta',
       data: {
         id: this.generarID(),
         descripcion: '',
@@ -450,10 +514,38 @@ export class BajaFlujoProcesoComponent implements OnInit {
       this.numeroCaso = this.casoTree[0].label;
       this.casoService.addCaso(casoSave).subscribe(data => {
         this.recorrerAddActividades(this.casoTree[0]);
+        const log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ADD-CASO',
+          cambio_json: {
+            mensaje: 'Ingreso existoso!',
+            data: data
+          }
+        }
+        this._servicioLogCambios.addLogCambio(log).subscribe(data => {
+        });
         this.inicio();
         this.ngOnInit();
         this.notifyService.notify('success', 'Exito', 'INGRESO EXITOSO!');
       }, err => {
+        let casoLog = {
+          respuestaBDD: err,
+          data: this.casoTree[0]
+        }
+        const log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ERROR-ADD-CASO',
+          cambio_json: {
+            mensaje: 'ERROR AL INGRESAR O CASO YA EXISTE!',
+            data: casoLog
+          }
+        }
+        this._servicioLogCambios.addLogCambio(log).subscribe(data => {
+        });
         this.notifyService.notify('error', 'ERROR', 'ERROR AL INGRESAR O CASO YA EXISTE!');
       });
     } else {
@@ -467,7 +559,8 @@ export class BajaFlujoProcesoComponent implements OnInit {
       label: nodoActividad.label,
       data: nodoActividad.data
     };
-    this.addActividad(act);
+    if (act.data.ingresar_actividad)
+      this.addActividad(act);
     if (nodoActividad.children) {
       nodoActividad.children.forEach(childNode => {
         this.recorrerAddActividades(childNode);
@@ -485,15 +578,38 @@ export class BajaFlujoProcesoComponent implements OnInit {
       'fecha_fin': datosCalendario.data.fecha_fin,
       'prioridad': 'yellow',
       'abogado': datosCalendario.data.abogado.id,
-      'hora_inicio': '08:00',
+      'hora_inicio': datosCalendario.data.hora_inicio,
       'hora_fin': '16:00',
       'repetir': 'Nunca',
-      'recordatorio': '1 hora antes'
+      'recordatorio': '1 hora antes',
+      'estado': 'Activo',
+      'id_user': JSON.parse(localStorage.getItem('userLogin'))._id
     };
     this.agenda.addActividadExtra(actividad).subscribe(data => {
-      // this.numeroCaso = '';
+      const log = {
+        usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+        cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+        fecha: new Date(),
+        transaccion: 'ADD-ACTIVIDAD',
+        cambio_json: {
+          mensaje: 'Ingreso existoso!',
+          data: data
+        }
+      }
+      this._servicioLogCambios.addLogCambio(log).subscribe();
     }, err => {
       // this.notifyService.notify('error', 'ERROR', 'Error Conexión!');
+      const log = {
+        usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+        cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+        fecha: new Date(),
+        transaccion: 'ERROR-ADD-ACTIVIDAD',
+        cambio_json: {
+          mensaje: 'ERROR AL INGRESAR ACTIVIDAD!',
+          data: actividad
+        }
+      }
+      this._servicioLogCambios.addLogCambio(log).subscribe();
     });
   }
 
@@ -505,10 +621,36 @@ export class BajaFlujoProcesoComponent implements OnInit {
       children: this.casoTreeNew[0].children
     };
     this.flujoProcesoService.addFlujoProceso(flujo).subscribe(data => {
+      const log = {
+        usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+        cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+        fecha: new Date(),
+        transaccion: 'ADD-FLUJO',
+        cambio_json: {
+          mensaje: 'Ingreso existoso!',
+          data: data
+        }
+      }
+      this._servicioLogCambios.addLogCambio(log).subscribe();
       this.inicio();
       this.ngOnInit();
       this.notifyService.notify('success', 'Exito', 'Ingreso existoso!');
     }, err => {
+      let flujoLog = {
+        respuestaBDD: err,
+        data: flujo
+      }
+      const log = {
+        usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+        cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+        fecha: new Date(),
+        transaccion: 'ERROR-ADD-FLUJO',
+        cambio_json: {
+          mensaje: 'ERROR AL INGRESAR!',
+          data: flujoLog
+        }
+      }
+      this._servicioLogCambios.addLogCambio(log).subscribe();
       this.notifyService.notify('error', 'ERROR', 'ERROR AL INGRESAR!');
     });
   }

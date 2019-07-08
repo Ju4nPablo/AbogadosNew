@@ -22,6 +22,9 @@ import { TooltipModule } from 'primeng/tooltip';
 /* import {CheckModule} from 'primeng/check'; */
 import { CalendarModule } from 'primeng/calendar';
 import { TabViewModule } from 'primeng/tabview';
+import { CheckboxModule } from 'primeng/checkbox';
+import { ChartModule } from 'primeng/chart';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 /* For tables */
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 
@@ -56,7 +59,15 @@ import { RouterModule, Routes } from '@angular/router';
 import { SpinnerModule } from 'primeng/spinner';
 import { GalleriaModule } from 'primeng/galleria';
 import { InputMaskModule } from 'primeng/inputmask';
+import { LogCambiosService } from './Services/log-Cambios/log-cambios.service';
+import { ListaCombosService } from './Services/listas-Combos/lista-combos.service';
+import { EditorModule } from 'primeng/editor';
+import { BotonesService } from './Services/botones/botones.service';
+import { EtiquetasService } from './Services/etiquetas/etiquetas.service';
+import { PermisosUserService } from './Services/permisos-user/permisos-user.service';
+import { GraficosComponent } from './AdministratorComponents/graficos/graficos.component';
 
+//#region  antes
 /*Navigation*/
 /* const appRoutes: Routes = [
   {
@@ -106,6 +117,7 @@ import { InputMaskModule } from 'primeng/inputmask';
   { path: 'login', component: LoginComponent }
 ];
  */
+//#endregion
 //noinspection TypeScriptValidateTypes
 @NgModule({
   declarations: [
@@ -122,6 +134,7 @@ import { InputMaskModule } from 'primeng/inputmask';
     CasoComponent,
     ReporteComponent,
     UserComponent,
+    GraficosComponent,
 
   ],
   imports: [
@@ -156,7 +169,10 @@ import { InputMaskModule } from 'primeng/inputmask';
     SpinnerModule,
     GalleriaModule,
     InputMaskModule,
-
+    CheckboxModule,
+    EditorModule,
+    ChartModule,
+    ProgressSpinnerModule,
   ],
   providers: [
     appRoutingProviders,
@@ -171,7 +187,13 @@ import { InputMaskModule } from 'primeng/inputmask';
     CasoService,
     LoginService,
     UserService,
-    SendEmailService
+    SendEmailService,
+    LogCambiosService,
+    ListaCombosService,
+    BotonesService,
+    EtiquetasService,
+    PermisosUserService,
+
   ],
   bootstrap: [AppComponent]
 })

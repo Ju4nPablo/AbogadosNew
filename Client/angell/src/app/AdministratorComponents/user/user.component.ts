@@ -3,6 +3,9 @@ import { UserService } from '../../Services/user/user.service';
 import { ValidacioneService } from '../../Services/validaciones/validacione.service';
 import { NotificacionesService } from '../../Services/notificaciones/notificaciones.service';
 import { AngularWaitBarrier } from 'blocking-proxy/built/lib/angular_wait_barrier';
+import { Router } from '@angular/router';
+import { BotonesService } from '../../Services/botones/botones.service';
+import { LogCambiosService } from '../../Services/log-Cambios/log-cambios.service';
 
 @Component({
   selector: 'app-user',
@@ -49,13 +52,17 @@ export class UserComponent implements OnInit {
   urlImagen: any = 'assets/perfil.png';
   uploadedFiles: any;
   totalRecords: number;
+  blockBotones: any = {};
   //#endregion
 
   //#region CONSTRUCTOR
   constructor(
     public userService: UserService,
     public validarService: ValidacioneService,
-    public notifyService: NotificacionesService
+    public notifyService: NotificacionesService,
+    private _servicioLogCambios: LogCambiosService,
+    private router: Router,
+    private _serviceBotones: BotonesService,
   ) {
     this.cols = [];
     this.cols = [
@@ -73,6 +80,12 @@ export class UserComponent implements OnInit {
 
   //#region INICIALIZAR VARIABLES
   inicio() {
+    this.blockBotones = this._serviceBotones.blockBotonesGene;
+    const user = JSON.parse(localStorage.getItem('userLogin'));
+    if (user.tipo !== '1') {
+      this.router.navigateByUrl('/dashboard/caso');
+    }
+
     this.totalRecords = 0;
     this.inicializarUser();
     this.bandera = {
@@ -136,6 +149,7 @@ export class UserComponent implements OnInit {
   //#region INGRESO Y MADIFICAR User
   // Añadir un User
   addUser() {
+    this.blockBotones = this._serviceBotones.disabledBotonesGene;
     if (this.bandera.ban1 === '1' && this.bandera.ban2 === '1' && this.bandera.ban3 === '1' && this.bandera.ban4 === '1') {
       if (this.selectEstado === true) {
         this.user.estado = '1';
@@ -145,17 +159,61 @@ export class UserComponent implements OnInit {
       this.user.tipo = this.selectTipo.id;
       this.userService.addUser(this.user).subscribe(data => {
         this.showDialog = false;
-        this.notifyService.notify('success', 'Exito', 'Ingreso Existoso!');
+        const log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ADD-USER',
+          cambio_json: {
+            mensaje: 'Ingreso existoso!',
+            data: data
+          }
+        }
+        this._servicioLogCambios.addLogCambio(log).subscribe();
         this.inicio();
+        this.notifyService.notify('success', 'Exito', 'Ingreso Existoso!');
       }, err => {
-        this.notifyService.notify('error', 'ERROR', 'Usuario ya existe!');
+        this.blockBotones = this._serviceBotones.blockBotonesGene;
+        let userLog = {
+          respuestaBDD: err,
+          data: this.user
+        };
+        if (err.status !== 0) {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-ADD-USER',
+            cambio_json: {
+              mensaje: 'Abogado ya existe!',
+              data: userLog
+            }
+          };
+          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'Usuario ya existe!');
+        } else {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-ADD-USER',
+            cambio_json: {
+              mensaje: 'ERROR DE CONEXIÓN!',
+              data: userLog
+            }
+          }
+          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
+        };
       });
     } else {
+      this.blockBotones = this._serviceBotones.blockBotonesGene;
       this.notifyService.notify('error', 'ERROR', 'Revise Campos!');
     }
   }
   // Modificar un User
   updateUser() {
+    this.blockBotones = this._serviceBotones.disabledBotonesGene;
     if (this.bandera.ban1 === '1' && this.bandera.ban2 === '1' && this.bandera.ban3 === '1' && this.bandera.ban4 === '1') {
       if (this.selectEstado === true) {
         this.selectUser.estado = '1';
@@ -165,12 +223,55 @@ export class UserComponent implements OnInit {
       this.selectUser.tipo = this.selectTipo.id;
       this.userService.updateUser(this.selectUser).subscribe(data => {
         this.showDialogMod = false;
+        const log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ADD-USER',
+          cambio_json: {
+            mensaje: 'Ingreso existoso!',
+            data: data
+          }
+        }
+        this._servicioLogCambios.addLogCambio(log).subscribe();
         this.inicio();
         this.notifyService.notify('success', 'Exito', 'Modificación Existosa!');
       }, err => {
-        this.notifyService.notify('error', 'ERROR', 'User ya Existe!');
+        this.blockBotones = this._serviceBotones.blockBotonesGene;
+        let userLog = {
+          respuestaBDD: err,
+          data: this.user
+        };
+        if (err.status !== 0) {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-UPDATE-USER',
+            cambio_json: {
+              mensaje: 'Abogado ya existe!',
+              data: userLog
+            }
+          };
+          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'Usuario ya existe!');
+        } else {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-UPDATE-USER',
+            cambio_json: {
+              mensaje: 'ERROR DE CONEXIÓN!',
+              data: userLog
+            }
+          }
+          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
+        };
       });
     } else {
+      this.blockBotones = this._serviceBotones.blockBotonesGene;
       this.notifyService.notify('error', 'ERROR', 'Revise Campos!');
     }
   }

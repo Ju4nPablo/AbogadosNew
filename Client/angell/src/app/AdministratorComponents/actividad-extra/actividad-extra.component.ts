@@ -5,6 +5,10 @@ import { ValidacioneService } from '../../Services/validaciones/validacione.serv
 import { EventService } from '../../Services/event/event.service';
 import { NotificacionesService } from '../../Services/notificaciones/notificaciones.service';
 import { CalendarModule } from 'primeng/calendar';
+import { LogCambiosService } from '../../Services/log-Cambios/log-cambios.service';
+import { ListaCombosService } from '../../Services/listas-Combos/lista-combos.service';
+import { BotonesService } from '../../Services/botones/botones.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-actividad-extra',
@@ -29,7 +33,9 @@ export class ActividadExtraComponent implements OnInit {
     'hora_inicio': '',
     'hora_fin': '',
     'repetir': '',
-    'recordatorio': ''
+    'recordatorio': '',
+    'estado': '',
+    'id_user': ''
   };
   evento: any = {
     'id': '',
@@ -53,10 +59,8 @@ export class ActividadExtraComponent implements OnInit {
   listRepetir: any[] = [];
   listRecordatorio: any[] = [];
   listHoras: any[] = [];
-  showButton: any = {
-    bttnUpdate : true,
-    bttnDelete : true
-  };
+  idActividad: any = '';
+  showButton: any = {};
   //#endregion
 
   //#region CONSTRUCTOR
@@ -65,7 +69,11 @@ export class ActividadExtraComponent implements OnInit {
     public actividadService: ActividadExtraService,
     public validarService: ValidacioneService,
     public notifyService: NotificacionesService,
-    public eventService: EventService
+    public eventService: EventService,
+    private _serviceLogCambios: LogCambiosService,
+    private _serviceListaCombos: ListaCombosService,
+    private _serviceBotones: BotonesService,
+    private router: Router,
   ) {
     this.inicio();
     /* this.actividadService.urlAcceso().subscribe(data => {
@@ -77,13 +85,9 @@ export class ActividadExtraComponent implements OnInit {
   //#region INICIO DE VARIABLES
 
   inicio() {
+    this.idActividad = '';
     const us = JSON.parse(localStorage.getItem('userLogin'));
-    if (us) {
-      this.showButton = {
-        bttnUpdate : false,
-        bttnDelete : false
-      }
-    }
+    this.showButton = this._serviceBotones.showBotonesActividades;
     this.events = [];
     this.listActividad = [];
     this.selectPrioridad = '';
@@ -98,7 +102,9 @@ export class ActividadExtraComponent implements OnInit {
       'hora_inicio': '',
       'hora_fin': '',
       'repetir': '',
-      'recordatorio': ''
+      'recordatorio': '',
+      'estado': '',
+      'id_user': ''
     };
     this.evento = {
       'id': '',
@@ -114,19 +120,7 @@ export class ActividadExtraComponent implements OnInit {
     this.selectRecordatorio = '';
     this.selectHoraIni = '';
     this.selectHoraFin = '';
-    this.listPrioridad = [
-      {
-        color: 'red',
-        prioridad: 'Alta'
-      },
-      {
-        color: 'yellow',
-        prioridad: 'Media'
-      },
-      {
-        color: 'green',
-        prioridad: 'Baja'
-      }];
+    this.listPrioridad = this._serviceListaCombos.listaPrioridadActividad;
     this.selectPrioridad = this.listPrioridad[1];
     // cargar lista de abogados
     this.abogadoService.listAbogado().subscribe(dat => {
@@ -143,25 +137,56 @@ export class ActividadExtraComponent implements OnInit {
       right: 'month,agendaWeek,agendaDay,list'
     };
     // carga de actividades al calendario
-    this.actividadService.listActividadExtra().subscribe(dat => {
-      const data: any = dat;
-      this.listActividad = data;
-      for (const e of data) {
-        this.evento.id = e._id;
-        this.evento.title = e.actividad;
-        this.evento.start = e.fecha_inicio;
-        this.evento.end = e.fecha_fin;
-        this.evento.color = e.prioridad;
-        this.events.push(this.evento);
-        this.evento = {
-          'id': '',
-          'title': '',
-          'start': '',
-          'end': '',
-          'color': ''
-        };
+    if (us.tipo === '1') {
+      this.actividadService.listActividadExtra().subscribe(dat => {
+        const data: any = dat;
+        this.listActividad = data;
+        for (const e of data) {
+          let fi = e.fecha_inicio.split('T');
+          let ff = e.fecha_inicio.split('T');
+          this.evento.id = e._id;
+          this.evento.title = e.actividad;
+          this.evento.start = fi[0];
+          this.evento.end = ff[0];
+          this.evento.color = e.prioridad;
+          this.events.push(this.evento);
+          this.evento = {
+            'id': '',
+            'title': '',
+            'start': '',
+            'end': '',
+            'color': ''
+          };
+        }
+      });
+    }
+    else {
+      if (us.tipo === '2') {
+        this.router.navigateByUrl('/dashboard/caso');
+      } else {
+        this.actividadService.listActividadExtraPorCedulaUsuario({ cedula: us.cedula, id_user: us._id }).subscribe(dat => {
+          const data: any = dat;
+          this.listActividad = data;
+          for (const e of data) {
+            let fi = e.fecha_inicio.split('T');
+            let ff = e.fecha_inicio.split('T');
+            this.evento.id = e._id;
+            this.evento.title = e.actividad;
+            this.evento.start = fi[0];
+            this.evento.end = ff[0];
+            this.evento.color = e.prioridad;
+            this.events.push(this.evento);
+            this.evento = {
+              'id': '',
+              'title': '',
+              'start': '',
+              'end': '',
+              'color': ''
+            };
+          }
+        });
       }
-    });
+    }
     this.listRepetir = [{ descripcion: 'Nunca' }, { descripcion: 'Todos los días' }, { descripcion: 'Todas las semanas' },
     { descripcion: 'Todos los meses' }, { descripcion: 'Todos los años' }];
     this.listRecordatorio = [{ descripcion: 'Nunca' }, { descripcion: '5 minutos antes' }, { descripcion: '15 minutos antes' },
@@ -198,7 +223,7 @@ export class ActividadExtraComponent implements OnInit {
   }
   //#endregion
 
-  //#region INGRESAR Y MODIFICAR ACTIVIDAD
+  //#region INGRESAR, MODIFICAR, ELIMINAR Y RESTAURAR ACTIVIDAD
   // Ingresa una actividad
   addActividad() {
     if (this.actividad.actividad !== '' && this.actividad.actividad !== null && this.actividad.actividad !== undefined) {
@@ -208,12 +233,40 @@ export class ActividadExtraComponent implements OnInit {
       this.actividad.hora_fin = this.selectHoraFin.hora;
       this.actividad.repetir = this.selectRepetir.descripcion;
       this.actividad.recordatorio = this.selectRecordatorio.descripcion;
+      this.actividad.estado = 'Activo';
+      this.actividad.id_user = JSON.parse(localStorage.getItem('userLogin'))._id;
       this.actividadService.addActividadExtra(this.actividad).subscribe(data => {
         this.showDialog = false;
+        const log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ADD-ACTIVIDAD',
+          cambio_json: {
+            mensaje: 'Ingreso Existoso!',
+            data: data
+          }
+        }
+        this._serviceLogCambios.addLogCambio(log).subscribe();
         this.notifyService.notify('success', 'Exito', 'Ingreso Existoso!');
         this.inicio();
       }, err => {
-        this.notifyService.notify('error', 'ERROR', 'Error Conexión!');
+        let actividadLog = {
+          respuestaBDD: err,
+          data: this.actividad
+        }
+        const log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ERROR-ADD-ACTIVIDAD',
+          cambio_json: {
+            mensaje: 'Error al Ingresar!',
+            data: actividadLog
+          }
+        }
+        this._serviceLogCambios.addLogCambio(log).subscribe();
+        this.notifyService.notify('error', 'ERROR', 'Error al Ingresar!');
       });
     } else {
       this.notifyService.notify('error', 'ERROR', 'Ingrese una actividad!');
@@ -228,39 +281,197 @@ export class ActividadExtraComponent implements OnInit {
       this.actividad.hora_fin = this.selectHoraFin.hora;
       this.actividad.repetir = this.selectRepetir.descripcion;
       this.actividad.recordatorio = this.selectRecordatorio.descripcion;
+      this.actividad.estado = 'Activo'
       this.actividadService.updateActividadExtra(this.actividad).subscribe(data => {
         this.showDialog = false;
+        let actividadLog = {
+          respuestaBDD: data,
+          data: this.actividad
+        };
+        const log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'UPDATE-ACTIVIDAD',
+          cambio_json: {
+            mensaje: 'Modificación Existosa!',
+            data: actividadLog
+          }
+        }
+        this._serviceLogCambios.addLogCambio(log).subscribe();
         this.notifyService.notify('success', 'Exito', 'Modificación Existosa!');
         this.inicio();
       }, err => {
-        this.notifyService.notify('error', 'ERROR', 'Error Conexión!');
+        let actividadLog = {
+          respuestaBDD: err,
+          data: this.actividad
+        };
+        const log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ERROR-UPDATE-ACTIVIDAD',
+          cambio_json: {
+            mensaje: 'Error al Modificar!',
+            data: actividadLog
+          }
+        }
+        this._serviceLogCambios.addLogCambio(log).subscribe();
+        this.notifyService.notify('error', 'ERROR', 'Error al Modificar!');
       });
     } else {
+      const log = {
+        usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+        cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+        fecha: new Date(),
+        transaccion: 'ERROR-UPDATE-ACTIVIDAD',
+        cambio_json: {
+          mensaje: 'Dirígase al caso "' + this.actividad.caso_numero + '" para poder modificar!',
+          data: this.actividad
+        }
+      }
+      this._serviceLogCambios.addLogCambio(log).subscribe();
       this.notifyService.notify('error', 'ERROR', 'Dirígase al caso "' + this.actividad.caso_numero + '" para poder modificar!');
     }
   }
-  //#endregion
 
   // Eliminar una actividad
-  deleteActividad() {
+  deleteActividad(event) {
+    this.actividad.estado = 'Eliminado';
+    this.actividad.prioridad = 'gray';
+    let cambio = {
+      id: this.idActividad,
+      estado: this.actividad.estado,
+      prioridad: this.actividad.prioridad
+    }
     if (this.actividad.id_actividad_caso === 'agenda') {
-      this.actividadService.deleteActividadExtra(this.actividad).subscribe(data => {
+      this.actividadService.deleteActividadExtraIdEstado(cambio).subscribe(data => {
         this.showDialog = false;
+        let actividadLog = {
+          respuestaBDD: data,
+          data: cambio
+        };
+        const log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'DELETE-ACTIVIDAD',
+          cambio_json: {
+            mensaje: 'Eliminación Existosa!',
+            data: actividadLog
+          }
+        }
+        this._serviceLogCambios.addLogCambio(log).subscribe();
         this.notifyService.notify('success', 'Exito', 'Eliminación Existosa!');
         this.inicio();
       }, err => {
-        this.notifyService.notify('error', 'ERROR', 'Error Conexión!');
+        let actividadLog = {
+          respuestaBDD: err,
+          data: cambio
+        };
+        const log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ERROR-DELETE-ACTIVIDAD',
+          cambio_json: {
+            mensaje: 'Ocurrio un ERROR al Eliminar!',
+            data: actividadLog
+          }
+        }
+        this._serviceLogCambios.addLogCambio(log).subscribe();
+        this.notifyService.notify('error', 'ERROR', 'Ocurrio un ERROR al Eliminar!');
       });
     } else {
+      const log = {
+        usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+        cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+        fecha: new Date(),
+        transaccion: 'ERROR-DELETE-ACTIVIDAD',
+        cambio_json: {
+          mensaje: 'Dirígase al caso "' + this.actividad.caso_numero + '" para poder eliminar!',
+          data: cambio
+        }
+      }
+      this._serviceLogCambios.addLogCambio(log).subscribe();
       this.notifyService.notify('error', 'ERROR', 'Dirígase al caso "' + this.actividad.caso_numero + '" para poder eliminar!');
     }
   }
+
+  // Eliminar una actividad
+  restaurarActividad() {
+    this.actividad.estado = 'Activo';
+    this.actividad.prioridad = 'yellow';
+    let cambio = {
+      id: this.idActividad,
+      estado: this.actividad.estado,
+      prioridad: this.actividad.prioridad
+    }
+    if (this.actividad.id_actividad_caso === 'agenda') {
+      this.actividadService.deleteActividadExtraIdEstado(cambio).subscribe(data => {
+        this.showDialog = false;
+        let actividadLog = {
+          respuestaBDD: data,
+          data: cambio
+        };
+        this.showButton = {
+          bttnUpdate: true,
+          bttnDelete: true,
+          bttnRestaurar: false
+        }
+        const log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'RESTAURAR-ACTIVIDAD',
+          cambio_json: {
+            mensaje: 'Restauración Existosa!',
+            data: actividadLog
+          }
+        }
+        this._serviceLogCambios.addLogCambio(log).subscribe();
+        this.notifyService.notify('success', 'Exito', 'Restauración Existosa!');
+        this.inicio();
+      }, err => {
+        let actividadLog = {
+          respuestaBDD: err,
+          data: cambio
+        };
+        const log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ERROR-RESTAURAR-ACTIVIDAD',
+          cambio_json: {
+            mensaje: 'Ocurrio un ERROR al Restaurar!',
+            data: actividadLog
+          }
+        }
+        this._serviceLogCambios.addLogCambio(log).subscribe();
+        this.notifyService.notify('error', 'ERROR', 'Ocurrio un ERROR al Restaurar!');
+      });
+    } else {
+      const log = {
+        usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+        cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+        fecha: new Date(),
+        transaccion: 'ERROR-RESTAURAR-ACTIVIDAD',
+        cambio_json: {
+          mensaje: 'Dirígase al caso "' + this.actividad.caso_numero + '" para poder eliminar!',
+          data: cambio
+        }
+      }
+      this._serviceLogCambios.addLogCambio(log).subscribe();
+      this.notifyService.notify('error', 'ERROR', 'Dirígase al caso "' + this.actividad.caso_numero + '" para poder eliminar!');
+    }
+  }
+
   //#endregion
 
   //#region MOSTRAR y CERRAR FORMULARIOS
   // Muestra el fomrulario para ingresar una actividad
   showDialogAdd(event) {
-    this.inicio();
+    // this.inicio();
     this.showDialog = true;
     this.actividad.fecha_inicio = event.date._d;
     this.actividad.fecha_fin = event.date._d;
@@ -269,6 +480,7 @@ export class ActividadExtraComponent implements OnInit {
   editActividad(event) {
     for (const act of this.listActividad) {
       if (act._id === event.calEvent.id) {
+        this.idActividad = act._id;
         this.actividad = act;
         this.actividad.fecha_inicio = event.calEvent.start._d;
         this.selectRecordatorio = { descripcion: act.recordatorio };
@@ -276,6 +488,9 @@ export class ActividadExtraComponent implements OnInit {
         this.selectHoraIni = { hora: act.hora_inicio };
         this.selectHoraFin = { hora: act.hora_fin };
 
+        if (act.estado === 'Eliminado') {
+          this.showButton = this._serviceBotones.showBotonEliminarActividad;
+        }
         if (event.calEvent.end !== null) {
           this.actividad.fecha_fin = event.calEvent.end._d;
         } else {
