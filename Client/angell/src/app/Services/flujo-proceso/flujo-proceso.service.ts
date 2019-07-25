@@ -23,7 +23,7 @@ export class FlujoProcesoService {
   updateFlujoProceso(flujo) {
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
-    return this.http.post(this.url + 'flujo_proceso', flujo, { headers });
+    return this.http.put(this.url + 'flujo_proceso/' + flujo._id, flujo, { headers });
   }
 
   allFlujoProceso() {

@@ -11,6 +11,7 @@ import { ActividadExtraService } from '../../Services/actividad-extra/actividad-
 import { LogCambiosService } from '../../Services/log-Cambios/log-cambios.service';
 import { ListaCombosService } from '../../Services/listas-Combos/lista-combos.service';
 import { Router } from '@angular/router';
+import { BotonesService } from '../../Services/botones/botones.service';
 
 @Component({
   selector: 'app-baja-flujo-proceso',
@@ -81,6 +82,14 @@ export class BajaFlujoProcesoComponent implements OnInit {
     blockDescripcionCliente: false,
     blockEstado: false,
   };
+  blockBotones: any = {};
+  paginado: number = 10;
+  totalRecords: number;
+
+  // Modificar plantilla
+  showDialogModPlant: boolean;
+  showDialogModPlantNodo: boolean;
+  flujoTreeUpdate: TreeNode[];
 
   constructor(
     private flujoProcesoService: FlujoProcesoService,
@@ -91,19 +100,25 @@ export class BajaFlujoProcesoComponent implements OnInit {
     public notifyService: NotificacionesService,
     private sendEmailService: SendEmailService,
     private agenda: ActividadExtraService,
-    private _servicioLogCambios: LogCambiosService,
-    private _servicioListaCombos: ListaCombosService,
+    private _serviceLogCambios: LogCambiosService,
+    private _serviceListaCombos: ListaCombosService,
     private router: Router,
+    private _serviceBotones: BotonesService,
   ) {
     this.inicio();
   }
 
   inicio() {
+    this.showDialogModPlant = false;
+    this.showDialogModPlantNodo = false;
+    this.totalRecords = 0;
+    this.paginado = 10;
+    this.blockBotones = this._serviceBotones.blockBotones;
     const user = JSON.parse(localStorage.getItem('userLogin'));
     if (user.tipo !== '1') {
       this.router.navigateByUrl('/dashboard/caso');
     }
-    this.listHoras = this._servicioListaCombos.listacomboHoras;
+    this.listHoras = this._serviceListaCombos.listacomboHoras;
     this.selectHoraIni = this.listHoras[2];
     this.info = {
       label: '',
@@ -152,7 +167,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
       blockAbogado: false,
       blockDescripcionAdmin: false,
       blockDescripcionAbogado: true,
-      blockDescripcionCliente: true,
+      blockDescripcionCliente: false,
       blockEstado: false,
     };
 
@@ -169,13 +184,18 @@ export class BajaFlujoProcesoComponent implements OnInit {
     this.showImagen = false;
     this.flujoProcesoService.allFlujoProceso().subscribe(data => {
       this.listFlujo = data;
-      this.listFlujo.forEach(item => {
-        this.listTabla.push({
-          id: item._id,
-          label: item.label,
-          descripcion: item.data.descripcion
+      if (this.listFlujo.length > 0) {
+        this.totalRecords = this.listFlujo.length;
+        this.listFlujo.forEach(item => {
+          this.listTabla.push({
+            id: item._id,
+            label: item.label,
+            descripcion: item.data.descripcion
+          });
         });
-      });
+      } else {
+        this.notifyService.notify('error', 'ERROR', 'NO EXISTEN REGISTROS!');
+      };
     });
     this.clienteService.getClienteTipo().subscribe(data => {
       this.listCliente = data;
@@ -194,11 +214,12 @@ export class BajaFlujoProcesoComponent implements OnInit {
     this.cols = [
       { field: 'label', header: 'Nombre flujo' },
       { field: 'descripcion', header: 'Descripción del evento' },
+      { field: 'editar', header: 'Editar plantilla' },
     ];
     this.showDialogMod = false;
     this.selectProceso = {};
     // Agregados
-    this.listEstado = this._servicioListaCombos.listacomboEstadoCaso;
+    this.listEstado = this._serviceListaCombos.listacomboEstadoCaso;
     this.node = {
       label: '',
       data: {
@@ -501,9 +522,59 @@ export class BajaFlujoProcesoComponent implements OnInit {
     this.activaBotonGuardaNodoFlujo = true;
   }
   //#endregion
+  //#region Trabajo con el nodo Modificar flujo add, uptade, delete, carga
+  loadNodeMod(event) {
+    this.selectNode = {};
+    this.selectNode = event.node;
+  }
+
+  addNodoMod() {
+    this.selectNode = {
+      label: 'Nueva Etiqueta',
+      data: {
+        id: this.generarID(),
+        descripcion: '',
+        estado: this.selectEstado
+      },
+      children: []
+    };
+    this.caso.node.children.push(this.selectNode);
+    this.caso.node.expanded = true;
+    this.showDialogModPlantNodo = false;
+    this.activaBotonGuardarFlujo = false;
+  }
+
+  updateNodoMod() {
+    this.node.label = this.nodeNew.label;
+    this.node.data = this.nodeNew.data;
+    this.showDialogModPlantNodo = false;
+  }
+
+  deleteNodoMod() {
+    this.flujoTreeUpdate.forEach(nodes => {
+      this.buscarQuitarNodo(nodes, this.node.data.id);
+      if (nodes.children.length > 0) {
+        this.activaBotonGuardarFlujo = false;
+      } else {
+        this.activaBotonGuardarFlujo = true;
+      }
+    });
+    this.showDialogModPlantNodo = false;
+  }
+
+  selectNodoMod(event) {
+    this.caso = event;
+    this.node = event.node;
+    this.nodeNew.label = this.node.label;
+    this.nodeNew.data = this.node.data;
+    this.showDialogModPlantNodo = true;
+    this.activaBotonGuardaNodoFlujo = true;
+  }
+  //#endregion
 
   //#region Guardar Casos
   saveCaso() {
+    this.blockBotones = this._serviceBotones.disabledBotonesCaso;
     this.verificarCasoRecursive(this.casoTree[0]);
     if (this.banValidar) {
       const casoSave = {
@@ -513,6 +584,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
       };
       this.numeroCaso = this.casoTree[0].label;
       this.casoService.addCaso(casoSave).subscribe(data => {
+        this.blockBotones = this._serviceBotones.blockBotones;
         this.recorrerAddActividades(this.casoTree[0]);
         const log = {
           usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
@@ -524,31 +596,47 @@ export class BajaFlujoProcesoComponent implements OnInit {
             data: data
           }
         }
-        this._servicioLogCambios.addLogCambio(log).subscribe(data => {
+        this._serviceLogCambios.addLogCambio(log).subscribe(data => {
         });
         this.inicio();
         this.ngOnInit();
         this.notifyService.notify('success', 'Exito', 'INGRESO EXITOSO!');
       }, err => {
+        this.blockBotones = this._serviceBotones.blockBotones;
         let casoLog = {
           respuestaBDD: err,
           data: this.casoTree[0]
         }
-        const log = {
-          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
-          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
-          fecha: new Date(),
-          transaccion: 'ERROR-ADD-CASO',
-          cambio_json: {
-            mensaje: 'ERROR AL INGRESAR O CASO YA EXISTE!',
-            data: casoLog
+        if (err.status !== 0) {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-ADD-CASO',
+            cambio_json: {
+              mensaje: 'CASO YA EXISTE!',
+              data: casoLog
+            }
+          };
+          this._serviceLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'CASO YA EXISTE!');
+        } else {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-ADD-CASO',
+            cambio_json: {
+              mensaje: 'ERROR DE CONEXIÓN!',
+              data: casoLog
+            }
           }
-        }
-        this._servicioLogCambios.addLogCambio(log).subscribe(data => {
-        });
-        this.notifyService.notify('error', 'ERROR', 'ERROR AL INGRESAR O CASO YA EXISTE!');
+          this._serviceLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
+        };
       });
     } else {
+      this.blockBotones = this._serviceBotones.blockBotones;
       this.notifyService.notify('error', 'ERROR', 'EXISTEN CAMPOS VACÍOS!');
     }
   }
@@ -596,7 +684,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
           data: data
         }
       }
-      this._servicioLogCambios.addLogCambio(log).subscribe();
+      this._serviceLogCambios.addLogCambio(log).subscribe();
     }, err => {
       // this.notifyService.notify('error', 'ERROR', 'Error Conexión!');
       const log = {
@@ -609,18 +697,20 @@ export class BajaFlujoProcesoComponent implements OnInit {
           data: actividad
         }
       }
-      this._servicioLogCambios.addLogCambio(log).subscribe();
+      this._serviceLogCambios.addLogCambio(log).subscribe();
     });
   }
 
   // guardar flujo
   saveFlujo() {
+    this.blockBotones = this._serviceBotones.disabledBotonesCaso;
     const flujo = {
       label: this.casoTreeNew[0].label,
       data: this.casoTreeNew[0].data,
       children: this.casoTreeNew[0].children
     };
     this.flujoProcesoService.addFlujoProceso(flujo).subscribe(data => {
+      this.blockBotones = this._serviceBotones.blockBotones;
       const log = {
         usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
         cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
@@ -631,27 +721,113 @@ export class BajaFlujoProcesoComponent implements OnInit {
           data: data
         }
       }
-      this._servicioLogCambios.addLogCambio(log).subscribe();
+      this._serviceLogCambios.addLogCambio(log).subscribe();
       this.inicio();
       this.ngOnInit();
       this.notifyService.notify('success', 'Exito', 'Ingreso existoso!');
     }, err => {
+      this.blockBotones = this._serviceBotones.blockBotones;
       let flujoLog = {
         respuestaBDD: err,
         data: flujo
+      }
+      if (err.status !== 0) {
+        let log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ERROR-ADD-FLUJO',
+          cambio_json: {
+            mensaje: 'ERROR PLANTILLA YA EXISTE!',
+            data: flujoLog
+          }
+        };
+        this._serviceLogCambios.addLogCambio(log).subscribe();
+        this.notifyService.notify('error', 'ERROR', 'PLANTILLA YA EXISTE!');
+      } else {
+        let log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ERROR-ADD-FLUJO',
+          cambio_json: {
+            mensaje: 'ERROR DE CONEXIÓN!',
+            data: flujoLog
+          }
+        }
+        this._serviceLogCambios.addLogCambio(log).subscribe();
+        this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
+      };
+    });
+  }
+  // guardar flujo
+  updateFlujo() {
+    this.blockBotones = this._serviceBotones.disabledBotonesCaso;
+    this.flujoProcesoService.updateFlujoProceso(this.flujoTreeUpdate[0]).subscribe(data => {
+      this.blockBotones = this._serviceBotones.blockBotones;
+      let flujoLog = {
+        respuestaBDD: data,
+        data: this.flujoTreeUpdate[0]
       }
       const log = {
         usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
         cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
         fecha: new Date(),
-        transaccion: 'ERROR-ADD-FLUJO',
+        transaccion: 'UPDATE-FLUJO',
         cambio_json: {
-          mensaje: 'ERROR AL INGRESAR!',
+          mensaje: 'Modificación existosa!',
           data: flujoLog
         }
       }
-      this._servicioLogCambios.addLogCambio(log).subscribe();
-      this.notifyService.notify('error', 'ERROR', 'ERROR AL INGRESAR!');
+      this._serviceLogCambios.addLogCambio(log).subscribe();
+      this.inicio();
+      this.ngOnInit();
+      this.notifyService.notify('success', 'Exito', 'Modificación existosa!');
+    }, err => {
+      this.blockBotones = this._serviceBotones.blockBotones;
+      let flujoLog = {
+        respuestaBDD: err,
+        data: this.flujoTreeUpdate[0]
+      }
+      if (err.status !== 0) {
+        let log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ERROR-UPDATE-FLUJO',
+          cambio_json: {
+            mensaje: 'ERROR PLANTILLA YA EXISTE!',
+            data: flujoLog
+          }
+        };
+        this._serviceLogCambios.addLogCambio(log).subscribe();
+        this.notifyService.notify('error', 'ERROR', 'PLANTILLA YA EXISTE!');
+      } else {
+        let log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ERROR-UPDATE-FLUJO',
+          cambio_json: {
+            mensaje: 'ERROR DE CONEXIÓN!',
+            data: flujoLog
+          }
+        }
+        this._serviceLogCambios.addLogCambio(log).subscribe();
+        this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
+      };
+    });
+  }
+  // Modificar Flujo
+  cargarFlujo(event) {
+    this.showDialogModPlant = true;
+    this.listFlujo.forEach(item => {
+      if (item._id === event.id) {
+        this.flujoTreeUpdate = [];
+        this.showDialogMod = true;
+        this.flujoTreeUpdate = [item];
+        this.expandAllMod();
+      }
     });
   }
   // guardar imágenes
@@ -707,6 +883,12 @@ export class BajaFlujoProcesoComponent implements OnInit {
     });
     this.banClose = false;
     this.banOpen = true;
+  }
+  // Expande todo el arbol recursivamente a modificarse.
+  expandAllMod() {
+    this.flujoTreeUpdate.forEach(node => {
+      this.expandRecursive(node, true);
+    });
   }
   // Contrae todo el arbol de forma recursiva.
   collapseAll() {
@@ -866,7 +1048,11 @@ export class BajaFlujoProcesoComponent implements OnInit {
     }
   }
   //#endregion
-  //#region Funciones de habilitar y desabilitar botones.
-
-  //#endregion
+  // Paginado de la tabla
+  validarPaginado() {
+    if (this.paginado < 3) {
+      this.paginado = 10;
+      this.notifyService.notify('error', 'ERROR', 'Paginado mínimo 3.');
+    }
+  };
 }

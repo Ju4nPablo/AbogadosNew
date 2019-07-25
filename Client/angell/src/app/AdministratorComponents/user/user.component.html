@@ -1,18 +1,28 @@
 <form>
   <br>
-  <p-panel header="LISTA USUARIOS">
+  <p-panel header="USUARIOS">
     <p>
       <b>Nota:</b> Click en un registro para modificar.</p>
     <p-table #dt [columns]="cols" [value]="listaUser" selectionMode="single" [responsive]="true"
-      [(selection)]="selectUser" (onRowSelect)="onRowSelect($event)" [paginator]="true" [rows]="10">
+      [(selection)]="selectUser" (onRowSelect)="onRowSelect($event)" [totalRecords]="totalRecords" [paginator]="true"
+      [rows]="paginado">
       <ng-template pTemplate="caption">
         <div class="ui-g">
-          <div class="ui-g-6" style="text-align:left">
+          <div class="ui-g-4" style="text-align:left">
             <button type="button" pButton icon="fa fa-plus" (click)="showDialogAdd()" label="Añadir Usuario"></button>
           </div>
-          <div class="ui-g-6" style="text-align: right">
+          <div class="ui-g-4" style="text-align: right">
+            <div class="ui-g-9">
+              <label for="float-input">Paginado: *</label>
+            </div>
+            <div class="ui-g-3">
+              <input pInputText type="number" id="paginado" [(ngModel)]="paginado" name="paginado"
+                class="form-control  input-sm" min="3" (ngModelChange)="validarPaginado()" required>
+            </div>
+          </div>
+          <div class="ui-g-4" style="text-align: right">
             <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-            <input type="text" pInputText size="50" placeholder="Buscar"
+            <input type="text" pInputText size="auto" placeholder="Buscar"
               (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
           </div>
         </div>
@@ -32,10 +42,6 @@
         </tr>
       </ng-template>
 
-      <ng-template pTemplate="summary" let-rowData>
-
-      </ng-template>
-
     </p-table>
 
     <p-dialog header="INGRESO USUARIO" [(visible)]="showDialog" [responsive]="true" showEffect="fade" [modal]="true"
@@ -43,7 +49,7 @@
       <div class="ui-g ui-fluid" *ngIf="user">
         <div>
           <div class="ui-g-12">
-            <div class="ui-g-6">
+            <div class="ui-g-4">
               <span class="ui-float-label">
                 <input pInputText type="text" id="nombre" [(ngModel)]="user.user_name" name="nombre"
                   class="form-control  input-sm" minlength="6" (ngModelChange)="verificaNameUser()" class="minusc"
@@ -51,11 +57,18 @@
                 <label for="float-input">Nombre Usuario: *</label>
               </span>
             </div>
-            <div class="ui-g-6">
+            <div class="ui-g-4">
               <span class="ui-float-label">
                 <input pInputText type="password" id="password" [(ngModel)]="user.password" name="password"
                   class="form-control  input-sm" (ngModelChange)="verificaPassword()" required>
                 <label for="float-input">Password: *</label>
+              </span>
+            </div>
+            <div class="ui-g-4">
+              <span class="ui-float-label">
+                <input pInputText type="password" id="passwordConfirmar" [(ngModel)]="confirmarPassword"
+                  name="passwordConfirmar" class="form-control  input-sm" (ngModelChange)="igualarPassword()" required>
+                <label for="float-input">Confirmar password: *</label>
               </span>
             </div>
           </div>
@@ -121,8 +134,9 @@
       <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix">
           <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar"
-            class="ui-button-danger"></button>
-          <button type="button" pButton icon="fa fa-check" (click)="addUser()" label="Guardar"></button>
+            class="ui-button-danger" [disabled]="blockBotones.cancelar"></button>
+          <button type="button" pButton icon="fa fa-save" (click)="addUser()" label="Guardar"
+            [disabled]="blockBotones.guardar"></button>
         </div>
       </p-footer>
     </p-dialog>
@@ -132,18 +146,26 @@
       <div class="ui-g ui-fluid" *ngIf="selectUser">
         <div>
           <div class="ui-g-12">
-            <div class="ui-g-6">
+            <div class="ui-g-4">
               <span class="ui-float-label">
                 <input pInputText type="text" id="nombreMod" [(ngModel)]="selectUser.user_name" name="nombreMod"
-                  class="form-control input-sm" minlength="6" (ngModelChange)="verificaNameUser()" required disabled>
+                  class="form-control input-sm" minlength="6" (ngModelChange)="verificaNameUser()" required>
                 <label for="float-input">Nombre Usuario: *</label>
               </span>
             </div>
-            <div class="ui-g-6">
+            <div class="ui-g-4">
               <span class="ui-float-label">
                 <input pInputText type="password" id="passwordMod" [(ngModel)]="selectUser.password" name="passwordMod"
                   class="form-control  input-sm" (ngModelChange)="verificaPassword()">
                 <label for="float-input">Password: *</label>
+              </span>
+            </div>
+            <div class="ui-g-4">
+              <span class="ui-float-label">
+                <input pInputText type="password" id="passwordConfirmarMod" [(ngModel)]="confirmarPassword"
+                  name="passwordConfirmarMod" class="form-control  input-sm" (ngModelChange)="igualarPasswordMod()"
+                  required>
+                <label for="float-input">Confirmar password: *</label>
               </span>
             </div>
           </div>
@@ -209,8 +231,9 @@
       <p-footer>
         <div class="ui-dialog-buttonpane ui-helper-clearfix">
           <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar"
-            class="ui-button-danger"></button>
-          <button type="button" pButton icon="fa fa-check" (click)="updateUser()" label="Modificar"></button>
+            class="ui-button-danger" [disabled]="blockBotones.cancelar"></button>
+          <button type="button" pButton icon="fa fa-save" (click)="updateUser()" label="Modificar"
+            [disabled]="blockBotones.guardar"></button>
         </div>
       </p-footer>
     </p-dialog>

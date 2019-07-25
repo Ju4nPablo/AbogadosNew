@@ -1,18 +1,28 @@
 <form>
   <br>
-  <p-panel header="TABLA DE PLANTILLAS">
+  <p-panel header="PLANTILLAS">
     <p>
       <b>Nota:</b> Click en un registro para crear un CASO.</p>
     <p-table #dt [columns]="cols" [value]="listTabla" selectionMode="single" [responsive]="true"
-      [(selection)]="selectProceso" (onRowSelect)="selectItem($event)" [paginator]="true" [rows]="10">
+      [(selection)]="selectProceso" (onRowSelect)="selectItem($event)" [paginator]="true" [totalRecords]="totalRecords"
+      [rows]="paginado">
       <ng-template pTemplate="caption">
         <div class="ui-g">
-          <div class="ui-g-6" style="text-align:left">
+          <div class="ui-g-4" style="text-align:left">
             <button type="button" pButton icon="fa fa-plus" (click)="showDialogAdd()" label="Añadir Plantilla"></button>
           </div>
-          <div class="ui-g-6" style="text-align: right">
+          <div class="ui-g-4" style="text-align: right">
+            <div class="ui-g-9">
+              <label for="float-input">Paginado: *</label>
+            </div>
+            <div class="ui-g-3">
+              <input pInputText type="number" id="paginado" [(ngModel)]="paginado" name="paginado"
+                class="form-control  input-sm" min="3" (ngModelChange)="validarPaginado()" required>
+            </div>
+          </div>
+          <div class="ui-g-4" style="text-align: right">
             <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-            <input type="text" pInputText size="50" placeholder="Buscar"
+            <input type="text" pInputText size="auto" placeholder="Buscar"
               (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
           </div>
         </div>
@@ -28,6 +38,8 @@
         <tr [pSelectableRow]="rowData">
           <td>{{rowData.label}}</td>
           <td>{{rowData.descripcion}}</td>
+          <td><button pButton type="button" (click)="cargarFlujo(rowData)" icon="fa fa-edit"
+              class="ui-button-success"></button></td>
         </tr>
       </ng-template>
 
@@ -38,7 +50,7 @@
   </p-panel>
 </form>
 
-<p-dialog header="CREAR CASO" [(visible)]="showDialogMod" [responsive]="true" showEffect="fade" [modal]="true"
+<p-dialog header="NUEVO CASO" [(visible)]="showDialogMod" [responsive]="true" showEffect="fade" [modal]="true"
   [width]="1200">
   <!--  [height]="700" -->
   <div class="ui-g ui-fluid" *ngIf="casoTree">
@@ -49,12 +61,14 @@
     </div>
   </div>
 
-  <button pButton type="button" (click)="saveCaso()" label="Generar Caso"></button>
-  <button pButton type="button" (click)="expandAll()" [disabled]="banOpen" label="Expandir Todos"
-    class="ui-button-success"></button>
-  <button pButton type="button" (click)="collapseAll()" [disabled]="banClose" label="Ocultar Todos"
-    class="ui-button-success"></button>
-  <button pButton type="button" (click)="exitArbol()" label="Cancelar" class="ui-button-danger"></button>
+  <button pButton type="button" (click)="saveCaso()" label="Generar Caso" icon="fa fa-save"
+    [disabled]="blockBotones.guardarCaso"></button>
+  <button pButton type="button" (click)="expandAll()" [disabled]="banOpen" label="Expandir" icon="fa fa-arrows"
+    class="ui-button-success" [disabled]="blockBotones.expandir"></button>
+  <button pButton type="button" (click)="collapseAll()" [disabled]="banClose" label="Contraer" icon="fa fa-compress"
+    class="ui-button-success" [disabled]="blockBotones.contraer"></button>
+  <button pButton type="button" (click)="exitArbol()" label="Cancelar" icon="fa fa-close" class="ui-button-danger"
+    [disabled]="blockBotones.cancelar"></button>
 </p-dialog>
 
 <p-dialog header="NUEVA PLANTILLA" [(visible)]="showDialogIng" [responsive]="true" showEffect="fade" [modal]="true"
@@ -67,11 +81,13 @@
         (onNodeSelect)="selectNodoIng($event)" (onNodeExpand)="loadNodeIng($event)"></p-tree>
     </div>
   </div>
-  <button pButton type="button" (click)="saveFlujo()" label="Guardar Plantilla"
-    [(disabled)]="activaBotonGuardarFlujo"></button>
-  <button pButton type="button" (click)="expandAll()" label="Expandir" class="ui-button-success"></button>
-  <button pButton type="button" (click)="collapseAll()" label="Ocultar" class="ui-button-danger"></button>
-  <button pButton type="button" (click)="exitArbol()" label="Cancelar" class="ui-button-danger"></button>
+  <button pButton type="button" (click)="saveFlujo()" label="Guardar" icon="fa fa-save"
+    [disabled]="blockBotones.guardarCaso"></button>
+  <!-- 
+  <button pButton type="button" (click)="expandAll()" label="Expandir" class="ui-button-success" [disabled]="blockBotones.expandir"></button>
+  <button pButton type="button" (click)="collapseAll()" label="Contraer" class="ui-button-danger" [disabled]="blockBotones.contraer"></button> -->
+  <button pButton type="button" (click)="exitArbol()" label="Cancelar" icon="fa fa-close " class="ui-button-danger"
+    [disabled]="blockBotones.cancelar"></button>
 </p-dialog>
 
 <p-dialog header="MODIFICAR" [(visible)]="showDialogIngNodo" [responsive]="true" showEffect="fade" [modal]="true"
@@ -162,7 +178,7 @@
           [(disabled)]="blockCampos.blockDescripcionAbogado" pInputTextarea></textarea>
       </div>
       <div class="ui-g-12 ui-md-12">
-        <label for="float-input">Observación cliente: </label>
+        <label for="float-input">Observación: </label>
         <textarea id="obserCliente" [(ngModel)]="info.data.descripcion_cliente" name="obserCliente" rows="2" cols="82"
           [(disabled)]="blockCampos.blockDescripcionCliente" pInputTextarea></textarea>
       </div>
@@ -240,7 +256,7 @@
           [(disabled)]="blockCampos.blockDescripcionAbogado" pInputTextarea></textarea>
       </div>
       <div class="ui-g-12 ui-md-12">
-        <label>Observación cliente: </label>
+        <label>Observación: </label>
         <textarea id="obserCliente" [(ngModel)]="info.data.descripcion_cliente" name="obserCliente" rows="2" cols="82"
           [(disabled)]="blockCampos.blockDescripcionCliente" pInputTextarea></textarea>
       </div>
@@ -309,4 +325,50 @@
       </div>
     </div>
   </form>
+</p-dialog>
+
+<!-- MODIFICAR PLANTILLA -->
+
+<p-dialog header="MODIFICAR PLANTILLA" [(visible)]="showDialogModPlant" [responsive]="true" showEffect="fade"
+  [modal]="true" [width]="1200">
+  <!--  [height]="700" -->
+  <div class="ui-g ui-fluid" *ngIf="flujoTreeUpdate">
+    <div class="ui-g-12">
+      <p><b>Nota: </b>Seleccione un nodo para modificar o agregar.</p>
+      <p-tree [value]="flujoTreeUpdate" layout="horizontal" selectionMode="single" [(selection)]="selectNode"
+        (onNodeSelect)="selectNodoMod($event)" (onNodeExpand)="loadNodeMod($event)"></p-tree>
+    </div>
+  </div>
+  <button pButton type="button" (click)="updateFlujo()" label="Guardar" icon="fa fa-save"
+    [disabled]="blockBotones.guardarCaso"></button>
+  <!-- 
+  <button pButton type="button" (click)="expandAll()" label="Expandir" class="ui-button-success" [disabled]="blockBotones.expandir"></button>
+  <button pButton type="button" (click)="collapseAll()" label="Contraer" class="ui-button-danger" [disabled]="blockBotones.contraer"></button> -->
+  <button pButton type="button" (click)="exitArbol()" label="Cancelar" icon="fa fa-close " class="ui-button-danger"
+    [disabled]="blockBotones.cancelar"></button>
+</p-dialog>
+
+<p-dialog header="MODIFICAR" [(visible)]="showDialogModPlantNodo" [responsive]="true" showEffect="fade" [modal]="true"
+  [width]="500" [height]="320">
+  <div class="ui-g ui-fluid" *ngIf="node">
+    <div class="ui-g-11 ui-md-11">
+      <label for="float-input">Etiqueta: *</label>
+      <input pInputText id="etiqueta" type="text" [(ngModel)]="nodeNew.label" name="etiqueta"
+        (ngModelChange)="verificaEtiqueta()" class="form-control input-sm">
+    </div>
+    <div class="ui-g-11 ui-md-11">
+      <label for="float-input">Descripción de la diligencia: *</label>
+      <textarea id="dato" [(ngModel)]="nodeNew.data.descripcion" name="dato" rows="2" cols="47"
+        pInputTextarea></textarea>
+    </div>
+  </div>
+  <div class="ui-dialog-buttonpane ui-helper-clearfix">
+    <button type="button" pButton icon="fa fa-close" (click)="exit()" label="Cancelar"
+      class="ui-button-danger"></button>
+    <button type="button" pButton icon="fa fa-trash" (click)="deleteNodoMod()" label="Quitar"
+      class="ui-button-danger"></button>
+    <button type="button" pButton icon="fa fa-plus-square" (click)="addNodoMod()" label="Añadir"
+      class="ui-button-success"></button>
+    <button type="button" pButton icon="fa fa-save" (click)="updateNodoMod()" label="Guardar"></button>
+  </div>
 </p-dialog>

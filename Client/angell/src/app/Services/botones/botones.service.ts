@@ -207,13 +207,28 @@ export class BotonesService {
   // Habilitar botones usuario, cliente, abogado.
   blockBotonesGene: any = {
     guardar: false,
-    cancelar: false
+    cancelar: false,
+    eliminar: false,
+    restaurar: false
   }
+
+  // Habilitar boton genenrerar reporte.
+  blockBotonesReport: any = {
+    reporte: false,
+  }
+
+  // desabilitar botones genenrerar reporte.
+  disabledBotonesReport: any = {
+    reporte: true,
+  }
+
 
   // Habilitar botones usuario, cliente, abogado.
   disabledBotonesGene: any = {
     guardar: true,
-    cancelar: true
+    cancelar: true,
+    eliminar: true,
+    restaurar: true
   }
 
   // Etiquetas de botones.

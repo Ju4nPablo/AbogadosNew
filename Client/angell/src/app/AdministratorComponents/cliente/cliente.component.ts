@@ -54,6 +54,8 @@ export class ClienteComponent implements OnInit {
   urlImagen: any = 'assets/perfil.png';
   uploadedFiles: any;
   blockBotones: any = {};
+  totalRecords: number;
+  paginado: number = 10;
   //#endregion
 
   //#region CONSTRUCTOR
@@ -61,7 +63,7 @@ export class ClienteComponent implements OnInit {
     public clienteService: ClienteService,
     public validarService: ValidacioneService,
     public notifyService: NotificacionesService,
-    private _servicioLogCambios: LogCambiosService,
+    private _serviceLogCambios: LogCambiosService,
     private router: Router,
     private _serviceBotones: BotonesService,
   ) {
@@ -72,6 +74,7 @@ export class ClienteComponent implements OnInit {
 
   //#region INICIALIZAR VARIABLES
   inicio() {
+    this.paginado = 10;
     this.blockBotones = this._serviceBotones.blockBotonesGene;
     const user = JSON.parse(localStorage.getItem('userLogin'));
     if (user.tipo !== '1') {
@@ -96,24 +99,29 @@ export class ClienteComponent implements OnInit {
 
     this.clienteService.listCliente().subscribe(data => {
       const d: any = data;
-      for (const cli of d) {
-        if (cli.sexo === '0') {
-          cli.sexo = 'Hombre';
-        } else {
-          cli.sexo = 'Mujer';
+      this.totalRecords = d.length;
+      if (d.length > 0) {
+        for (const cli of d) {
+          if (cli.sexo === '0') {
+            cli.sexo = 'Hombre';
+          } else {
+            cli.sexo = 'Mujer';
+          }
+          if (cli.estado === '0') {
+            cli.estado = 'Activo';
+            this.listaCliente.push(cli);
+          } else {
+            cli.estado = 'Inactivo';
+            this.listaCliente.push(cli);
+          }
         }
-        if (cli.estado === '0') {
-          cli.estado = 'Activo';
-          this.listaCliente.push(cli);
-        } else {
-          cli.estado = 'Inactivo';
-          this.listaCliente.push(cli);
-        }
-      }
+      } else {
+        this.notifyService.notify('error', 'ERROR', 'NO EXISTEN REGISTROS!');
+      };
     }, err => {
       console.log(err);
     });
-  }
+  };
 
   ngOnInit() {
     this.cols = [
@@ -126,7 +134,7 @@ export class ClienteComponent implements OnInit {
       { field: 'sexo', header: 'Sexo' },
       { field: 'estado', header: 'Estado' },
     ];
-  }
+  };
   //#endregion
 
   //#region INGRESO Y MADIFICAR CLIENTE
@@ -153,7 +161,7 @@ export class ClienteComponent implements OnInit {
             data: data
           }
         }
-        this._servicioLogCambios.addLogCambio(log).subscribe();
+        this._serviceLogCambios.addLogCambio(log).subscribe();
 
         this.notifyService.notify('success', 'Exito', 'Ingreso Existoso!');
         this.inicio();
@@ -174,7 +182,7 @@ export class ClienteComponent implements OnInit {
               data: clienteLog
             }
           }
-          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this._serviceLogCambios.addLogCambio(log).subscribe();
           this.notifyService.notify('error', 'ERROR', 'Cliente ya existe!');
         } else {
           let log = {
@@ -187,7 +195,7 @@ export class ClienteComponent implements OnInit {
               data: clienteLog
             }
           }
-          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this._serviceLogCambios.addLogCambio(log).subscribe();
           this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
         };
       });
@@ -195,7 +203,7 @@ export class ClienteComponent implements OnInit {
       this.blockBotones = this._serviceBotones.blockBotonesGene;
       this.notifyService.notify('error', 'ERROR', 'Revise Campos!');
     }
-  }
+  };
   // Modificar un cliente
   updateCliente() {
     this.blockBotones = this._serviceBotones.disabledBotonesGene;
@@ -229,7 +237,7 @@ export class ClienteComponent implements OnInit {
             data: clienteLog
           }
         }
-        this._servicioLogCambios.addLogCambio(log).subscribe();
+        this._serviceLogCambios.addLogCambio(log).subscribe();
         this.inicio();
         this.notifyService.notify('success', 'Exito', 'Modificación Existosa!');
       }, err => {
@@ -249,7 +257,7 @@ export class ClienteComponent implements OnInit {
               data: clienteLog
             }
           }
-          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this._serviceLogCambios.addLogCambio(log).subscribe();
           this.notifyService.notify('error', 'ERROR', 'Cliente ya existe!');
         } else {
           let log = {
@@ -262,7 +270,7 @@ export class ClienteComponent implements OnInit {
               data: clienteLog
             }
           }
-          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this._serviceLogCambios.addLogCambio(log).subscribe();
           this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
         };
       });
@@ -270,7 +278,7 @@ export class ClienteComponent implements OnInit {
       this.blockBotones = this._serviceBotones.blockBotonesGene;
       this.notifyService.notify('error', 'ERROR', 'Revise Campos!');
     }
-  }
+  };
   //#endregion
 
   //#region CARGAR Y MOSTRAR FORMULARIOS
@@ -298,14 +306,14 @@ export class ClienteComponent implements OnInit {
       foto: '',
       numeroCarpeta: ''
     };
-  }
+  };
   // Cerrar formulario
   cancelar() {
     this.inicializarCampos();
     this.showDialog = false;
     this.showDialogMod = false;
     // this.inicio();
-  }
+  };
 
   // Cargar imagen
   cargaImagen(file: FileList) {
@@ -315,7 +323,7 @@ export class ClienteComponent implements OnInit {
       this.urlImagen = event.target.result;
     };
     reader.readAsDataURL(this.fileImagen);
-  }
+  };
   // Mostrar formulario de ingreso.
   showDialogAdd() {
     document.getElementById('cedula').style.borderColor = '';
@@ -336,7 +344,7 @@ export class ClienteComponent implements OnInit {
     this.selectSexo = true;
     this.urlImagen = 'assets/perfil.png';
     this.showDialog = true;
-  }
+  };
   // cargar datos de la seleccion de una fila de la tabla y mostrar el formulario de modificar
   onRowSelect(event) {
     document.getElementById('cedulaMod').style.borderColor = '';
@@ -365,7 +373,7 @@ export class ClienteComponent implements OnInit {
       this.selectEstado = false;
     }
     this.showDialogMod = true;
-  }
+  };
   //#endregion
 
   //#region VALICADION DE CAMPOS
@@ -389,7 +397,7 @@ export class ClienteComponent implements OnInit {
         this.bandera.ban1 = '1';
       }
     }
-  }
+  };
   // verifica numero de telefono
   verificaTelefono() {
     if (this.cliente.telefono !== '') {
@@ -410,7 +418,7 @@ export class ClienteComponent implements OnInit {
         this.bandera.ban2 = '1';
       }
     }
-  }
+  };
   // verifica email
   verificaEmail() {
     if (this.cliente.mail !== '') {
@@ -431,7 +439,7 @@ export class ClienteComponent implements OnInit {
         this.bandera.ban3 = '1';
       }
     }
-  }
+  };
   // verifica Nombres
   verificaNombres() {
     if (this.cliente.nombre !== '') {
@@ -452,7 +460,7 @@ export class ClienteComponent implements OnInit {
         this.bandera.ban4 = '1';
       }
     }
-  }
+  };
   // verifica dirección
   verificaDireccion() {
     if (this.cliente.direccion !== '') {
@@ -473,7 +481,7 @@ export class ClienteComponent implements OnInit {
         this.bandera.ban5 = '1';
       }
     }
-  }
+  };
   // verifica numero carpeta
   verificaNumeroCarpeta() {
     if (this.cliente.numeroCarpeta !== '' || this.cliente.numeroCarpeta === '') {
@@ -493,6 +501,13 @@ export class ClienteComponent implements OnInit {
         this.bandera.ban6 = '1';
       }
     }
-  }
+  };
+  // Paginado de la tabla
+  validarPaginado() {
+    if (this.paginado < 3) {
+      this.paginado = 10;
+      this.notifyService.notify('error', 'ERROR', 'Paginado mínimo 3.');
+    }
+  };
   //#endregion
 }

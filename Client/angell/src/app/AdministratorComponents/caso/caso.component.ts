@@ -11,6 +11,7 @@ import { LogCambiosService } from '../../Services/log-Cambios/log-cambios.servic
 import { ListaCombosService } from '../../Services/listas-Combos/lista-combos.service';
 import { BotonesService } from '../../Services/botones/botones.service';
 import { EtiquetasService } from '../../Services/etiquetas/etiquetas.service';
+import { ValidacioneService } from '../../Services/validaciones/validacione.service';
 
 @Component({
   selector: 'app-caso',
@@ -81,6 +82,9 @@ export class CasoComponent implements OnInit {
   etiquetasFormCaso: any = {};
   etiquetasBotones: any = {};
   blockBotones: any = {};
+  totalRecords: number;
+  paginado: number = 10;
+  bodyCliente: any = '';
 
   constructor(
     private casoService: CasoService,
@@ -93,12 +97,14 @@ export class CasoComponent implements OnInit {
     private _serviceListaCombos: ListaCombosService,
     private _serviceBotones: BotonesService,
     private _serviceEtiquetas: EtiquetasService,
+    public validarService: ValidacioneService,
   ) {
     this.inicio();
   }
 
   inicio() {
-
+    this.bodyCliente = '';
+    this.paginado = 10;
     this.showDialogIng = false;
     this.listHoras = this._serviceListaCombos.listacomboHoras;
     this.selectHoraIni = this.listHoras[1];
@@ -111,7 +117,7 @@ export class CasoComponent implements OnInit {
     this.datosMail = {
       para: [],
       asunto: '',
-      body: ''
+      body: '',
     };
 
     const us = JSON.parse(localStorage.getItem('userLogin'));
@@ -168,6 +174,7 @@ export class CasoComponent implements OnInit {
       this.casoService.AllCasoAbogadoPendiente(obj).subscribe(data => {
         this.listCaso = data;
         this.cargarTabla(this.listCaso);
+        this.cargarCaso();
       });
       this.blockCampos = this._serviceBotones.bloquearCamposAbogado;
       this.showButon = this._serviceBotones.visibleBotonesAbogado;
@@ -286,21 +293,26 @@ export class CasoComponent implements OnInit {
   }
 
   cargarTabla(lista) {
-    lista.forEach(item => {
-      // let cli = this.buscarCliente(item.data.cliente.cedula);
-      let fech = new Date(item.data.fecha_inicio);
-      let fec = fech.getDate() + "/" + (((fech.getMonth() + 1) < 10) ? ('0' + (fech.getMonth() + 1)) : (fech.getMonth() + 1)) + "/" + fech.getFullYear();
-      this.listTabla.push({
-        id: item._id,
-        label: item.label,
-        cliente: item.data.cliente.nombre,
-        abogado: item.data.abogado.nombre,
-        numeroCarpeta: this.buscarCliente(item.data.cliente.cedula).numeroCarpeta,
-        fecha: fec,
-        estado: item.data.estado.estado
+    this.totalRecords = lista.length;
+    if (lista.length > 0) {
+      lista.forEach(item => {
+        // let cli = this.buscarCliente(item.data.cliente.cedula);
+        let fech = new Date(item.data.fecha_inicio);
+        let fec = fech.getDate() + "/" + (((fech.getMonth() + 1) < 10) ? ('0' + (fech.getMonth() + 1)) : (fech.getMonth() + 1)) + "/" + fech.getFullYear();
+        this.listTabla.push({
+          id: item._id,
+          label: item.label,
+          cliente: item.data.cliente.nombre,
+          abogado: item.data.abogado.nombre,
+          numeroCarpeta: this.buscarCliente(item.data.cliente.cedula).numeroCarpeta,
+          fecha: fec,
+          estado: item.data.estado.estado
+        });
       });
-    });
-  }
+    } else {
+      this.notifyService.notify('error', 'ERROR', 'NO EXISTEN REGISTROS!');
+    };
+  };
 
   ngOnInit() {
     this.es = {
@@ -559,7 +571,7 @@ export class CasoComponent implements OnInit {
         descripcion_Administrador: '',
         descripcion_abogado: '',
         descripcion_cliente: '',
-        abogado: Object,
+        abogado: this.selectAbogado,
         imagenes: [],
         estado: this.listEstado[0]
       },
@@ -658,7 +670,7 @@ export class CasoComponent implements OnInit {
         descripcion_Administrador: '',
         descripcion_abogado: '',
         descripcion_cliente: '',
-        abogado: Object,
+        abogado: this.selectAbogado,
         imagenes: [],
         estado: this.listEstado[0]
       },
@@ -913,6 +925,22 @@ export class CasoComponent implements OnInit {
     this.blockBotones.contraer = true;
     this.blockBotones.expandir = false;
   }
+  // Expande todo el arbol recursivamente
+  expandAllIng() {
+    this.casoTreeInsert.forEach(node => {
+      this.expandRecursive(node, true);
+    });
+    this.blockBotones.contraer = false;
+    this.blockBotones.expandir = true;
+  }
+  // Contrae todo el arbol de forma recursiva.
+  collapseAllIng() {
+    this.casoTreeInsert.forEach(node => {
+      this.expandRecursive(node, false);
+    });
+    this.blockBotones.contraer = true;
+    this.blockBotones.expandir = false;
+  }
   // Funsion que permite expandir de forma recursiva.
   private expandRecursive(node: TreeNode, isExpand: boolean) {
     node.expanded = isExpand;
@@ -1139,58 +1167,175 @@ export class CasoComponent implements OnInit {
   }
   // envio de mail administrador.
   enviarMail() {
-    this.blockBotones.enviarMail = true;
-    const mailCliente = {
-      destinatario: this.datosMail.para,
-      asunto: this.datosMail.asunto,
-      texto: this.datosMail.body
-    };
-    this.sendEmailService.sendNotifications(mailCliente).subscribe(data => {
-      if (data) {
-        this.blockBotones.enviarMail = false;
-        this.notifyService.notify('success', 'Exito', 'CORREO ENVIADO!');
-        this.exitMail();
-      } else {
-        this.blockBotones.enviarMail = false;
+    if (this.validarMails(this.datosMail.para) && !this.campoVacio(this.datosMail.asunto) && !this.campoVacio(this.datosMail.body)) {
+      this.blockBotones.enviarMail = true;
+      const mail = {
+        destinatario: this.datosMail.para,
+        asunto: this.datosMail.asunto,
+        texto: 'Administrador', //this.datosMail.body,
+        html: this.datosMail.body
+      };
+      this.sendEmailService.sendNotifications(mail).subscribe(data => {
+        if (data) {
+          this.blockBotones.enviarMail = false;
+          let mailLog = {
+            respuestaBDD: data,
+            data: mail
+          };
+          const log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ENVIO-MAIL',
+            cambio_json: {
+              mensaje: 'CORREO ENVIADO!',
+              data: mailLog
+            }
+          };
+          this._serviceLogCambios.addLogMail(log).subscribe();
+          this.notifyService.notify('success', 'Exito', 'CORREO ENVIADO!');
+          this.exitMail();
+        } else {
+          this.blockBotones.enviarMail = false;
+          let mailLog = {
+            respuestaBDD: data,
+            data: mail
+          }
+          const log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-ENVIO-MAIL',
+            cambio_json: {
+              mensaje: 'NO SE PUEDO ENVIAR EL CORREO!',
+              data: mailLog
+            }
+          }
+          this._serviceLogCambios.addLogMail(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'NO SE PUEDO ENVIAR EL CORREO!');
+        }
+      }, err => {
+        this.blockBotones = this._serviceBotones.blockBotones;
+        let mailLog = {
+          respuestaBDD: err,
+          data: mail
+        }
+        const log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ERROR-ENVIO-MAIL',
+          cambio_json: {
+            mensaje: 'NO SE PUEDO ENVIAR EL CORREO!',
+            data: mailLog
+          }
+        }
+        this._serviceLogCambios.addLogMail(log).subscribe();
         this.notifyService.notify('error', 'ERROR', 'NO SE PUEDO ENVIAR EL CORREO!');
-      }
-    });
+      });
+    } else {
+      this.notifyService.notify('error', 'ERROR', 'REVICE LOS CAMPOS!');
+    }
   };
   // nenvio de mail cliente
   enviarMailCliente() {
-    this.blockBotones.enviarMail = true;
-    const mailCliente = {
-      destinatario: 'eljuanpi_01@hotmail.com',
-      asunto: 'Cliente Caso # ' + this.casoTree[0].label + ' ' + this.cliente.nombre,
-      texto: this.datosMail.body
-    };
-    this.sendEmailService.sendNotifications(mailCliente).subscribe(data => {
-      if (data) {
-        this.blockBotones.enviarMail = false;
-        this.notifyService.notify('success', 'Exito', 'CORREO ENVIADO!');
-        this.exitMailCliente();
-      } else {
-        this.blockBotones.enviarMail = false;
+    if (!this.campoVacio(this.bodyCliente)) {
+      this.blockBotones.enviarMail = true;
+      const mail = {
+        destinatario: JSON.parse(localStorage.getItem('userLogin')).mail + ';' + 'angellrio2018@gmail.com',
+        asunto: 'Cliente Caso # ' + this.casoTree[0].label + ' ' + this.cliente.nombre,
+        texto: 'Cliente',
+        html: this.bodyCliente
+      };
+      this.sendEmailService.sendNotifications(mail).subscribe(data => {
+        if (data) {
+          this.blockBotones.enviarMail = false;
+          let mailLog = {
+            respuestaBDD: data,
+            data: mail
+          };
+          const log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ENVIO-MAIL',
+            cambio_json: {
+              mensaje: 'CORREO ENVIADO!',
+              data: mailLog
+            }
+          };
+          this._serviceLogCambios.addLogMail(log).subscribe();
+          this.notifyService.notify('success', 'Exito', 'CORREO ENVIADO!');
+          this.exitMailCliente();
+        } else {
+          this.blockBotones.enviarMail = false;
+          let mailLog = {
+            respuestaBDD: data,
+            data: mail
+          }
+          const log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-ENVIO-MAIL',
+            cambio_json: {
+              mensaje: 'NO SE PUEDO ENVIAR EL CORREO!',
+              data: mailLog
+            }
+          }
+          this._serviceLogCambios.addLogMail(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'NO SE PUEDO ENVIAR EL CORREO!');
+        }
+      }, err => {
+        this.blockBotones = this._serviceBotones.blockBotones;
+        let mailLog = {
+          respuestaBDD: err,
+          data: mail
+        }
+        const log = {
+          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+          fecha: new Date(),
+          transaccion: 'ERROR-ENVIO-MAIL',
+          cambio_json: {
+            mensaje: 'NO SE PUEDO ENVIAR EL CORREO!',
+            data: mailLog
+          }
+        }
+        this._serviceLogCambios.addLogMail(log).subscribe();
         this.notifyService.notify('error', 'ERROR', 'NO SE PUEDO ENVIAR EL CORREO!');
-      }
-    });
+      });
+    } else {
+      this.notifyService.notify('error', 'ERROR', 'REVICE LOS CAMPOS!');
+    }
+  };
+  // validar grupo de mails.
+  validarMails(mails) {
+    let resp: boolean = true;
+    if (mails.length > 0) {
+      let listMails = mails.split(';');
+      for (let mail of listMails) {
+        if (!this.validarService.validateEmail(mail)) {
+          resp = false;
+          break;
+        }
+      };
+      return (resp);
+    } else
+      return false;
   };
   // salir del formulario del administrador
   exitMail() {
     this.datosMail = {
       para: [],
       asunto: '',
-      body: ''
+      body: '',
     };
     this.showDialogMail = false;
   };
   // saludo del formulario de mail cliente
   exitMailCliente() {
-    this.datosMail = {
-      para: [],
-      asunto: '',
-      body: ''
-    };
+    this.bodyCliente = '';
     this.showDialogMailCliente = false;
   };
   // mostrar formulario de mail administrador.
@@ -1242,5 +1387,12 @@ export class CasoComponent implements OnInit {
       return true;
     }
   }
+  // Paginado de la tabla
+  validarPaginado() {
+    if (this.paginado < 3) {
+      this.paginado = 10;
+      this.notifyService.notify('error', 'ERROR', 'Paginado mínimo 3.');
+    }
+  };
   //#endregion
 }

@@ -4,15 +4,24 @@
     <p>
       <b>Nota:</b>{{etiquetasFormCaso.nota}}</p>
     <p-table #dt [columns]="cols" [value]="listTabla" selectionMode="single" [(selection)]="selectProceso"
-      (onRowSelect)="selectItem($event)" [paginator]="true" [rows]="10">
+      (onRowSelect)="selectItem($event)" [paginator]="true" [totalRecords]="totalRecords" [rows]="paginado">
       <ng-template pTemplate="caption">
         <div class="ui-g">
-          <div class="ui-g-6" style="text-align:left">
+          <div class="ui-g-4" style="text-align:left">
             <button type="button" pButton icon="fa fa-plus" (click)="showDialogAdd()"
               label="{{etiquetasBotones.anadirCaso}}" [disabled]="blockBotones.addCaso"
               *ngIf="showButon.showAnadirCaso"></button>
           </div>
-          <div class="ui-g-6" style="text-align: right">
+          <div class="ui-g-4" style="text-align: right">
+            <div class="ui-g-9">
+              <label for="float-input">Paginado: *</label>
+            </div>
+            <div class="ui-g-3">
+              <input pInputText type="number" id="paginado" [(ngModel)]="paginado" name="paginado"
+                class="form-control  input-sm" min="3" (ngModelChange)="validarPaginado()" required>
+            </div>
+          </div>
+          <div class="ui-g-4" style="text-align: right">
             <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
             <input type="text" pInputText size="auto" placeholder="Buscar"
               (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
@@ -326,12 +335,13 @@
       </p-tree>
     </div>
   </div>
-  <button pButton type="button" (click)="saveCaso()" label="Guardar" [disabled]="blockBotones.guardarCaso"></button>
-  <button pButton type="button" (click)="expandAll()" label="Expandir" class="ui-button-success"
+  <button pButton type="button" (click)="saveCaso()" label="Guardar" [disabled]="blockBotones.guardarCaso"
+    icon="fa fa-save"></button>
+  <button pButton type="button" (click)="expandAllIng()" label="Expandir" class="ui-button-success" icon="fa fa-arrows"
     [disabled]="blockBotones.expandir"></button>
-  <button pButton type="button" (click)="collapseAll()" label="Contraer" class="ui-button-danger"
-    [disabled]="blockBotones.contraer"></button>
-  <button pButton type="button" (click)="exitArbol()" label="Cancelar" class="ui-button-danger"
+  <button pButton type="button" (click)="collapseAllIng()" label="Contraer" class="ui-button-success"
+    icon="fa fa-compress" [disabled]="blockBotones.contraer"></button>
+  <button pButton type="button" (click)="exitArbol()" label="Cancelar" class="ui-button-danger" icon="fa fa-close"
     [disabled]="blockBotones.cancelar"></button>
 </p-dialog>
 
@@ -390,7 +400,7 @@
         </p-checkbox>
         <label>Ingresar</label>
       </div>
-      <div class="ui-g-12 ui-md-12" *ngIf="visibleCampos.campoObserAdmin">
+      <div class="ui-g-12 ui-md-12">
         <label for="float-input">Observación Administrador: </label>
         <textarea id="obserAdmin" [(ngModel)]="nodeInsert.data.descripcion_Administrador" name="obserAdmin" rows="2"
           cols="82" [(disabled)]="blockCampos.blockDescripcionAdmin" pInputTextarea></textarea>
@@ -471,7 +481,7 @@
         </p-checkbox>
         <label>Ingresar</label>
       </div>
-      <div class="ui-g-12 ui-md-12" *ngIf="visibleCampos.campoObserAdmin">
+      <div class="ui-g-12 ui-md-12">
         <label for="float-input">Observación Administrador: </label>
         <textarea id="obserAdmin" [(ngModel)]="nodeInsert.data.descripcion_Administrador" name="obserAdmin" rows="2"
           cols="82" [(disabled)]="blockCampos.blockDescripcionAdmin" pInputTextarea></textarea>
@@ -505,7 +515,7 @@
 </p-dialog>
 
 <p-dialog header="ENVIAR MAIL" [(visible)]="showDialogMail" [responsive]="true" showEffect="fade" [modal]="true"
-  [width]="700" [height]="650">
+  [width]="750" [height]="650">
   <div class="ui-g ui-fluid">
     <div class="ui-g-11 ui-md-11">
       <div class="ui-g-2 ui-md-2">
@@ -526,34 +536,98 @@
       </div>
     </div>
     <div class="ui-g-12 ui-md-12">
-      <!-- <p-editor id="idCuerpoMail" [(ngModel)]="datosMail.body" name="idCuerpoMail" [style]="{'height':'320px'}"
+      <p-editor id="idCuerpoMail" [(ngModel)]="datosMail.body" name="idCuerpoMail" [style]="{'height':'320px'}"
         [(disabled)]="blockCampos.blockDescripcionAdmin">
-      </p-editor> -->
-      <textarea id="idCuerpoMail" [(ngModel)]="datosMail.body" name="idCuerpoMail" rows="10" cols="75"
-        [(disabled)]="blockCampos.blockDescripcionAdmin" pInputTextarea></textarea>
+        <p-header>
+          <span class="ql-formats">
+            <select class="ql-header">
+              <option value="1">Heading</option>
+              <option value="2">Subheading</option>
+              <option selected>Normal</option>
+            </select>
+          </span>
+          <span class="ql-formats">
+            <button class="ql-bold" aria-label="Bold"></button>
+            <button class="ql-italic" aria-label="Italic"></button>
+            <button class="ql-underline" aria-label="Underline"></button>
+          </span>
+          <span class="ql-formats">
+            <select class="ql-color"></select>
+            <select class="ql-background"></select>
+          </span>
+          <span class="ql-formats">
+            <button class="ql-list" value="ordered" aria-label="Ordered List"></button>
+            <button class="ql-list" value="bullet" aria-label="Unordered List"></button>
+          </span>
+          <span class="ql-formats">
+            <select class="ql-align">
+              <option selected></option>
+              <option value="center"></option>
+              <option value="right"></option>
+              <option value="justify"></option>
+            </select>
+          </span>
+          <span class="ql-formats">
+            <!-- <button class="ql-link" aria-label="Insert Link"></button>
+            <button class="ql-image" aria-label="Insert Image"></button> 
+            <button class="ql-code-block" aria-label="Insert Code Block"></button>-->
+          </span>
+        </p-header>
+      </p-editor>
+      <!-- <textarea id="idCuerpoMail" [(ngModel)]="datosMail.body" name="idCuerpoMail" rows="10" cols="75"
+        [(disabled)]="blockCampos.blockDescripcionAdmin" pInputTextarea></textarea> -->
     </div>
   </div>
   <button pButton type="button" (click)="enviarMail()" label="Enviar" [disabled]="blockBotones.enviarMail"></button>
-  <button pButton type="button" (click)="exitMail()" label="Descartar" class="ui-button-danger"></button>
+  <button pButton type="button" (click)="exitMail()" label="Descartar" class="ui-button-danger"
+    [disabled]="blockBotones.enviarMail"></button>
 </p-dialog>
 
-<p-dialog header="ENVIAR OBSERBACIÓN" [(visible)]="showDialogMailCliente" [responsive]="true" showEffect="fade"
-  [modal]="true" [width]="700" [height]="450">
+<p-dialog header="ENVIAR OBSERVACIÓN" [(visible)]="showDialogMailCliente" [responsive]="true" showEffect="fade"
+  [modal]="true" [width]="750" [height]="550">
   <div class="ui-g ui-fluid">
     <div class="ui-g-11 ui-md-11">
-      <div class="ui-g-5 ui-md-5">
-        <label for="float-input">Observación: *</label>
-      </div>
-      <!-- <p-editor id="idCuerpoMail" [(ngModel)]="datosMail.body" name="idCuerpoMail" [style]="{'height':'320px'}"
-        [(disabled)]="blockCampos.blockDescripcionAdmin">
-      </p-editor> -->
-      <textarea id="idCuerpoMail" [(ngModel)]="datosMail.body" name="idCuerpoMail" rows="10" cols="75"
-        pInputTextarea></textarea>
+      <p-editor [(ngModel)]="bodyCliente" [style]="{'height':'320px'}" [(disabled)]="blockCampos.blockDescripcionAdmin">
+        <p-header>
+          <span class="ql-formats">
+            <select class="ql-header">
+              <option value="1">Heading</option>
+              <option value="2">Subheading</option>
+              <option selected>Normal</option>
+            </select>
+          </span>
+          <span class="ql-formats">
+            <button class="ql-bold" aria-label="Bold"></button>
+            <button class="ql-italic" aria-label="Italic"></button>
+            <button class="ql-underline" aria-label="Underline"></button>
+          </span>
+          <span class="ql-formats">
+            <select class="ql-color"></select>
+            <select class="ql-background"></select>
+          </span>
+          <span class="ql-formats">
+            <button class="ql-list" value="ordered" aria-label="Ordered List"></button>
+            <button class="ql-list" value="bullet" aria-label="Unordered List"></button>
+          </span>
+          <span class="ql-formats">
+            <select class="ql-align">
+              <option selected></option>
+              <option value="center"></option>
+              <option value="right"></option>
+              <option value="justify"></option>
+            </select>
+          </span>
+          <!-- <span class="ql-formats">
+            <button class="ql-image" aria-label="Insert Image"></button>
+          </span> -->
+        </p-header>
+      </p-editor>
     </div>
   </div>
   <button pButton type="button" (click)="enviarMailCliente()" label="Enviar"
     [disabled]="blockBotones.enviarMail"></button>
-  <button pButton type="button" (click)="exitMailCliente()" label="Descartar" class="ui-button-danger"></button>
+  <button pButton type="button" (click)="exitMailCliente()" label="Descartar" class="ui-button-danger"
+    [disabled]="blockBotones.enviarMail"></button>
 </p-dialog>
 
 <!-- <p-dialog header="AÑADIR IMÁGENES" [(visible)]="showDialogImagenes" [responsive]="true" showEffect="fade" [modal]="true"

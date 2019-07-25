@@ -1,18 +1,28 @@
 <form>
   <br>
-  <p-panel header="LISTADO ABOGADOS">
+  <p-panel header="ABOGADOS">
     <p>
       <b>Nota:</b> Click en un registro para modificar.</p>
     <p-table #dt [columns]="cols" [value]="listaAbogado" selectionMode="single" [responsive]="true"
-      [(selection)]="selectAbogado" (onRowSelect)="onRowSelect($event)" [paginator]="true" [rows]="10">
+      [(selection)]="selectAbogado" (onRowSelect)="onRowSelect($event)" [paginator]="true" [totalRecords]="totalRecords"
+      [rows]="paginado">
       <ng-template pTemplate="caption">
         <div class="ui-g">
-          <div class="ui-g-6" style="text-align:left">
+          <div class="ui-g-4" style="text-align:left">
             <button type="button" pButton icon="fa fa-plus" (click)="showDialogAdd()" label="Añadir Abogado"></button>
           </div>
-          <div class="ui-g-6" style="text-align: right">
+          <div class="ui-g-4" style="text-align: right">
+            <div class="ui-g-9">
+              <label for="float-input">Paginado: *</label>
+            </div>
+            <div class="ui-g-3">
+              <input pInputText type="number" id="paginado" [(ngModel)]="paginado" name="paginado"
+                class="form-control  input-sm" min="2" (ngModelChange)="validarPaginado()" required>
+            </div>
+          </div>
+          <div class="ui-g-4" style="text-align: right">
             <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-            <input type="text" pInputText size="50" placeholder="Buscar"
+            <input type="text" pInputText size="auto" placeholder="Buscar"
               (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
           </div>
         </div>

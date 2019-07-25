@@ -19,4 +19,10 @@ export class LogCambiosService {
     return this.http.post(this.url + 'log_cambio', log, { headers });
   }
 
+  addLogMail(log) {
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    return this.http.post(this.url + 'log_mail', log, { headers });
+  }
+
 }

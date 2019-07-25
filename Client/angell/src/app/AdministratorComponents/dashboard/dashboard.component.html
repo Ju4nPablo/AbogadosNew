@@ -113,6 +113,36 @@
       </div>
     </div>
   </div>
-
-
 </div>
+
+<p-dialog header="CAMBIAR CONTRASEÑA" [(visible)]="showDialog" [responsive]="true" showEffect="fade" [modal]="true"
+  [width]="550" [closable]="false">
+  <div>
+    <div>
+      <div class="ui-g-12 ui-md-12 ui-lg-12">
+        <div class="ui-g-4 ui-md-4 ui-lg-5">
+          <label for="float-input">Contraseña: *</label>
+        </div>
+        <div class="ui-g-8 ui-md-8 ui-lg-7">
+          <input pInputText type="password" id="nombreUser" [(ngModel)]="password" name="nombreUser"
+            class="form-control input-sm" required>
+        </div>
+      </div>
+      <div class="ui-g-12 ui-md-12 ui-lg-12">
+        <div class="ui-g-4 ui-md-4 ui-lg-5">
+          <label for="float-input">Repita Contraseña: *</label>
+        </div>
+        <div class="ui-g-8 ui-md-8 ui-lg-7">
+          <input pInputText type="password" id="mailUser" [(ngModel)]="repitaPassword" name="mailUser"
+            class="form-control input-sm">
+        </div>
+      </div>
+      <br>
+    </div>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+      <button type="button" pButton (click)="cambiarClave()" icon="fa fa-key" label="Cambiar" [disabled]="blockCambio"></button>
+    </div>
+  </p-footer>
+</p-dialog>

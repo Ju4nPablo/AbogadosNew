@@ -108,10 +108,10 @@
       </div>
     </div>
     <div class="ui-dialog-buttonpane ui-helper-clearfix">
-      <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar"
-        class="ui-button-danger"></button>
+      <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar" class="ui-button-danger"
+        [disabled]="blockBotones.cancelar"></button>
       <button type="button" pButton icon="fa fa-check" (click)="addActividad()" label="Guardar"
-        class="ui-button-primary"></button>
+        class="ui-button-primary" [disabled]="blockBotones.guardar"></button>
     </div>
   </p-dialog>
 </form>
@@ -211,14 +211,14 @@
     </div>
     <p-footer>
       <div class="ui-dialog-buttonpane ui-helper-clearfix">
-        <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar"
-          class="ui-button-danger"></button>
+        <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar" class="ui-button-danger"
+          [disabled]="blockBotones.cancelar"></button>
         <button type="button" pButton icon="fa fa-check" (click)="updateActividad()" label="Modificar"
-          class="ui-button-primary" *ngIf="showButton.bttnUpdate"></button>
+          class="ui-button-primary" *ngIf="showButton.bttnUpdate" [disabled]="blockBotones.guardar"></button>
         <button type="button" pButton icon="fa fa-trash" (click)="deleteActividad()" label="Eliminar"
-          class="ui-button-danger" *ngIf="showButton.bttnDelete"></button>
+          class="ui-button-danger" *ngIf="showButton.bttnDelete" [disabled]="blockBotones.eliminar"></button>
         <button type="button" pButton icon="fa fa-trash" (click)="restaurarActividad()" label="Restaurar"
-          class="ui-button-success" *ngIf="showButton.bttnRestaurar"></button>
+          class="ui-button-success" *ngIf="showButton.bttnRestaurar" [disabled]="blockBotones.restaurar"></button>
       </div>
     </p-footer>
   </p-dialog>

@@ -261,15 +261,11 @@ router.post('/getAllCasoClientePendiente', function (req, res) {
     MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("angell");
-        var casos = dbo.collection("casos").find();
+        var casos = dbo.collection("casos").find({ 'data.cliente.cedula': req.body.cedula });
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            if (doc.data.cliente.cedula == req.body.cedula && doc.data.estado.id == '1') {
-                list = doc.data.fecha_inicio.split('T');
-                doc.data.fecha_inicio = list[0];
-                resultArray.push(doc);
-            }
+            resultArray.push(doc);
         }, function () {
             db.close();
             res.send(resultArray);
@@ -283,7 +279,8 @@ router.post('/getAllCasoAbogadoPendiente', function (req, res) {
     MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("angell");
-        var casos = dbo.collection("casos").find({ 'data.abogado.cedula': req.body.cedula, 'data.estado.id': '1' });
+        var casos = dbo.collection("casos").find({ 'data.abogado.cedula': req.body.cedula });
+        // var casos = dbo.collection("casos").find({ 'data.abogado.cedula': req.body.cedula, 'data.estado.id': '1' });
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);

@@ -50,14 +50,14 @@
         </span>
       </div>
     </div>
-    <button pButton type="button" icon="fa fa-search" label="Generar" class="ui-button-success"
-      (click)="generar()"></button>
+    <button pButton type="button" icon="fa fa-search" label="Generar" class="ui-button-success" (click)="generar()"
+      [disabled]="blockBotones.reporte"></button>
   </p-panel>
 </form>
 
 <form>
   <br>
-  <p-panel header="TABLA CASOS">
+  <p-panel header="CASOS">
     <p-table #dt [columns]="cols" [value]="listCaso" selectionMode="single" [paginator]="true" [rows]="10">
       <!-- [(selection)]="selectProceso"  (onRowSelect)="selectItem($event)" -->
       <!-- <ng-template pTemplate="caption">

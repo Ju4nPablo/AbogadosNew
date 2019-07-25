@@ -3,6 +3,7 @@ import { CasoService } from '../../Services/caso/caso.service';
 import { ClienteService } from '../../Services/cliente/cliente.service';
 import { AbogadoService } from '../../Services/abogado/abogado.service';
 import { NotificacionesService } from '../../Services/notificaciones/notificaciones.service';
+import { BotonesService } from '../../Services/botones/botones.service';
 
 
 @Component({
@@ -24,12 +25,14 @@ export class ReporteComponent implements OnInit {
   selectCliente: any = '';
   selectAbogado: any = '';
   selectEstado: any = '';
+  blockBotones: any = {};
 
   constructor(
     private casoService: CasoService,
     private clienteService: ClienteService,
     private abogadoService: AbogadoService,
-    private notifyService: NotificacionesService
+    private notifyService: NotificacionesService,
+    private _serviceBotones: BotonesService,
   ) {
     this.inicio();
   }
@@ -49,6 +52,7 @@ export class ReporteComponent implements OnInit {
   }
 
   inicio() {
+    this.blockBotones = this._serviceBotones.blockBotonesReport;
     this.listCaso = [];
     this.listAbogado = [];
     this.listCliente = [];
@@ -120,16 +124,17 @@ export class ReporteComponent implements OnInit {
   }
 
   generar() {
+    //this.blockBotones = this._serviceBotones.disabledBotonesReport;
     this.listCaso = [];
     // rango de fechas
-    /*
-        // Validacion de fechas fechas
-        if (this.fechaInicio == '' || this.fechaFin == '' || this.fechaInicio == '' || this.fechaFin == '') {
-          this.fechaInicio = '';
-          this.fechaFin = '';
-          this.notifyService.notify('error', 'ERROR', 'Campos vacios en fechas!');
-        }
-    */
+
+    // Validacion de fechas fechas
+    if (this.fechaInicio == '' || this.fechaFin == '' || this.fechaInicio == '' || this.fechaFin == '') {
+      this.fechaInicio = '';
+      this.fechaFin = '';
+      this.notifyService.notify('error', 'ERROR', 'Campos vacios en fechas!');
+    }
+
     // todos
     if (this.selectEstado.id === '-1' && this.selectAbogado._id === '-1' && this.selectCliente._id === '-1' && this.fechaInicio === '' &&
       this.fechaFin === '') {

@@ -30,7 +30,8 @@ export class UserService {
         apellidos: user.apellidos,
         mail: user.mail,
         tipo: user.tipo,
-        estado: user.estado
+        estado: user.estado,
+        cambio_password: user.cambio_password
       };
       return this.http.put(this.url + 'user/' + user._id, use, { headers });
     } else {
@@ -43,7 +44,8 @@ export class UserService {
         mail: user.mail,
         tipo: user.tipo,
         estado: user.estado,
-        password: user.password
+        password: user.password,
+        cambio_password: user.cambio_password
       };
       return this.http.post(this.url + 'updateUserPassword', use, { headers });
     }
@@ -58,6 +60,11 @@ export class UserService {
   getUserCedula(ced) {
     const params = new HttpParams()
       .append('cedula', ced); // si desea filtrar por mas campos agrega un nuevo params.
+    return this.http.get(this.url + 'user/', { params });
+  }
+  getUserName(name) {
+    const params = new HttpParams()
+      .append('user_name', name); // si desea filtrar por mas campos agrega un nuevo params.
     return this.http.get(this.url + 'user/', { params });
   }
 

@@ -35,6 +35,7 @@ api.post('/saveUser', (req, res) => {
     //crear objeto
     var user = new User();
     //params
+    console.log(req.body);
     if (req.body.user_name && req.body.password && req.body.estado && req.body.tipo) {
         user.user_name = req.body.user_name;
         user.password = req.body.password;
@@ -44,6 +45,7 @@ api.post('/saveUser', (req, res) => {
         user.tipo = req.body.tipo;
         user.nombres = req.body.nombres;
         user.apellidos = req.body.apellidos;
+        user.cambio_password = req.body.cambio_password;
         bcrypt.hash(user.password, null, null, function (err, hash) {
             user.password = hash;
             user.save((err, userStored) => {
@@ -80,6 +82,7 @@ api.post('/updateUserPassword', (req, res) => {
         userDatos.tipo = req.body.tipo;
         userDatos.nombres = req.body.nombres;
         userDatos.apellidos = req.body.apellidos;
+        userDatos.cambio_password = req.body.cambio_password;
         bcrypt.hash(userDatos.password, null, null, function (err, hash) {
             userDatos.password = hash;
             User.findByIdAndUpdate(id, userDatos, { new: true }, (err, userUpdated) => {

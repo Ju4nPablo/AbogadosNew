@@ -61,6 +61,7 @@ export class ActividadExtraComponent implements OnInit {
   listHoras: any[] = [];
   idActividad: any = '';
   showButton: any = {};
+  blockBotones: any = {};
   //#endregion
 
   //#region CONSTRUCTOR
@@ -85,6 +86,7 @@ export class ActividadExtraComponent implements OnInit {
   //#region INICIO DE VARIABLES
 
   inicio() {
+    this.blockBotones = this._serviceBotones.blockBotonesGene;
     this.idActividad = '';
     const us = JSON.parse(localStorage.getItem('userLogin'));
     this.showButton = this._serviceBotones.showBotonesActividades;
@@ -226,6 +228,7 @@ export class ActividadExtraComponent implements OnInit {
   //#region INGRESAR, MODIFICAR, ELIMINAR Y RESTAURAR ACTIVIDAD
   // Ingresa una actividad
   addActividad() {
+    this.blockBotones = this._serviceBotones.disabledBotonesGene;
     if (this.actividad.actividad !== '' && this.actividad.actividad !== null && this.actividad.actividad !== undefined) {
       this.actividad.prioridad = this.selectPrioridad.color;
       this.actividad.abogado = this.selectAbogado._id;
@@ -236,6 +239,7 @@ export class ActividadExtraComponent implements OnInit {
       this.actividad.estado = 'Activo';
       this.actividad.id_user = JSON.parse(localStorage.getItem('userLogin'))._id;
       this.actividadService.addActividadExtra(this.actividad).subscribe(data => {
+        this.blockBotones = this._serviceBotones.blockBotonesGene;
         this.showDialog = false;
         const log = {
           usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
@@ -251,22 +255,40 @@ export class ActividadExtraComponent implements OnInit {
         this.notifyService.notify('success', 'Exito', 'Ingreso Existoso!');
         this.inicio();
       }, err => {
+        this.blockBotones = this._serviceBotones.blockBotonesGene;
         let actividadLog = {
           respuestaBDD: err,
           data: this.actividad
         }
-        const log = {
-          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
-          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
-          fecha: new Date(),
-          transaccion: 'ERROR-ADD-ACTIVIDAD',
-          cambio_json: {
-            mensaje: 'Error al Ingresar!',
-            data: actividadLog
+
+        if (err.status !== 0) {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-ADD-ACTIVIDAD',
+            cambio_json: {
+              mensaje: 'Error al Ingresar!',
+              data: actividadLog
+            }
+          };
+          this._serviceLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'Error al Ingresar!');
+        } else {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-ADD-ACTIVIDAD',
+            cambio_json: {
+              mensaje: 'ERROR DE CONEXIÓN!',
+              data: actividadLog
+            }
           }
-        }
-        this._serviceLogCambios.addLogCambio(log).subscribe();
-        this.notifyService.notify('error', 'ERROR', 'Error al Ingresar!');
+          this._serviceLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
+        };
+
       });
     } else {
       this.notifyService.notify('error', 'ERROR', 'Ingrese una actividad!');
@@ -274,6 +296,7 @@ export class ActividadExtraComponent implements OnInit {
   }
   // Modificar una actividad
   updateActividad() {
+    this.blockBotones = this._serviceBotones.disabledBotonesGene;
     if (this.actividad.id_actividad_caso === 'agenda') {
       this.actividad.prioridad = this.selectPrioridad.color;
       this.actividad.abogado = this.selectAbogado._id;
@@ -283,6 +306,7 @@ export class ActividadExtraComponent implements OnInit {
       this.actividad.recordatorio = this.selectRecordatorio.descripcion;
       this.actividad.estado = 'Activo'
       this.actividadService.updateActividadExtra(this.actividad).subscribe(data => {
+        this.blockBotones = this._serviceBotones.blockBotonesGene;
         this.showDialog = false;
         let actividadLog = {
           respuestaBDD: data,
@@ -302,24 +326,42 @@ export class ActividadExtraComponent implements OnInit {
         this.notifyService.notify('success', 'Exito', 'Modificación Existosa!');
         this.inicio();
       }, err => {
+        this.blockBotones = this._serviceBotones.blockBotonesGene;
         let actividadLog = {
           respuestaBDD: err,
           data: this.actividad
         };
-        const log = {
-          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
-          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
-          fecha: new Date(),
-          transaccion: 'ERROR-UPDATE-ACTIVIDAD',
-          cambio_json: {
-            mensaje: 'Error al Modificar!',
-            data: actividadLog
+
+        if (err.status !== 0) {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-UPDATE-ACTIVIDAD',
+            cambio_json: {
+              mensaje: 'Error al Modificar!',
+              data: actividadLog
+            }
+          };
+          this._serviceLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'Error al Modificar!');
+        } else {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-UPDATE-ACTIVIDAD',
+            cambio_json: {
+              mensaje: 'ERROR DE CONEXIÓN!',
+              data: actividadLog
+            }
           }
-        }
-        this._serviceLogCambios.addLogCambio(log).subscribe();
-        this.notifyService.notify('error', 'ERROR', 'Error al Modificar!');
+          this._serviceLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
+        };
       });
     } else {
+      this.blockBotones = this._serviceBotones.blockBotonesGene;
       const log = {
         usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
         cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
@@ -337,6 +379,7 @@ export class ActividadExtraComponent implements OnInit {
 
   // Eliminar una actividad
   deleteActividad(event) {
+    this.blockBotones = this._serviceBotones.disabledBotonesGene;
     this.actividad.estado = 'Eliminado';
     this.actividad.prioridad = 'gray';
     let cambio = {
@@ -346,6 +389,7 @@ export class ActividadExtraComponent implements OnInit {
     }
     if (this.actividad.id_actividad_caso === 'agenda') {
       this.actividadService.deleteActividadExtraIdEstado(cambio).subscribe(data => {
+        this.blockBotones = this._serviceBotones.blockBotonesGene;
         this.showDialog = false;
         let actividadLog = {
           respuestaBDD: data,
@@ -365,24 +409,42 @@ export class ActividadExtraComponent implements OnInit {
         this.notifyService.notify('success', 'Exito', 'Eliminación Existosa!');
         this.inicio();
       }, err => {
+        this.blockBotones = this._serviceBotones.blockBotonesGene;
         let actividadLog = {
           respuestaBDD: err,
           data: cambio
         };
-        const log = {
-          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
-          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
-          fecha: new Date(),
-          transaccion: 'ERROR-DELETE-ACTIVIDAD',
-          cambio_json: {
-            mensaje: 'Ocurrio un ERROR al Eliminar!',
-            data: actividadLog
+
+        if (err.status !== 0) {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-DELETE-ACTIVIDAD',
+            cambio_json: {
+              mensaje: 'ERROR al Eliminar!',
+              data: actividadLog
+            }
+          };
+          this._serviceLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'ERROR al Eliminar!');
+        } else {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-DELETE-ACTIVIDAD',
+            cambio_json: {
+              mensaje: 'ERROR DE CONEXIÓN!',
+              data: actividadLog
+            }
           }
-        }
-        this._serviceLogCambios.addLogCambio(log).subscribe();
-        this.notifyService.notify('error', 'ERROR', 'Ocurrio un ERROR al Eliminar!');
+          this._serviceLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
+        };
       });
     } else {
+      this.blockBotones = this._serviceBotones.blockBotonesGene;
       const log = {
         usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
         cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
@@ -400,6 +462,7 @@ export class ActividadExtraComponent implements OnInit {
 
   // Eliminar una actividad
   restaurarActividad() {
+    this.blockBotones = this._serviceBotones.disabledBotonesGene;
     this.actividad.estado = 'Activo';
     this.actividad.prioridad = 'yellow';
     let cambio = {
@@ -409,6 +472,7 @@ export class ActividadExtraComponent implements OnInit {
     }
     if (this.actividad.id_actividad_caso === 'agenda') {
       this.actividadService.deleteActividadExtraIdEstado(cambio).subscribe(data => {
+        this.blockBotones = this._serviceBotones.blockBotonesGene;
         this.showDialog = false;
         let actividadLog = {
           respuestaBDD: data,
@@ -433,24 +497,42 @@ export class ActividadExtraComponent implements OnInit {
         this.notifyService.notify('success', 'Exito', 'Restauración Existosa!');
         this.inicio();
       }, err => {
+        this.blockBotones = this._serviceBotones.blockBotonesGene;
         let actividadLog = {
           respuestaBDD: err,
           data: cambio
         };
-        const log = {
-          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
-          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
-          fecha: new Date(),
-          transaccion: 'ERROR-RESTAURAR-ACTIVIDAD',
-          cambio_json: {
-            mensaje: 'Ocurrio un ERROR al Restaurar!',
-            data: actividadLog
+
+        if (err.status !== 0) {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-RESTAURAR-ACTIVIDAD',
+            cambio_json: {
+              mensaje: 'ERROR al Restaurar!',
+              data: actividadLog
+            }
+          };
+          this._serviceLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'ERROR al Restaurar!');
+        } else {
+          let log = {
+            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+            fecha: new Date(),
+            transaccion: 'ERROR-RESTAURAR-ACTIVIDAD',
+            cambio_json: {
+              mensaje: 'ERROR DE CONEXIÓN!',
+              data: actividadLog
+            }
           }
-        }
-        this._serviceLogCambios.addLogCambio(log).subscribe();
-        this.notifyService.notify('error', 'ERROR', 'Ocurrio un ERROR al Restaurar!');
+          this._serviceLogCambios.addLogCambio(log).subscribe();
+          this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
+        };
       });
     } else {
+      this.blockBotones = this._serviceBotones.blockBotonesGene;
       const log = {
         usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
         cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,

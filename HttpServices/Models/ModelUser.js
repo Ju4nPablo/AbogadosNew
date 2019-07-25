@@ -38,6 +38,9 @@ var UserSchema = new mongoose.Schema({
 	},
 	tipo: {
 		type: String
+	},
+	cambio_password: {
+		type: Boolean
 	}
 
 }, { collection: 'user' });

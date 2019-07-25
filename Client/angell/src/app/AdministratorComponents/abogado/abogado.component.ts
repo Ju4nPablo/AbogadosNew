@@ -53,6 +53,7 @@ export class AbogadoComponent implements OnInit {
   uploadedFiles: any;
   totalRecords: number;
   blockBotones: any = {};
+  paginado: number = 10;
   //#endregion
 
   //#region CONSTRUCTOR
@@ -60,7 +61,7 @@ export class AbogadoComponent implements OnInit {
     public abogadoService: AbogadoService,
     public validarService: ValidacioneService,
     public notifyService: NotificacionesService,
-    private _servicioLogCambios: LogCambiosService,
+    private _serviceLogCambios: LogCambiosService,
     private router: Router,
     private _serviceBotones: BotonesService,
   ) {
@@ -70,6 +71,7 @@ export class AbogadoComponent implements OnInit {
 
   //#region INICIO DE VARIABLES
   inicio() {
+    this.paginado = 10;
     this.blockBotones = this._serviceBotones.blockBotonesGene;
     const user = JSON.parse(localStorage.getItem('userLogin'));
     if (user.tipo !== '1') {
@@ -114,20 +116,24 @@ export class AbogadoComponent implements OnInit {
 
     this.abogadoService.listAbogado().subscribe(data => {
       const aux: any = data;
-      this.totalRecords = aux.length;
-      for (const abo of aux) {
-        if (abo.sexo === '0') {
-          abo.sexo = 'Hombre';
-        } else {
-          abo.sexo = 'Mujer';
+      if (aux.length > 0) {
+        this.totalRecords = aux.length;
+        for (const abo of aux) {
+          if (abo.sexo === '0') {
+            abo.sexo = 'Hombre';
+          } else {
+            abo.sexo = 'Mujer';
+          }
+          if (abo.estado === '0') {
+            abo.estado = 'Activo';
+          } else {
+            abo.estado = 'Inactivo';
+          }
+          this.listaAbogado.push(abo);
         }
-        if (abo.estado === '0') {
-          abo.estado = 'Activo';
-        } else {
-          abo.estado = 'Inactivo';
-        }
-        this.listaAbogado.push(abo);
-      }
+      } else {
+        this.notifyService.notify('error', 'ERROR', 'NO EXISTEN REGISTROS!');
+      };
     }, err => {
       console.log(err);
     });
@@ -171,7 +177,7 @@ export class AbogadoComponent implements OnInit {
             data: data
           }
         }
-        this._servicioLogCambios.addLogCambio(log).subscribe();
+        this._serviceLogCambios.addLogCambio(log).subscribe();
         this.inicio();
         this.notifyService.notify('success', 'Exito', 'Ingreso existoso!');
       }, err => {
@@ -191,7 +197,7 @@ export class AbogadoComponent implements OnInit {
               data: abogadoLog
             }
           };
-          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this._serviceLogCambios.addLogCambio(log).subscribe();
           this.notifyService.notify('error', 'ERROR', 'Abogado ya existe!');
         } else {
           let log = {
@@ -204,7 +210,7 @@ export class AbogadoComponent implements OnInit {
               data: abogadoLog
             }
           }
-          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this._serviceLogCambios.addLogCambio(log).subscribe();
           this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
         };
       });
@@ -246,7 +252,7 @@ export class AbogadoComponent implements OnInit {
             data: abogadoLog
           }
         }
-        this._servicioLogCambios.addLogCambio(log).subscribe();
+        this._serviceLogCambios.addLogCambio(log).subscribe();
         this.inicio();
         this.logAbogado = {};
         this.notifyService.notify('success', 'Exito', 'Modificación existosa!');
@@ -259,7 +265,7 @@ export class AbogadoComponent implements OnInit {
         const log = {
 
         }
-        this._servicioLogCambios.addLogCambio(log).subscribe();
+        this._serviceLogCambios.addLogCambio(log).subscribe();
         this.notifyService.notify('error', 'ERROR', 'Abogado ya existe!');
 
         if (err.status !== 0) {
@@ -273,7 +279,7 @@ export class AbogadoComponent implements OnInit {
               data: abogadoLog
             }
           };
-          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this._serviceLogCambios.addLogCambio(log).subscribe();
           this.notifyService.notify('error', 'ERROR', 'Abogado ya existe!');
         } else {
           let log = {
@@ -286,7 +292,7 @@ export class AbogadoComponent implements OnInit {
               data: abogadoLog
             }
           }
-          this._servicioLogCambios.addLogCambio(log).subscribe();
+          this._serviceLogCambios.addLogCambio(log).subscribe();
           this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
         };
 
@@ -517,5 +523,11 @@ export class AbogadoComponent implements OnInit {
     }
   }
   //#endregion
-
+  // Paginado de la tabla
+  validarPaginado() {
+    if (this.paginado < 3) {
+      this.paginado = 10;
+      this.notifyService.notify('error', 'ERROR', 'Paginado mínimo 3.');
+    }
+  }
 }

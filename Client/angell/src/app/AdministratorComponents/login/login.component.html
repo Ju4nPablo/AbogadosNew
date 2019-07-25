@@ -1,13 +1,12 @@
 <br>
 <br>
-<div class="container jumbotron" style="width: 50%; height: 50%;">
-
+<div class="container jumbotron" style="width: 30%; height: 30%;">
   <form #loginForm>
     <div class="row">
       <div class="col-md-4 col-xs-4">
       </div>
       <div class="col-md-2 col-xs-2">
-        <img src="assets/icon.png" style="max-width: 125px">
+        <img src="assets/icon.jpg" style="max-width: 125px">
       </div>
       <div class="col-md-4 col-xs-4">
       </div>
@@ -20,13 +19,58 @@
         </label>
         <br>
         <label>Nombre de Usuario:</label>
-        <input type="text" placeholder="Nombre de usuario" name="usuario" class="form-control" [(ngModel)]="user.user_name"><br>
+        <input type="text" placeholder="Nombre de usuario" name="usuario" class="form-control"
+          [(ngModel)]="user.user_name"><br>
         <label>Contraseña:</label>
-        <input type="password" placeholder="Contraseña" name="password" class="form-control" [(ngModel)]="user.password"><br>
-        <input type="submit" class="btn-primary form-control" value="Ingresar" (click)="login()"><br>
+        <input type="password" placeholder="Contraseña" name="password" class="form-control"
+          [(ngModel)]="user.password"><br>
+        <input type="submit" style="cursor: pointer" class="btn-primary form-control" value="Ingresar"
+          (click)="login()"><br>
       </div>
-      <div class="col-md-3 col-xs-0">
+    </div>
+    <div class="row">
+      <div class="col-md-3 col-xs-3">
+      </div>
+      <div class="col-md-6 col-xs-6">
+        <p class="subrayarTexto" (click)="mostrarDialogoRecuperarPassword()"> Olvidaste su Contraseña?</p>
       </div>
     </div>
   </form>
+
+  <p-dialog header="RECUPERAR CONTRASEÑA" [(visible)]="showDialog" [responsive]="true" showEffect="fade" [modal]="true"
+    [width]="550">
+    <div *ngIf="userPasswd">
+      <div>
+        <div class="ui-g-12 ui-md-12 ui-lg-12" *ngIf="showCampo.userName">
+          <div class="ui-g-4 ui-md-4 ui-lg-4">
+            <label for="float-input">Nombre Usuario: *</label>
+          </div>
+          <div class="ui-g-8 ui-md-8 ui-lg-8">
+            <input pInputText type="text" id="nombreUser" [(ngModel)]="userPasswd.user_name" name="nombreUser"
+              class="form-control input-sm" [disabled]="blockCampo.userName" required>
+          </div>
+        </div>
+        <div class="ui-g-12 ui-md-12 ui-lg-12" *ngIf="showCampo.mail">
+          <div class="ui-g-4 ui-md-4 ui-lg-4">
+            <label for="float-input">Validar email:</label>
+          </div>
+          <div class="ui-g-8 ui-md-8 ui-lg-8">
+            <input pInputText type="text" id="mailUser" [(ngModel)]="mail" name="mailUser"
+              class="form-control input-sm" [disabled]="blockCampo.mail" required>
+          </div>
+        </div>
+        <br>
+      </div>
+    </div>
+    <p-footer>
+      <div class="ui-dialog-buttonpane ui-helper-clearfix">
+        <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar" class="ui-button-danger"
+          [disabled]="blockCampo.cancelar"></button>
+        <button type="button" pButton (click)="buscarUser()" icon="fa fa-search" label="Buscar" *ngIf="showCampo.buscar"></button>
+        <button type="button" pButton (click)="recuperarClave()" icon="fa fa-key" label="Recuperar" *ngIf="showCampo.recuperar"
+          [disabled]="blockCampo.recuperar"></button>
+      </div>
+    </p-footer>
+  </p-dialog>
+
 </div>

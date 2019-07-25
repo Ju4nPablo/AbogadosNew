@@ -23,7 +23,8 @@ export class UserComponent implements OnInit {
     apellidos: '',
     mail: '',
     estado: '0',
-    tipo: ''
+    tipo: '',
+    cambio_password: false,
   };
   selectUser = {
     user_name: '',
@@ -33,7 +34,8 @@ export class UserComponent implements OnInit {
     apellidos: '',
     mail: '',
     estado: '0',
-    tipo: ''
+    tipo: '',
+    cambio_password: false,
   };
   bandera = {
     ban1: '0',
@@ -51,8 +53,11 @@ export class UserComponent implements OnInit {
   showDialogMod: boolean;
   urlImagen: any = 'assets/perfil.png';
   uploadedFiles: any;
-  totalRecords: number;
   blockBotones: any = {};
+  confirmarPassword: any = {};
+  banPassword: any = true;
+  totalRecords: number;
+  paginado: number = 10;
   //#endregion
 
   //#region CONSTRUCTOR
@@ -60,7 +65,7 @@ export class UserComponent implements OnInit {
     public userService: UserService,
     public validarService: ValidacioneService,
     public notifyService: NotificacionesService,
-    private _servicioLogCambios: LogCambiosService,
+    private _serviceLogCambios: LogCambiosService,
     private router: Router,
     private _serviceBotones: BotonesService,
   ) {
@@ -80,6 +85,9 @@ export class UserComponent implements OnInit {
 
   //#region INICIALIZAR VARIABLES
   inicio() {
+    this.paginado = 10;
+    this.confirmarPassword = '';
+    this.banPassword = true;
     this.blockBotones = this._serviceBotones.blockBotonesGene;
     const user = JSON.parse(localStorage.getItem('userLogin'));
     if (user.tipo !== '1') {
@@ -100,27 +108,30 @@ export class UserComponent implements OnInit {
     this.showDialogMod = false;
     this.selectEstado = true;
     this.selectTipo = true;
-
     this.userService.listUser().subscribe(data => {
       const d: any = data;
-      this.totalRecords = d.length;
-      for (const us of d) {
-        if (us.tipo === '1') {
-          us.tipo = 'Administrador';
+      if (d.length > 0) {
+        this.totalRecords = d.length;
+        for (const us of d) {
+          if (us.tipo === '1') {
+            us.tipo = 'Administrador';
+          }
+          if (us.tipo === '2') {
+            us.tipo = 'Cliente';
+          }
+          if (us.tipo === '3') {
+            us.tipo = 'Abogado';
+          }
+          if (us.estado === '1') {
+            us.estado = 'Activo';
+          } else {
+            us.estado = 'Inactivo';
+          }
+          this.listaUser.push(us);
         }
-        if (us.tipo === '2') {
-          us.tipo = 'Cliente';
-        }
-        if (us.tipo === '3') {
-          us.tipo = 'Abogado';
-        }
-        if (us.estado === '1') {
-          us.estado = 'Activo';
-        } else {
-          us.estado = 'Inactivo';
-        }
-        this.listaUser.push(us);
-      }
+      } else {
+        this.notifyService.notify('error', 'ERROR', 'NO EXISTEN REGISTROS!');
+      };
     }, err => {
       console.log(err);
     });
@@ -139,142 +150,152 @@ export class UserComponent implements OnInit {
       }
     ];
     this.selectTipo = this.listTipoUser[0];
-  }
+  };
 
   ngOnInit() {
 
-  }
+  };
   //#endregion
 
   //#region INGRESO Y MADIFICAR User
   // Añadir un User
   addUser() {
     this.blockBotones = this._serviceBotones.disabledBotonesGene;
-    if (this.bandera.ban1 === '1' && this.bandera.ban2 === '1' && this.bandera.ban3 === '1' && this.bandera.ban4 === '1') {
-      if (this.selectEstado === true) {
-        this.user.estado = '1';
-      } else {
-        this.user.estado = '0';
-      }
-      this.user.tipo = this.selectTipo.id;
-      this.userService.addUser(this.user).subscribe(data => {
-        this.showDialog = false;
-        const log = {
-          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
-          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
-          fecha: new Date(),
-          transaccion: 'ADD-USER',
-          cambio_json: {
-            mensaje: 'Ingreso existoso!',
-            data: data
-          }
-        }
-        this._servicioLogCambios.addLogCambio(log).subscribe();
-        this.inicio();
-        this.notifyService.notify('success', 'Exito', 'Ingreso Existoso!');
-      }, err => {
-        this.blockBotones = this._serviceBotones.blockBotonesGene;
-        let userLog = {
-          respuestaBDD: err,
-          data: this.user
-        };
-        if (err.status !== 0) {
-          let log = {
-            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
-            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
-            fecha: new Date(),
-            transaccion: 'ERROR-ADD-USER',
-            cambio_json: {
-              mensaje: 'Abogado ya existe!',
-              data: userLog
-            }
-          };
-          this._servicioLogCambios.addLogCambio(log).subscribe();
-          this.notifyService.notify('error', 'ERROR', 'Usuario ya existe!');
+    if (this.banPassword) {
+      if (this.bandera.ban1 === '1' && this.bandera.ban2 === '1' && this.bandera.ban3 === '1' && this.bandera.ban4 === '1') {
+        if (this.selectEstado === true) {
+          this.user.estado = '1';
         } else {
-          let log = {
+          this.user.estado = '0';
+        }
+        this.user.tipo = this.selectTipo.id;
+        this.userService.addUser(this.user).subscribe(data => {
+          this.showDialog = false;
+          const log = {
             usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
             cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
             fecha: new Date(),
-            transaccion: 'ERROR-ADD-USER',
+            transaccion: 'ADD-USER',
             cambio_json: {
-              mensaje: 'ERROR DE CONEXIÓN!',
-              data: userLog
+              mensaje: 'Ingreso existoso!',
+              data: data
             }
           }
-          this._servicioLogCambios.addLogCambio(log).subscribe();
-          this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
-        };
-      });
+          this._serviceLogCambios.addLogCambio(log).subscribe();
+          this.inicio();
+          this.notifyService.notify('success', 'Exito', 'Ingreso Existoso!');
+        }, err => {
+          this.blockBotones = this._serviceBotones.blockBotonesGene;
+          let userLog = {
+            respuestaBDD: err,
+            data: this.user
+          };
+          if (err.status !== 0) {
+            let log = {
+              usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+              cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+              fecha: new Date(),
+              transaccion: 'ERROR-ADD-USER',
+              cambio_json: {
+                mensaje: 'Abogado ya existe!',
+                data: userLog
+              }
+            };
+            this._serviceLogCambios.addLogCambio(log).subscribe();
+            this.notifyService.notify('error', 'ERROR', 'Usuario ya existe!');
+          } else {
+            let log = {
+              usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+              cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+              fecha: new Date(),
+              transaccion: 'ERROR-ADD-USER',
+              cambio_json: {
+                mensaje: 'ERROR DE CONEXIÓN!',
+                data: userLog
+              }
+            }
+            this._serviceLogCambios.addLogCambio(log).subscribe();
+            this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
+          };
+        });
+      } else {
+        this.blockBotones = this._serviceBotones.blockBotonesGene;
+        this.notifyService.notify('error', 'ERROR', 'Revise Campos!');
+      }
     } else {
       this.blockBotones = this._serviceBotones.blockBotonesGene;
-      this.notifyService.notify('error', 'ERROR', 'Revise Campos!');
+      this.notifyService.notify('error', 'ERROR', 'Contraseñas no coinciden!');
     }
-  }
+  };
   // Modificar un User
   updateUser() {
     this.blockBotones = this._serviceBotones.disabledBotonesGene;
-    if (this.bandera.ban1 === '1' && this.bandera.ban2 === '1' && this.bandera.ban3 === '1' && this.bandera.ban4 === '1') {
-      if (this.selectEstado === true) {
-        this.selectUser.estado = '1';
-      } else {
-        this.selectUser.estado = '0';
-      }
-      this.selectUser.tipo = this.selectTipo.id;
-      this.userService.updateUser(this.selectUser).subscribe(data => {
-        this.showDialogMod = false;
-        const log = {
-          usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
-          cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
-          fecha: new Date(),
-          transaccion: 'ADD-USER',
-          cambio_json: {
-            mensaje: 'Ingreso existoso!',
-            data: data
-          }
-        }
-        this._servicioLogCambios.addLogCambio(log).subscribe();
-        this.inicio();
-        this.notifyService.notify('success', 'Exito', 'Modificación Existosa!');
-      }, err => {
-        this.blockBotones = this._serviceBotones.blockBotonesGene;
-        let userLog = {
-          respuestaBDD: err,
-          data: this.user
-        };
-        if (err.status !== 0) {
-          let log = {
-            usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
-            cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
-            fecha: new Date(),
-            transaccion: 'ERROR-UPDATE-USER',
-            cambio_json: {
-              mensaje: 'Abogado ya existe!',
-              data: userLog
-            }
-          };
-          this._servicioLogCambios.addLogCambio(log).subscribe();
-          this.notifyService.notify('error', 'ERROR', 'Usuario ya existe!');
+    if (this.banPassword) {
+      if (this.bandera.ban1 === '1' && this.bandera.ban2 === '1' && this.bandera.ban3 === '1' && this.bandera.ban4 === '1') {
+        if (this.selectEstado === true) {
+          this.selectUser.estado = '1';
         } else {
-          let log = {
+          this.selectUser.estado = '0';
+        }
+        this.selectUser.tipo = this.selectTipo.id;
+        this.userService.updateUser(this.selectUser).subscribe(data => {
+          this.showDialogMod = false;
+          const log = {
             usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
             cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
             fecha: new Date(),
-            transaccion: 'ERROR-UPDATE-USER',
+            transaccion: 'ADD-USER',
             cambio_json: {
-              mensaje: 'ERROR DE CONEXIÓN!',
-              data: userLog
+              mensaje: 'Ingreso existoso!',
+              data: data
             }
           }
-          this._servicioLogCambios.addLogCambio(log).subscribe();
-          this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
-        };
-      });
+          this._serviceLogCambios.addLogCambio(log).subscribe();
+          this.inicio();
+          this.notifyService.notify('success', 'Exito', 'Modificación Existosa!');
+        }, err => {
+          this.blockBotones = this._serviceBotones.blockBotonesGene;
+          let userLog = {
+            respuestaBDD: err,
+            data: this.user
+          };
+          if (err.status !== 0) {
+            let log = {
+              usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+              cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+              fecha: new Date(),
+              transaccion: 'ERROR-UPDATE-USER',
+              cambio_json: {
+                mensaje: 'Abogado ya existe!',
+                data: userLog
+              }
+            };
+            this._serviceLogCambios.addLogCambio(log).subscribe();
+            this.notifyService.notify('error', 'ERROR', 'Usuario ya existe!');
+          } else {
+            let log = {
+              usuario: JSON.parse(localStorage.getItem('userLogin')).user_name,
+              cedula: JSON.parse(localStorage.getItem('userLogin')).cedula,
+              fecha: new Date(),
+              transaccion: 'ERROR-UPDATE-USER',
+              cambio_json: {
+                mensaje: 'ERROR DE CONEXIÓN!',
+                data: userLog
+              }
+            }
+            this._serviceLogCambios.addLogCambio(log).subscribe();
+            this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
+          };
+        });
+      } else {
+        this.blockBotones = this._serviceBotones.blockBotonesGene;
+        this.notifyService.notify('error', 'ERROR', 'Revise Campos!');
+      }
     } else {
       this.blockBotones = this._serviceBotones.blockBotonesGene;
-      this.notifyService.notify('error', 'ERROR', 'Revise Campos!');
+      this.notifyService.notify('error', 'ERROR', 'Contraseñas no coinciden!');
     }
-  }
+  };
   //#endregion
 
   //#region CARGAR Y MOSTRAR FORMULARIOS
@@ -284,7 +305,7 @@ export class UserComponent implements OnInit {
     this.showDialog = false;
     this.showDialogMod = false;
     this.inicio();
-  }
+  };
   // Inicializar campos.
   inicializarUser() {
     this.user = {
@@ -295,7 +316,8 @@ export class UserComponent implements OnInit {
       apellidos: '',
       mail: '',
       estado: '0',
-      tipo: ''
+      tipo: '',
+      cambio_password: false,
     };
     this.selectUser = {
       user_name: '',
@@ -305,9 +327,10 @@ export class UserComponent implements OnInit {
       apellidos: '',
       mail: '',
       estado: '',
-      tipo: ''
+      tipo: '',
+      cambio_password: false,
     };
-  }
+  };
   // Mostrar formulario de ingreso.
   showDialogAdd() {
     document.getElementById('nombre').style.borderColor = '';
@@ -324,7 +347,7 @@ export class UserComponent implements OnInit {
     this.selectEstado = true;
     this.selectTipo = this.listTipoUser[0];
     this.showDialog = true;
-  }
+  };
   // cargar datos de la seleccion de una fila de la tabla y mostrar el formulario de modificar
   onRowSelect(event) {
     document.getElementById('nombreMod').style.borderColor = '';
@@ -333,6 +356,7 @@ export class UserComponent implements OnInit {
     document.getElementById('nombresMod').style.borderColor = '';
     document.getElementById('apellidosMod').style.borderColor = '';
     document.getElementById('mailMod').style.borderColor = '';
+    document.getElementById('passwordConfirmarMod').style.borderColor = '';
     this.bandera = {
       ban1: '1',
       ban2: '1',
@@ -352,7 +376,7 @@ export class UserComponent implements OnInit {
       }
     });
     this.showDialogMod = true;
-  }
+  };
   //#endregion
 
   //#region VALICADION DE CAMPOS
@@ -376,9 +400,10 @@ export class UserComponent implements OnInit {
         this.bandera.ban1 = '1';
       }
     }
-  }
+  };
   // verifica Password
   verificaPassword() {
+    this.igualarPasswordMod();
     if (this.user.password !== '') {
       if (this.user.password.length < 6) {
         document.getElementById('password').style.borderColor = '#FE2E2E';
@@ -403,7 +428,52 @@ export class UserComponent implements OnInit {
       document.getElementById('passwordMod').style.borderColor = '';
       this.bandera.ban2 = '1';
     }
-  }
+  };
+
+  // igualar contrasenias.
+  igualarPassword() {
+    if (this.user.password.length === this.confirmarPassword.length) {
+      if (this.user.password !== this.confirmarPassword) {
+        this.banPassword = false;
+        this.notifyService.notify('error', 'ERROR', 'Contraseñas no coinciden!');
+      } else {
+        this.banPassword = true;
+        document.getElementById('passwordConfirmar').style.borderColor = '#5ff442';
+      }
+    } else {
+      this.banPassword = false;
+      document.getElementById('passwordConfirmar').style.borderColor = '#FE2E2E';
+    }
+  };
+
+  // igualar contrasenias modificar.
+  igualarPasswordMod() {
+    if (this.selectUser.password.length === this.confirmarPassword.length) {
+      if (this.selectUser.password !== this.confirmarPassword) {
+        this.banPassword = false;
+        this.notifyService.notify('error', 'ERROR', 'Contraseñas no coinciden!');
+      } else {
+        this.banPassword = true;
+        document.getElementById('passwordConfirmarMod').style.borderColor = '#5ff442';
+      }
+    } else {
+      this.banPassword = false;
+      document.getElementById('passwordConfirmarMod').style.borderColor = '#FE2E2E';
+    }
+    if (this.user.password.length === this.confirmarPassword.length) {
+      if (this.user.password !== this.confirmarPassword) {
+        this.banPassword = false;
+        this.notifyService.notify('error', 'ERROR', 'Contraseñas no coinciden!');
+      } else {
+        this.banPassword = true;
+        document.getElementById('passwordConfirmarMod').style.borderColor = '#5ff442';
+      }
+    } else {
+      this.banPassword = false;
+      document.getElementById('passwordConfirmarMod').style.borderColor = '#FE2E2E';
+    }
+  };
+
   // verifica email
   verificaEmail() {
     if (this.user.mail !== '') {
@@ -424,7 +494,7 @@ export class UserComponent implements OnInit {
         this.bandera.ban3 = '1';
       }
     }
-  }
+  };
   // verifica nombre usuario
   verificaNameUser() {
     if (this.user.user_name !== '') {
@@ -445,7 +515,7 @@ export class UserComponent implements OnInit {
         this.bandera.ban4 = '1';
       }
     }
-  }
+  };
   // verifica Nombres
   verificaNombres() {
     if (this.user.nombres !== '') {
@@ -466,7 +536,7 @@ export class UserComponent implements OnInit {
         this.bandera.ban4 = '1';
       }
     }
-  }
+  };
   // verifica Apellidos
   verificaApellidos() {
     if (this.user.apellidos !== '') {
@@ -487,5 +557,12 @@ export class UserComponent implements OnInit {
         this.bandera.ban4 = '1';
       }
     }
-  }
-}
+  };
+  // Paginado de la tabla
+  validarPaginado() {
+    if (this.paginado < 3) {
+      this.paginado = 10;
+      this.notifyService.notify('error', 'ERROR', 'Paginado mínimo 3.');
+    }
+  };
+};
