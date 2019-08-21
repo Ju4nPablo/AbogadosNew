@@ -23,35 +23,7 @@ router.get('/getAllCasos', function (req, res) {
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
-            list = doc.data.fecha_inicio.split('T');
-            doc.data.fecha_inicio = list[0];
             resultArray.push(doc);
-        }, function () {
-            db.close();
-            res.send(resultArray);
-        });
-    });
-});
-
-// Todos los casos entre fechas
-router.post('/getAllCasosFechas', function (req, res) {
-    var resultArray = [];
-    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
-        if (err) throw err;
-        var dbo = db.db("angell");
-        var casos = dbo.collection("casos").find();
-
-        fib = new Date(req.body.fechaInicio).getTime();
-        ffb = new Date(req.body.fechaFin).getTime();
-        casos.forEach(function (doc, err) {
-            assert.equal(null, err);
-            fi = new Date(doc.data.fecha_inicio).getTime();
-            ff = new Date(doc.data.fecha_fin).getTime();
-            if (fi >= fib && ff <= ffb) {
-                list = doc.data.fecha_inicio.split('T');
-                doc.data.fecha_inicio = list[0];
-                resultArray.push(doc);
-            }
         }, function () {
             db.close();
             res.send(resultArray);
@@ -191,63 +163,11 @@ router.post('/getAllCasosAbogadoClienteEstado', function (req, res) {
     MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
         if (err) throw err;
         var dbo = db.db("angell");
-        var casos = dbo.collection("casos").find({ 'data.abogado.id': req.body.idAbogado, 'data.cliente.id': req.body.idAbogado, 'data.estado.id': req.body.idEstado });
+        var casos = dbo.collection("casos").find({ 'data.cliente.id': req.body.idCliente, 'data.abogado.id': req.body.idAbogado, 'data.estado.id': req.body.idEstado });
 
         casos.forEach(function (doc, err) {
             assert.equal(null, err);
             resultArray.push(doc);
-        }, function () {
-            db.close();
-            res.send(resultArray);
-        });
-    });
-});
-
-
-// consulta por abogado, cliente y fechas
-router.post('/getAllCasosAbogadoClienteFecha', function (req, res) {
-    var resultArray = [];
-    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
-        if (err) throw err;
-        var dbo = db.db("angell");
-        var casos = dbo.collection("casos").find();
-        fib = new Date(req.body.fechaInicio).getTime();
-        ffb = new Date(req.body.fechaFin).getTime();
-        casos.forEach(function (doc, err) {
-            assert.equal(null, err);
-            fi = new Date(doc.data.fecha_inicio).getTime();
-            ff = new Date(doc.data.fecha_fin).getTime();
-            if (doc.data.cliente.id == req.body.idCliente && doc.data.abogado.id == req.body.idAbogado && fi >= fib && ff <= ffb) {
-                list = doc.data.fecha_inicio.split('T');
-                doc.data.fecha_inicio = list[0];
-                resultArray.push(doc);
-            }
-        }, function () {
-            db.close();
-            res.send(resultArray);
-        });
-    });
-});
-
-// consulta por abogado, cliente, estado y fechas
-router.post('/getAllCasosAbogadoClienteEstadoFecha', function (req, res) {
-    var resultArray = [];
-    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
-        if (err) throw err;
-        var dbo = db.db("angell");
-        var casos = dbo.collection("casos").find();
-        fib = new Date(req.body.fechaInicio).getTime();
-        ffb = new Date(req.body.fechaFin).getTime();
-        casos.forEach(function (doc, err) {
-            assert.equal(null, err);
-            fi = new Date(doc.data.fecha_inicio).getTime();
-            ff = new Date(doc.data.fecha_fin).getTime();
-            if (doc.data.cliente.id == req.body.idCliente && doc.data.abogado.id == req.body.idAbogado &&
-                doc.data.estado.id == req.body.idEstado && fi >= fib && ff <= ffb) {
-                list = doc.data.fecha_inicio.split('T');
-                doc.data.fecha_inicio = list[0];
-                resultArray.push(doc);
-            }
         }, function () {
             db.close();
             res.send(resultArray);
@@ -292,6 +212,196 @@ router.post('/getAllCasoAbogadoPendiente', function (req, res) {
     });
 });
 
+// Todos los casos entre fechas
+router.post('/getAllCasosFechas', function (req, res) {
+    var resultArray = [];
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("angell");
+        var casos = dbo.collection("casos").find();
+
+        fib = new Date(req.body.fechaInicio).getTime();
+        ffb = new Date(req.body.fechaFin).getTime();
+        casos.forEach(function (doc, err) {
+            assert.equal(null, err);
+            fi = new Date(doc.data.fecha_inicio).getTime();
+            ff = new Date(doc.data.fecha_fin).getTime();
+            if (fi >= fib && ff <= ffb) {
+                resultArray.push(doc);
+            }
+        }, function () {
+            db.close();
+            res.send(resultArray);
+        });
+    });
+});
+
+// consulta por abogado y fechas
+router.post('/getAllCasosAbogadoFecha', function (req, res) {
+    var resultArray = [];
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("angell");
+        var casos = dbo.collection("casos").find({ 'data.abogado.id': req.body.idAbogado });
+        fib = new Date(req.body.fechaInicio).getTime();
+        ffb = new Date(req.body.fechaFin).getTime();
+        casos.forEach(function (doc, err) {
+            assert.equal(null, err);
+            fi = new Date(doc.data.fecha_inicio).getTime();
+            ff = new Date(doc.data.fecha_fin).getTime();
+            if (fi >= fib && ff <= ffb) {
+                resultArray.push(doc);
+            }
+        }, function () {
+            db.close();
+            res.send(resultArray);
+        });
+    });
+});
+
+// consulta por abogado, cliente y fechas
+router.post('/getAllCasosAbogadoClienteFecha', function (req, res) {
+    var resultArray = [];
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("angell");
+        var casos = dbo.collection("casos").find({ 'data.abogado.id': req.body.idAbogado, 'data.cliente.id': req.body.idCliente });
+        fib = new Date(req.body.fechaInicio).getTime();
+        ffb = new Date(req.body.fechaFin).getTime();
+        casos.forEach(function (doc, err) {
+            assert.equal(null, err);
+            fi = new Date(doc.data.fecha_inicio).getTime();
+            ff = new Date(doc.data.fecha_fin).getTime();
+            if (fi >= fib && ff <= ffb) {
+                resultArray.push(doc);
+            }
+        }, function () {
+            db.close();
+            res.send(resultArray);
+        });
+    });
+});
+
+// consulta por abogado, cliente, estado y fechas
+router.post('/getAllCasosAbogadoEstadoFecha', function (req, res) {
+    var resultArray = [];
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("angell");
+        var casos = dbo.collection("casos").find({ 'data.abogado.id': req.body.idAbogado, 'data.estado.id': req.body.idEstado });
+
+        fib = new Date(req.body.fechaInicio).getTime();
+        ffb = new Date(req.body.fechaFin).getTime();
+        casos.forEach(function (doc, err) {
+            assert.equal(null, err);
+            fi = new Date(doc.data.fecha_inicio).getTime();
+            ff = new Date(doc.data.fecha_fin).getTime();
+            if (fi >= fib && ff <= ffb) {
+                resultArray.push(doc);
+            }
+        }, function () {
+            db.close();
+            res.send(resultArray);
+        });
+    });
+});
+
+// consulta por cliente, estado y fechas
+router.post('/getAllCasosClienteEstadoFecha', function (req, res) {
+    var resultArray = [];
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("angell");
+        var casos = dbo.collection("casos").find({ 'data.cliente.id': req.body.idCliente, 'data.estado.id': req.body.idEstado });
+
+        fib = new Date(req.body.fechaInicio).getTime();
+        ffb = new Date(req.body.fechaFin).getTime();
+        casos.forEach(function (doc, err) {
+            assert.equal(null, err);
+            fi = new Date(doc.data.fecha_inicio).getTime();
+            ff = new Date(doc.data.fecha_fin).getTime();
+            if (fi >= fib && ff <= ffb) {
+                resultArray.push(doc);
+            }
+        }, function () {
+            db.close();
+            res.send(resultArray);
+        });
+    });
+});
+
+// consulta por abogado, cliente, estado y fechas
+router.post('/getAllCasosAbogadoClienteEstadoFecha', function (req, res) {
+    var resultArray = [];
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("angell");
+        // var casos = dbo.collection("casos").find({ 'data.abogado.id': req.body.idAbogado, 'data.cliente.id': req.body.idCliente, 'data.estado.id': req.body.idEstado });
+        var casos = dbo.collection("casos").find({ 'data.cliente.id': req.body.idCliente, 'data.abogado.id': req.body.idAbogado, 'data.estado.id': req.body.idEstado });
+
+        fib = new Date(req.body.fechaInicio).getTime();
+        ffb = new Date(req.body.fechaFin).getTime();
+        casos.forEach(function (doc, err) {
+            assert.equal(null, err);
+            fi = new Date(doc.data.fecha_inicio).getTime();
+            ff = new Date(doc.data.fecha_fin).getTime();
+            if (fi >= fib && ff <= ffb) {
+                resultArray.push(doc);
+            }
+        }, function () {
+            db.close();
+            res.send(resultArray);
+        });
+    });
+});
+
+// cliente
+// consulta por abogado y fechas
+router.post('/getAllCasosClienteFecha', function (req, res) {
+    var resultArray = [];
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("angell");
+        var casos = dbo.collection("casos").find({ 'data.cliente.id': req.body.idCliente });
+        fib = new Date(req.body.fechaInicio).getTime();
+        ffb = new Date(req.body.fechaFin).getTime();
+        casos.forEach(function (doc, err) {
+            assert.equal(null, err);
+            fi = new Date(doc.data.fecha_inicio).getTime();
+            ff = new Date(doc.data.fecha_fin).getTime();
+            if (fi >= fib && ff <= ffb) {
+                resultArray.push(doc);
+            }
+        }, function () {
+            db.close();
+            res.send(resultArray);
+        });
+    });
+});
+
+// Estado
+// consulta por abogado y fechas
+router.post('/getAllCasosEstadoFecha', function (req, res) {
+    var resultArray = [];
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("angell");
+        var casos = dbo.collection("casos").find({ 'data.estado.id': req.body.idEstado });
+        fib = new Date(req.body.fechaInicio).getTime();
+        ffb = new Date(req.body.fechaFin).getTime();
+        casos.forEach(function (doc, err) {
+            assert.equal(null, err);
+            fi = new Date(doc.data.fecha_inicio).getTime();
+            ff = new Date(doc.data.fecha_fin).getTime();
+            if (fi >= fib && ff <= ffb) {
+                resultArray.push(doc);
+            }
+        }, function () {
+            db.close();
+            res.send(resultArray);
+        });
+    });
+});
 
 // </editor-fold>
 

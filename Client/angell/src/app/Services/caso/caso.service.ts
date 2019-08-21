@@ -92,16 +92,34 @@ export class CasoService {
     return this.http.post(this.url + 'getAllCasosAbogadoClienteEstado', obj, { headers });
   }
 
+  allCasoAbogadoFecha(obj) {
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    return this.http.post(this.url + 'getAllCasosAbogadoFecha', obj, { headers });
+  }
+
   allCasoAbogadoClienteFecha(obj) {
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     return this.http.post(this.url + 'getAllCasosAbogadoClienteFecha', obj, { headers });
   }
 
+  allCasoAbogadoEstadoFecha(obj) {
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    return this.http.post(this.url + 'getAllCasosAbogadoEstadoFecha', obj, { headers });
+  }
+
   allCasoAbogadoClienteEstadoFecha(obj) {
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     return this.http.post(this.url + 'getAllCasosAbogadoClienteEstadoFecha', obj, { headers });
+  }
+
+  allCasoClienteEstadoFecha(obj) {
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    return this.http.post(this.url + 'getAllCasosClienteEstadoFecha', obj, { headers });
   }
 
   AllCasoClientePendiente(obj) {
@@ -114,6 +132,19 @@ export class CasoService {
     const headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     return this.http.post(this.url + 'getAllCasoAbogadoPendiente', obj, { headers });
+  }
+
+  // cliente
+  allCasoClienteFecha(obj) {
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    return this.http.post(this.url + 'getAllCasosClienteFecha', obj, { headers });
+  }
+
+  allCasoEstadoFecha(obj) {
+    const headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    return this.http.post(this.url + 'getAllCasosEstadoFecha', obj, { headers });
   }
 
 }

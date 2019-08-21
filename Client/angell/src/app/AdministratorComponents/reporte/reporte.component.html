@@ -9,7 +9,7 @@
     </p-header>
     <div class="ui-g-12 ui-md-12 ui-panel-content">
 
-      <p><b>Nota: </b>Si no se pone fecha trae todo los que se encuentren</p>
+      <p><b>Nota: </b>Si no posee rango de fechas trae la información del filtro que posee.</p>
       <div class="ui-g-4 ui-md-4">
         <span class="ui-float-label">
           <p-dropdown id="abogado" name="abogado" [options]="listAbogado" [(ngModel)]="selectAbogado"
@@ -33,22 +33,33 @@
           <label for="float-input">Estado: *</label>
         </span>
       </div>
+
       <div class="ui-g-4 ui-md-4">
-        <span class="ui-float-label">
-          <p-calendar id="fechaInicio" name="fechaInicio" [locale]="es" [(ngModel)]="fechaInicio" [showIcon]="true"
-            [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
-            [disabledDays]="[0,7]" (onSelect)="onSelectFechaIncicio($event)"></p-calendar>
-          <label for="float-input">Fecha inicio: *</label>
-        </span>
+        <label for="float-input">Habilitar fechas: </label>
+        <p-checkbox id="rangoFecha" name="rangoFecha" [(ngModel)]="blockFecha" binary="true">
+        </p-checkbox>
       </div>
-      <div class="ui-g-4 ui-md-4">
-        <span class="ui-float-label">
-          <p-calendar id="fechaFin" name="fechaFin" [locale]="es" [(ngModel)]="fechaFin" [showIcon]="true"
-            [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
-            [disabledDays]="[0,7]" (onSelect)="onSelectFechaFin($event)"></p-calendar>
-          <label for="float-input">Fecha fin: *</label>
-        </span>
+
+      <div>
+        <div class="ui-g-4 ui-md-4">
+          <span class="ui-float-label">
+            <p-calendar id="fechaInicio" name="fechaInicio" [locale]="es" [(ngModel)]="fechaInicio" [showIcon]="true"
+              [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
+              [disabledDays]="[0,7]" (onSelect)="onSelectFechaIncicio($event)" [(disabled)]="!blockFecha">
+            </p-calendar>
+            <label for="float-input">Fecha inicio: *</label>
+          </span>
+        </div>
+        <div class="ui-g-4 ui-md-4">
+          <span class="ui-float-label">
+            <p-calendar id="fechaFin" name="fechaFin" [locale]="es" [(ngModel)]="fechaFin" [showIcon]="true"
+              [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
+              [disabledDays]="[0,7]" (onSelect)="onSelectFechaFin($event)" [(disabled)]="!blockFecha"></p-calendar>
+            <label for="float-input">Fecha fin: *</label>
+          </span>
+        </div>
       </div>
+
     </div>
     <button pButton type="button" icon="fa fa-search" label="Generar" class="ui-button-success" (click)="generar()"
       [disabled]="blockBotones.reporte"></button>

@@ -144,11 +144,12 @@
           [(disabled)]="blockCampos.blockHoraInicio"></p-dropdown>
       </div>
       <div class="ui-g-2 ui-md-2" *ngIf="visibleCampos.showActividad">
-        <div *ngIf="visibleCampos.showActividad"></div>
-        <label for="float-input">Actividad: </label>
-        <p-checkbox id="ingAct" name="ingAct" [(ngModel)]="info.data.ingresar_actividad" binary="true"
-          [(disabled)]="blockCampos.blockActividad">
-        </p-checkbox>
+        <div *ngIf="visibleCampos.showActividad">
+          <label for="float-input">Actividad: </label>
+          <p-checkbox id="ingAct" name="ingAct" [(ngModel)]="info.data.ingresar_actividad" binary="true"
+            [(disabled)]="blockCampos.blockActividad">
+          </p-checkbox>
+        </div>
         <div *ngIf="visibleCampos.showValidar">
           <label for="float-input">Validar: </label>
           <p-checkbox id="ingAct" name="ingAct" [(ngModel)]="info.data.validar_diligencia" binary="true"
