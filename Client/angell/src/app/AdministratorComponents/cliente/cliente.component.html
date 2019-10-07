@@ -5,7 +5,7 @@
       <b>Nota:</b> Click en un registro para modificar.</p>
     <p-table #dt [columns]="cols" [value]="listaCliente" selectionMode="single" [responsive]="true"
       [(selection)]="selectCliente" (onRowSelect)="onRowSelect($event)" [paginator]="true" [totalRecords]="totalRecords"
-      [rows]="paginado">
+      [rows]="paginado" [loading]="loading">
       <ng-template pTemplate="caption">
         <div class="ui-g">
           <div class="ui-g-4" style="text-align:left">
@@ -13,7 +13,7 @@
           </div>
           <div class="ui-g-4" style="text-align: right">
             <div class="ui-g-9">
-              <label for="float-input">Paginado: *</label>
+              <label>Paginado: *</label>
             </div>
             <div class="ui-g-3">
               <input pInputText type="number" id="paginado" [(ngModel)]="paginado" name="paginado"
@@ -42,14 +42,14 @@
         </tr>
       </ng-template>
 
-      <ng-template pTemplate="summary" let-rowData>
-
+      <ng-template pTemplate="summary">
+        Existen {{listaCliente?.length}} clientes
       </ng-template>
 
     </p-table>
 
     <p-dialog header="INGRESO CLIENTE" [(visible)]="showDialog" [responsive]="true" showEffect="fade" [modal]="true"
-      [width]="800">
+      [width]="850" [closable]="false">
       <div class="ui-g ui-fluid" *ngIf="cliente">
         <div class="ui-g-12">
           <form #imagenForm=ngForm>
@@ -59,62 +59,73 @@
               </div>
               <div class="ui-g-9">
                 <input type="file" #Image pButton (change)="cargaImagen($event.target.files)">
-                <!-- <button type="button" pButton icon="fa fa-upload" label="Subir" [disabled]="Image.value==''"></button> -->
               </div>
             </div>
           </form>
           <div class="ui-g-4">
-            <span class="ui-float-label">
+            <div class="ui-g-4">
+              <label>Cédula: *</label>
+            </div>
+            <div class="ui-g-8">
               <input id="cedula" type="text" pInputText id="cedula" [(ngModel)]="cliente.cedula" name="cedula"
                 onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"
                 (ngModelChange)="verificaCedula()" class="form-control  input-sm">
-              <label for="float-input">Cédula: *</label>
-            </span>
+            </div>
           </div>
           <div class="ui-g-4">
-            <span class="ui-float-label">
+            <div class="ui-g-6">
+              <label>No. carpeta: *</label>
+            </div>
+            <div class="ui-g-6">
               <input pInputText type="text" id="numCarpeta" [(ngModel)]="cliente.numeroCarpeta" name="numCarpeta"
                 onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"
                 (ngModelChange)="verificaNumeroCarpeta()">
-              <label for="float-input">Número carpeta: *</label>
-            </span>
+            </div>
           </div>
           <div class="ui-g-8">
-            <span class="ui-float-label">
+            <div class="ui-g-3">
+              <label>Nombres: *</label>
+            </div>
+            <div class="ui-g-9">
               <input pInputText type="text" id="nombre" [(ngModel)]="cliente.nombre" name="nombre"
                 onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
               event.charCode === 241 || event.charCode === 32 || event.charCode === 209 || event.charCode >= 65 && event.charCode <= 90' maxlength="50" (ngModelChange)="verificaNombres()"
                 class="form-control  input-sm">
-              <label for="float-input">Nombres: *</label>
-            </span>
+            </div>
           </div>
           <div class="ui-g-8">
-            <span class="ui-float-label">
+            <div class="ui-g-3">
+              <label>Teléfono: *</label>
+            </div>
+            <div class="ui-g-9">
               <input pInputText type="text" id="telefono" [(ngModel)]="cliente.telefono" name="telefono"
                 onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"
                 (ngModelChange)="verificaTelefono()" class="form-control  input-sm">
-              <label for="float-input">Teléfono: *</label>
-            </span>
+            </div>
           </div>
           <div class="ui-g-8">
-            <span class="ui-float-label">
+            <div class="ui-g-3">
+              <label>Email: *</label>
+            </div>
+            <div class="ui-g-9">
               <input pInputText type="text" id="mail" [(ngModel)]="cliente.mail" name="mail"
                 (ngModelChange)="verificaEmail()" class="form-control  input-sm">
-              <label for="float-input">Email: *</label>
-            </span>
+            </div>
           </div>
           <div class="ui-g-8">
-            <span class="ui-float-label">
+            <div class="ui-g-3">
+              <label>Dirección: *</label>
+            </div>
+            <div class="ui-g-9">
               <input pInputText type="text" id="direccion" [(ngModel)]="cliente.direccion" name="direccion"
                 (ngModelChange)="verificaDireccion()" class="form-control  input-sm">
-              <label for="float-input">Dirección: *</label>
-            </span>
+            </div>
           </div>
-          <div class="ui-g-12">
-            <div class="ui-g-offset-5 ui-g-2">
+          <div class="ui-g-4">
+            <div class="ui-g-4">
               <label for="color">Sexo: *</label>
             </div>
-            <div class="ui-g-3">
+            <div class="ui-g-8">
               <p-inputSwitch pInputText id="sexo" [(ngModel)]="selectSexo" name="sexo" onLabel="Hombre"
                 offLabel="Mujer"></p-inputSwitch>
             </div>
@@ -133,7 +144,7 @@
     </p-dialog>
 
     <p-dialog header="MODIFICAR CLIENTE" [(visible)]="showDialogMod" [responsive]="true" showEffect="fade"
-      [modal]="true" [width]="800">
+      [modal]="true" [width]="850" [closable]="false">
       <div class="ui-g ui-fluid" *ngIf="selectCliente">
         <div class="ui-g-12">
           <form #imagenForm=ngForm>
@@ -147,69 +158,81 @@
               </div>
             </div>
           </form>
-          <div class="ui-g-4">
-            <span class="ui-float-label">
+          <div class="ui-g-8">
+            <div class="ui-g-4">
+              <label>Cédula: *</label>
+            </div>
+            <div class="ui-g-8">
               <input pInputText type="text" id="cedulaMod" [(ngModel)]="selectCliente.cedula" name="cedulaMod"
                 onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"
                 (ngModelChange)="verificaCedula()">
-              <label for="float-input">Cédula: *</label>
-            </span>
+            </div>
           </div>
-          <div class="ui-g-4">
-            <span class="ui-float-label">
+          <div class="ui-g-8">
+            <div class="ui-g-4">
+              <label>No. carpeta: *</label>
+            </div>
+            <div class="ui-g-3">
               <input pInputText type="text" id="numCarpetaMod" [(ngModel)]="selectCliente.numeroCarpeta"
                 name="numCarpetaMod" onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"
                 (ngModelChange)="verificaNumeroCarpeta()">
-              <label for="float-input">Numero carpeta: *</label>
-            </span>
+            </div>
           </div>
           <div class="ui-g-8">
-            <span class="ui-float-label">
+            <div class="ui-g-4">
+              <label>Nombres: *</label>
+            </div>
+            <div class="ui-g-8">
               <input pInputText type="text" id="nombreMod" [(ngModel)]="selectCliente.nombre" name="nombreMod"
                 onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
                   event.charCode === 241 || event.charCode === 32 || event.charCode === 209 || event.charCode >= 65 && event.charCode <= 90'
                 maxlength="50" (ngModelChange)="verificaNombres()">
-              <label for="float-input">Nombres: *</label>
-            </span>
+            </div>
           </div>
           <div class="ui-g-8">
-            <span class="ui-float-label">
+            <div class="ui-g-4">
+              <label>Teléfono: *</label>
+            </div>
+            <div class="ui-g-8">
               <input pInputText type="text" id="telefonoMod" [(ngModel)]="selectCliente.telefono" name="telefonoMod"
                 onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"
                 (ngModelChange)="verificaTelefono()">
-              <label for="float-input">Teléfono: *</label>
-            </span>
+            </div>
           </div>
-          <div class="ui-g-8">
-            <span class="ui-float-label">
-              <input pInputText type="text" id="mailMod" [(ngModel)]="selectCliente.mail" name="mailMod"
-                (ngModelChange)="verificaEmail()">
-              <label for="float-input">Email: *</label>
-            </span>
-          </div>
-          <div class="ui-g-8">
-            <span class="ui-float-label">
-              <input pInputText type="text" id="direccionMod" [(ngModel)]="selectCliente.direccion" name="direccionMod"
-                (ngModelChange)="verificaDireccion()">
-              <label for="float-input">Dirección: *</label>
-            </span>
-          </div>
-          <div class="ui-g-offset-4 ui-g-4">
-            <div class="ui-g-5">
+          <div class="ui-g-4">
+            <div class="ui-g-4">
               <label for="color">Sexo: *</label>
             </div>
-            <div class="ui-g-4">
+            <div class="ui-g-8">
               <p-inputSwitch pInputText id="sexoMod" [(ngModel)]="selectSexo" name="sexoMod" onLabel="Hombre"
                 offLabel="Mujer"></p-inputSwitch>
             </div>
           </div>
+          <div class="ui-g-8">
+            <div class="ui-g-4">
+              <label>Email: *</label>
+            </div>
+            <div class="ui-g-8">
+              <input pInputText type="text" id="mailMod" [(ngModel)]="selectCliente.mail" name="mailMod"
+                (ngModelChange)="verificaEmail()">
+            </div>
+          </div>
           <div class="ui-g-4">
-            <div class="ui-g-6">
+            <div class="ui-g-4">
               <label for="color">Estado: *</label>
             </div>
-            <div class="ui-g-4">
+            <div class="ui-g-8">
               <p-inputSwitch pInputText id="estadoMod" [(ngModel)]="selectEstado" name="estadoMod" onLabel="Activo"
                 offLabel="Inactivo"></p-inputSwitch>
+            </div>
+          </div>
+          <div class="ui-g-8">
+            <div class="ui-g-4">
+              <label>Dirección: *</label>
+            </div>
+            <div class="ui-g-8">
+              <input pInputText type="text" id="direccionMod" [(ngModel)]="selectCliente.direccion" name="direccionMod"
+                (ngModelChange)="verificaDireccion()">
             </div>
           </div>
         </div>

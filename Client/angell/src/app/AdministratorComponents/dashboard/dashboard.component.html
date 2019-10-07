@@ -1,54 +1,55 @@
-<nav class="navbar navbar-expand-lg  navbar-dark bg-dark" style="z-index: 90000000001!important;">
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03"
-    aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div>
-    <a class="navbar-brand">
-      <!-- [routerLink]="['/dashboard']" -->
-      <img src="assets/consorcio20.png" /> </a>
-  </div>
-  <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
-    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-      <li class="nav-item active" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"
-        *ngIf="showMenu.showCalendario">
-        <a class="nav-link" [routerLink]="['/dashboard/actividadExtra']">Agenda
-          <span class="sr-only">(current)</span>
-        </a>
-      </li>
-      <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"
-        *ngIf="showMenu.showUsuario">
-        <a class="nav-item nav-link" [routerLink]="['/dashboard/usuario']">Usuarios</a>
-        <!--  href="/dashboard/usuario" -->
-      </li>
-      <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"
-        *ngIf="showMenu.showCliente">
-        <a class="nav-item nav-link" [routerLink]="['/dashboard/cliente']">Clientes</a>
-        <!-- href="/dashboard/cliente" -->
-      </li>
-      <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"
-        *ngIf="showMenu.showAbogado">
-        <a class="nav-item nav-link" [routerLink]="['/dashboard/abogado']">Abogados</a>
-        <!-- href="/dashboard/abogado" -->
-      </li>
-      <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"
-        *ngIf="showMenu.showFlujo">
-        <a class="nav-item nav-link" [routerLink]="['/dashboard/bajaFlujoProceso']">Plantillas</a>
-      </li>
-      <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"
-        *ngIf="showMenu.showCasos">
-        <a class="nav-item nav-link" [routerLink]="['/dashboard/caso']">Casos</a>
-      </li>
-      <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"
-        *ngIf="showMenu.showReporte">
-        <a class="nav-item nav-link" [routerLink]="['/dashboard/reporte']">Reportes</a>
-      </li>
-      <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"
-        *ngIf="showMenu.showGraficos">
-        <a class="nav-item nav-link" [routerLink]="['/dashboard/graficas']">Gráficas</a>
-      </li>
-    </ul>
-    <!-- <ul class="nav navbar-nav navbar-right">
+<div *ngIf="mostrarDashboard">
+  <nav class="navbar navbar-expand-lg  navbar-dark bg-dark" style="z-index: 90000000001!important;">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03"
+      aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div>
+      <a class="navbar-brand">
+        <!-- [routerLink]="['/dashboard']" -->
+        <img src="assets/consorcio20.png" /> </a>
+    </div>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+      <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+        <li class="nav-item active" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"
+          *ngIf="showMenu.showCalendario">
+          <a class="nav-link" [routerLink]="['/dashboard/actividadExtra']">Agenda
+            <span class="sr-only">(current)</span>
+          </a>
+        </li>
+        <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"
+          *ngIf="showMenu.showUsuario">
+          <a class="nav-item nav-link" [routerLink]="['/dashboard/usuario']">Usuarios</a>
+          <!--  href="/dashboard/usuario" -->
+        </li>
+        <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"
+          *ngIf="showMenu.showCliente">
+          <a class="nav-item nav-link" [routerLink]="['/dashboard/cliente']">Clientes</a>
+          <!-- href="/dashboard/cliente" -->
+        </li>
+        <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"
+          *ngIf="showMenu.showAbogado">
+          <a class="nav-item nav-link" [routerLink]="['/dashboard/abogado']">Abogados</a>
+          <!-- href="/dashboard/abogado" -->
+        </li>
+        <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"
+          *ngIf="showMenu.showFlujo">
+          <a class="nav-item nav-link" [routerLink]="['/dashboard/bajaFlujoProceso']">Plantillas</a>
+        </li>
+        <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"
+          *ngIf="showMenu.showCasos">
+          <a class="nav-item nav-link" [routerLink]="['/dashboard/caso']">Casos</a>
+        </li>
+        <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"
+          *ngIf="showMenu.showReporte">
+          <a class="nav-item nav-link" [routerLink]="['/dashboard/reporte']">Reportes</a>
+        </li>
+        <li class="nav-item dropdown" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact:true}"
+          *ngIf="showMenu.showGraficos">
+          <a class="nav-item nav-link" [routerLink]="['/dashboard/graficas']">Gráficas</a>
+        </li>
+      </ul>
+      <!-- <ul class="nav navbar-nav navbar-right">
       &lt;!&ndash;<button class="btn form-control" href="#"><i class="fa fa-sign-out" aria-hidden="true"></i> Salir</button>&ndash;&gt;
       <li><button class="btn form-control" [routerLink]="['/dashboard/login']"><i class="fa fa-user" aria-hidden="true"></i>
           Mi perfil</button></li>
@@ -56,65 +57,63 @@
           <i class="fa fa-sign-out" aria-hidden="true"></i> Salir
         </button></li>
     </ul>-->
-    <form class="form-inline my-2 my-lg-0">
-      <div class="ui-md-4" *ngIf="showMenu.showDashboard">
-        <ul>
-          <div class="dropdown">
-            <button class="btn  dropdown-toggle" style="background-color:grey; color:white" type="button"
-              id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="fa fa-bell" aria-hidden="true" style="color:yellow"></i>
-              <span class="badge" style="color:white">{{cantidad_notificaciones}}</span>
-              Notificaciones
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"
-              style="overflow-y: scroll; max-height: 200px">
-              <dl class="dropdown-item borde" *ngFor="let notification of notifications"
-                [ngStyle]="{'background-color':notification.color === 'rojo' ? '#E52741' : '#F1DF4A' }"
-                (click)="cargarCaso(notification)">
-                <dt>{{notification.titulo}}</dt>
-                <dd>{{notification.cliente.nombre}}</dd>
-              </dl>
+      <form class="form-inline my-2 my-lg-0">
+        <div class="ui-md-4" *ngIf="showMenu.showDashboard">
+          <ul>
+            <div class="dropdown">
+              <button class="btn  dropdown-toggle" style="background-color:grey; color:white" type="button"
+                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fa fa-bell" aria-hidden="true" style="color:yellow"></i>
+                <span class="badge" style="color:white">{{cantidad_notificaciones}}</span>
+                Notificaciones
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"
+                style="overflow-y: scroll; max-height: 200px">
+                <dl class="dropdown-item borde" *ngFor="let notification of notifications"
+                  [ngStyle]="{'background-color':notification.color === 'rojo' ? '#E52741' : '#F1DF4A' }"
+                  (click)="cargarCaso(notification)">
+                  <dt>{{notification.titulo}}</dt>
+                  <dd>{{notification.cliente.nombre}}</dd>
+                </dl>
+              </div>
             </div>
-          </div>
-        </ul>
-      </div>
-      <div class="ui-md-1">
+          </ul>
+        </div>
+        <div class="ui-md-1">
 
-      </div>
-      <div class="ui-md-4">
-        <ul>
-          <button class="btn form-control btn-secondary"><i class="fa fa-user" aria-hidden="true"></i>
-            {{nombreUser}}</button> <!-- [routerLink]="['/dashboard/login']" -->
-        </ul>
-      </div>
-      <div class="ui-md-2">
-        <ul>
-          <button class="btn form-control btn-secondary" [routerLink]="['/dashboard/login']" (click)="logout()">
-            <i class="fa fa-sign-out" aria-hidden="true"></i> Salir
-          </button>
-        </ul>
-      </div>
-    </form>
-  </div>
-  <div>
-    <app-notification></app-notification>
-  </div>
-</nav>
+        </div>
+        <div class="ui-md-4">
+          <ul>
+            <button class="btn form-control btn-secondary"><i class="fa fa-user" aria-hidden="true"></i>
+              {{nombreUser}}</button> <!-- [routerLink]="['/dashboard/login']" -->
+          </ul>
+        </div>
+        <div class="ui-md-2">
+          <ul>
+            <button class="btn form-control btn-secondary" [routerLink]="['/dashboard/login']" (click)="logout()">
+              <i class="fa fa-sign-out" aria-hidden="true"></i> Salir
+            </button>
+          </ul>
+        </div>
+      </form>
+    </div>
+    <div>
+      <app-notification></app-notification>
+    </div>
+  </nav>
 
-<br>
+  <br>
 
-<!--<div class="container jumbotron" style="background-color: white">-->
-
-<div class="row" style=" width:100%!important">
-  <div class="col-md-12 col-xs-12">
-    <div class="panel" style="background-color: white !important; height: 100%; ">
-      <div class="container">
-        <router-outlet></router-outlet>
+  <div class="row" style=" width:100%!important">
+    <div class="col-md-12 col-xs-12">
+      <div class="panel" style="background-color: white !important; height: 100%; ">
+        <div class="container">
+          <router-outlet></router-outlet>
+        </div>
       </div>
     </div>
   </div>
 </div>
-
 <p-dialog header="CAMBIAR CONTRASEÑA" [(visible)]="showDialog" [responsive]="true" showEffect="fade" [modal]="true"
   [width]="550" [closable]="false">
   <div>
@@ -142,7 +141,10 @@
   </div>
   <p-footer>
     <div class="ui-dialog-buttonpane ui-helper-clearfix">
-      <button type="button" pButton (click)="cambiarClave()" icon="fa fa-key" label="Cambiar" [disabled]="blockCambio"></button>
+      <button type="button" pButton icon="fa fa-close" (click)="cancelar()" label="Cancelar"
+      class="ui-button-danger"></button>
+      <button type="button" pButton (click)="cambiarClave()" icon="fa fa-key" label="Cambiar"
+        [disabled]="blockCambio"></button>
     </div>
   </p-footer>
 </p-dialog>

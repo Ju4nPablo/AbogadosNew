@@ -58,6 +58,7 @@ export class UserComponent implements OnInit {
   banPassword: any = true;
   totalRecords: number;
   paginado: number = 10;
+  loading: boolean;
   //#endregion
 
   //#region CONSTRUCTOR
@@ -110,27 +111,38 @@ export class UserComponent implements OnInit {
     this.selectTipo = true;
     this.userService.listUser().subscribe(data => {
       const d: any = data;
+      this.loading = true;
       if (d.length > 0) {
-        this.totalRecords = d.length;
-        for (const us of d) {
-          if (us.tipo === '1') {
-            us.tipo = 'Administrador';
+        this.totalRecords = d.length -1;
+        setTimeout(() => {
+          let cont = 0;
+          for (const us of d) {
+            if (us.cedula !== '9999999999') {
+              if (us.tipo === '1') {
+                us.tipo = 'Administrador';
+              }
+              if (us.tipo === '2') {
+                us.tipo = 'Cliente';
+              }
+              if (us.tipo === '3') {
+                us.tipo = 'Abogado';
+              }
+              if (us.estado === '1') {
+                us.estado = 'Activo';
+              } else {
+                us.estado = 'Inactivo';
+              }
+              this.listaUser.push(us);
+              if (cont === this.totalRecords - 1) {
+                this.loading = false;
+              };
+              cont++;
+            }
           }
-          if (us.tipo === '2') {
-            us.tipo = 'Cliente';
-          }
-          if (us.tipo === '3') {
-            us.tipo = 'Abogado';
-          }
-          if (us.estado === '1') {
-            us.estado = 'Activo';
-          } else {
-            us.estado = 'Inactivo';
-          }
-          this.listaUser.push(us);
-        }
+        }, 2000);
       } else {
         this.notifyService.notify('error', 'ERROR', 'NO EXISTEN REGISTROS!');
+        this.loading = false;
       };
     }, err => {
       console.log(err);

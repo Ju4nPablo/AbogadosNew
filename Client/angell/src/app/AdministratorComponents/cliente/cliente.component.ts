@@ -56,6 +56,7 @@ export class ClienteComponent implements OnInit {
   blockBotones: any = {};
   totalRecords: number;
   paginado: number = 10;
+  loading: boolean;
   //#endregion
 
   //#region CONSTRUCTOR
@@ -99,24 +100,33 @@ export class ClienteComponent implements OnInit {
 
     this.clienteService.listCliente().subscribe(data => {
       const d: any = data;
-      this.totalRecords = d.length;
+      this.loading = true;
       if (d.length > 0) {
-        for (const cli of d) {
-          if (cli.sexo === '0') {
-            cli.sexo = 'Hombre';
-          } else {
-            cli.sexo = 'Mujer';
+        this.totalRecords = d.length;
+        setTimeout(() => {
+          let cont = 0;
+          for (const cli of d) {
+            if (cli.sexo === '0') {
+              cli.sexo = 'Hombre';
+            } else {
+              cli.sexo = 'Mujer';
+            }
+            if (cli.estado === '0') {
+              cli.estado = 'Activo';
+              this.listaCliente.push(cli);
+            } else {
+              cli.estado = 'Inactivo';
+              this.listaCliente.push(cli);
+            }
+            cont++;
+            if (cont === this.totalRecords) {
+              this.loading = false;
+            };
           }
-          if (cli.estado === '0') {
-            cli.estado = 'Activo';
-            this.listaCliente.push(cli);
-          } else {
-            cli.estado = 'Inactivo';
-            this.listaCliente.push(cli);
-          }
-        }
+        }, 2000);
       } else {
         this.notifyService.notify('error', 'ERROR', 'NO EXISTEN REGISTROS!');
+        this.loading = false;
       };
     }, err => {
       console.log(err);

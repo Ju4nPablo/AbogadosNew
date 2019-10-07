@@ -9,7 +9,7 @@ export class EtiquetasService {
     tituloTabla: 'CASOS',
     nota: ' Seleccione un registro para modificar.',
     tituloFormCaso: 'MODIFICAR CASO',
-    tituloFormDiligecia: 'MODIFICAR DILIGENCIA',
+    tituloFormDiligencia: 'MODIFICAR DILIGENCIA',
     tituloFormImagen: 'AÑADIR IMÁGENES'
   };
 

@@ -15,7 +15,7 @@ export class BotonesService {
     blockAbogado: false,
     blockDescripcionAdmin: false,
     blockDescripcionAbogado: true,
-    blockDescripcionCliente: false,
+    blockDescripcionCliente: true,
     blockEstado: false,
     blockHoraInicio: false,
     blockActividad: false,
@@ -129,11 +129,11 @@ export class BotonesService {
   };
 
   visibleBotonesAbogado: any = {
-    showMail: false,
+    showMail: true,
     showGuardar: true,
-    showAnadir: false,
+    showAnadir: true,
     showAnadirCaso: false,
-    showQuitar: false,
+    showQuitar: true,
     showAnadirFoto: true,
     showGuardarCaso: true,
     showExpandirArbol: true,

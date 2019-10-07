@@ -91,6 +91,8 @@ export class BajaFlujoProcesoComponent implements OnInit {
   showDialogModPlantNodo: boolean;
   flujoTreeUpdate: TreeNode[];
 
+  loading: boolean;
+
   constructor(
     private flujoProcesoService: FlujoProcesoService,
     private casoService: CasoService,
@@ -158,18 +160,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
       }
     };
 
-    this.blockCampos = {
-      blockFechIni: false,
-      blockFechFin: false,
-      blockCaso: false,
-      blockPrecio: false,
-      blockCliente: true,
-      blockAbogado: false,
-      blockDescripcionAdmin: false,
-      blockDescripcionAbogado: true,
-      blockDescripcionCliente: false,
-      blockEstado: false,
-    };
+    this.blockCampos = this._serviceBotones.bloquearCamposAdministrador;
 
     this.listFlujo = [];
     this.listAbogado = [];
@@ -183,18 +174,27 @@ export class BajaFlujoProcesoComponent implements OnInit {
     this.showDialogImagenes = false;
     this.showImagen = false;
     this.flujoProcesoService.allFlujoProceso().subscribe(data => {
+      this.loading = true;
       this.listFlujo = data;
+      let cont = 0;
       if (this.listFlujo.length > 0) {
         this.totalRecords = this.listFlujo.length;
-        this.listFlujo.forEach(item => {
-          this.listTabla.push({
-            id: item._id,
-            label: item.label,
-            descripcion: item.data.descripcion
-          });
-        });
+        setTimeout(() => {
+          for (let item of this.listFlujo) {
+            this.listTabla.push({
+              id: item._id,
+              label: item.label,
+              descripcion: item.data.descripcion
+            });
+            cont++;
+            if (cont === this.totalRecords) {
+              this.loading = false;
+            };
+          };
+        }, 2000);
       } else {
         this.notifyService.notify('error', 'ERROR', 'NO EXISTEN REGISTROS!');
+        this.loading = false;
       };
     });
     this.clienteService.getClienteTipo().subscribe(data => {
@@ -875,6 +875,7 @@ export class BajaFlujoProcesoComponent implements OnInit {
   // Salir de form de ingreso un nodo
   exit() {
     this.showDialogIngNodo = false;
+    this.showDialogModPlantNodo = false;
   }
   // Expande todo el arbol recursivamente
   expandAll() {

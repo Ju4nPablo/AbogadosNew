@@ -5,7 +5,7 @@
       <b>Nota:</b> Click en un registro para modificar.</p>
     <p-table #dt [columns]="cols" [value]="listaAbogado" selectionMode="single" [responsive]="true"
       [(selection)]="selectAbogado" (onRowSelect)="onRowSelect($event)" [paginator]="true" [totalRecords]="totalRecords"
-      [rows]="paginado">
+      [rows]="paginado" [loading]="loading">
       <ng-template pTemplate="caption">
         <div class="ui-g">
           <div class="ui-g-4" style="text-align:left">
@@ -13,7 +13,7 @@
           </div>
           <div class="ui-g-4" style="text-align: right">
             <div class="ui-g-9">
-              <label for="float-input">Paginado: *</label>
+              <label>Paginado: *</label>
             </div>
             <div class="ui-g-3">
               <input pInputText type="number" id="paginado" [(ngModel)]="paginado" name="paginado"
@@ -42,14 +42,14 @@
         </tr>
       </ng-template>
 
-      <ng-template pTemplate="summary" let-rowData>
-
+      <ng-template pTemplate="summary">
+        Existen {{listaAbogado?.length}} abogados
       </ng-template>
 
     </p-table>
 
     <p-dialog header="INGRESO ABOGADO" [(visible)]="showDialog" [responsive]="true" showEffect="fade" [modal]="true"
-      [width]="700">
+      [width]="700" [closable]="false">
       <div class="ui-g ui-fluid" *ngIf="abogado">
         <div class="ui-g-12">
           <form #imagenForm=ngForm>
@@ -64,49 +64,58 @@
             </div>
           </form>
           <div class="ui-g-8">
-            <span class="ui-float-label">
+            <div class="ui-g-3">
+              <label>Cédula: *</label>
+            </div>
+            <div class="ui-g-9">
               <input id="cedula" type="text" pInputText id="cedula" [(ngModel)]="abogado.cedula" name="cedula"
                 onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"
                 (ngModelChange)="verificaCedula()">
-              <label for="float-input">Cédula: *</label>
-            </span>
+            </div>
           </div>
           <div class="ui-g-8">
-            <span class="ui-float-label">
+            <div class="ui-g-3">
+              <label>Nombres: *</label>
+            </div>
+            <div class="ui-g-9">
               <input pInputText id="nombre" [(ngModel)]="abogado.nombre" name="nombre"
                 onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
               event.charCode === 241 || event.charCode === 32 || event.charCode === 209 || event.charCode >= 65 && event.charCode <= 90' maxlength="50" (ngModelChange)="verificaNombres()">
-              <label for="float-input">Nombres: *</label>
-            </span>
+            </div>
           </div>
           <div class="ui-g-8">
-            <span class="ui-float-label">
+            <div class="ui-g-3">
+              <label>Teléfono: *</label>
+            </div>
+            <div class="ui-g-9">
               <input pInputText id="telefono" [(ngModel)]="abogado.telefono" name="telefono"
                 onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"
                 (ngModelChange)="verificaTelefono()" class="form-control input-sm">
-              <label for="float-input">Teléfono: *</label>
-            </span>
+            </div>
           </div>
           <div class="ui-g-8">
-            <span class="ui-float-label">
+            <div class="ui-g-3">
+              <label>Email: *</label>
+            </div>
+            <div class="ui-g-9">
               <input pInputText id="mail" [(ngModel)]="abogado.mail" name="mail" (ngModelChange)="verificaEmail()"
                 class="form-control input-sm">
-              <label for="float-input">Email: *</label>
-            </span>
+            </div>
           </div>
-          <div class="ui-g-8">
-            <span class="ui-float-label">
+          <div class="ui-g-12">
+            <div class="ui-g-2">
+              <label>Dirección: *</label>
+            </div>
+            <div class="ui-g-10">
               <input pInputText id="direccion" [(ngModel)]="abogado.direccion" name="direccion"
                 (ngModelChange)="verificaDireccion()" class="form-control input-sm">
-              <label for="float-input">Dirección: *</label>
-            </span>
+            </div>
           </div>
-
-          <div class="ui-g-offset-4 ui-g-8">
-            <div class="ui-g-4">
+          <div class="ui-g-offset-4 ui-g-4">
+            <div class="ui-g-5">
               <label for="color">Sexo: *</label>
             </div>
-            <div class="ui-g-8">
+            <div class="ui-g-7">
               <p-inputSwitch id="sexo" [(ngModel)]="selectSexo" name="sexo" onLabel="Hombre" offLabel="Mujer">
               </p-inputSwitch>
             </div>
@@ -126,7 +135,7 @@
     </p-dialog>
 
     <p-dialog header="MODIFICAR ABOGADO" [(visible)]="showDialogMod" [responsive]="true" showEffect="fade"
-      [modal]="true" [width]="800">
+      [modal]="true" [width]="800" [closable]="false">
       <div class="ui-g ui-fluid" *ngIf="selectAbogado">
         <div class="ui-g-12">
           <form #imagenForm=ngForm>
@@ -141,45 +150,55 @@
             </div>
           </form>
           <div class="ui-g-8">
-            <span class="ui-float-label">
+            <div class="ui-g-3">
+              <label>Cédula: *</label>
+            </div>
+            <div class="ui-g-9">
               <input pInputText id="cedulaMod" [(ngModel)]="selectAbogado.cedula" name="cedulaMod"
                 onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"
                 (ngModelChange)="verificaCedula()" class="form-control input-sm">
-              <label for="float-input">Cédula: *</label>
-            </span>
+            </div>
           </div>
           <div class="ui-g-8">
-            <span class="ui-float-label">
+            <div class="ui-g-3">
+              <label>Nombres: *</label>
+            </div>
+            <div class="ui-g-9">
               <input pInputText id="nombreMod" [(ngModel)]="selectAbogado.nombre" name="nombreMod"
                 onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
                   event.charCode === 241 || event.charCode === 32 || event.charCode === 209 || event.charCode >= 65 && event.charCode <= 90' maxlength="50" (ngModelChange)="verificaNombres()"
                 class="form-control input-sm">
-              <label for="float-input">Nombres: *</label>
-            </span>
+            </div>
           </div>
           <div class="ui-g-8">
-            <span class="ui-float-label">
+            <div class="ui-g-3">
+              <label>Teléfono: *</label>
+            </div>
+            <div class="ui-g-9">
               <input pInputText id="telefonoMod" [(ngModel)]="selectAbogado.telefono" name="telefonoMod"
                 onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"
                 (ngModelChange)="verificaTelefono()" class="form-control input-sm">
-              <label for="float-input">Teléfono: *</label>
-            </span>
+            </div>
           </div>
           <div class="ui-g-8">
-            <span class="ui-float-label">
+            <div class="ui-g-3">
+              <label>Email: *</label>
+            </div>
+            <div class="ui-g-9">
               <input pInputText type="email" id="mailMod" [(ngModel)]="selectAbogado.mail" name="mailMod"
                 (ngModelChange)="verificaEmail()" class="form-control input-sm">
-              <label for="float-input">Email: *</label>
-            </span>
+            </div>
           </div>
-          <div class="ui-g-8">
-            <span class="ui-float-label">
+          <div class="ui-g-12">
+            <div class="ui-g-3">
+              <label>Dirección: *</label>
+            </div>
+            <div class="ui-g-9">
               <input pInputText id="direccionMod" [(ngModel)]="selectAbogado.direccion" name="direccionMod"
                 (ngModelChange)="verificaDireccion()" class="form-control input-sm">
-              <label for="float-input">Dirección: *</label>
-            </span>
+            </div>
           </div>
-          <div class="ui-g-offset-4 ui-g-4">
+          <div class="ui-g-offset-2 ui-g-4">
             <div class="ui-g-5">
               <label for="color">Sexo: *</label>
             </div>

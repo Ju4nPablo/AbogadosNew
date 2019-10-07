@@ -62,6 +62,7 @@ export class ActividadExtraComponent implements OnInit {
   idActividad: any = '';
   showButton: any = {};
   blockBotones: any = {};
+  showCampoAbogado: boolean = false;
   //#endregion
 
   //#region CONSTRUCTOR
@@ -76,6 +77,7 @@ export class ActividadExtraComponent implements OnInit {
     private _serviceBotones: BotonesService,
     private router: Router,
   ) {
+    this.showCampoAbogado = false;
     this.inicio();
     /* this.actividadService.urlAcceso().subscribe(data => {
       console.log(data.url);
@@ -86,6 +88,7 @@ export class ActividadExtraComponent implements OnInit {
   //#region INICIO DE VARIABLES
 
   inicio() {
+    let encontrar = false;
     this.blockBotones = this._serviceBotones.blockBotonesGene;
     this.idActividad = '';
     const us = JSON.parse(localStorage.getItem('userLogin'));
@@ -129,6 +132,23 @@ export class ActividadExtraComponent implements OnInit {
       const data: any = dat;
       this.listAbogado = data;
       this.selectAbogado = data[1];
+      if (us.tipo === '3') {
+        for (let abog of this.listAbogado) {
+          if (abog.cedula === us.cedula) {
+            this.selectAbogado = { ...abog };
+            this.showCampoAbogado = false;
+            encontrar = true;
+            this.cargarActAbogado(us, true);
+          }
+        }
+        if (!encontrar) {
+          this.showCampoAbogado = true;
+          this.listAbogado.push({ cedula: '0123456789', nombre: 'No registrado' });
+          this.selectAbogado = { cedula: '0123456789', nombre: 'No registrado' };
+          this.blockBotones.guardar = true;
+          this.notifyService.notify('error', 'ERROR', 'Comunicarse con administración para el registro en la sección de abogados.!');
+        }
+      }
     }, err => {
       console.log(err);
     });
@@ -162,33 +182,10 @@ export class ActividadExtraComponent implements OnInit {
         }
       });
     }
-    else {
-      if (us.tipo === '2') {
-        this.router.navigateByUrl('/dashboard/caso');
-      } else {
-        this.actividadService.listActividadExtraPorCedulaUsuario({ cedula: us.cedula, id_user: us._id }).subscribe(dat => {
-          const data: any = dat;
-          this.listActividad = data;
-          for (const e of data) {
-            let fi = e.fecha_inicio.split('T');
-            let ff = e.fecha_inicio.split('T');
-            this.evento.id = e._id;
-            this.evento.title = e.actividad;
-            this.evento.start = fi[0];
-            this.evento.end = ff[0];
-            this.evento.color = e.prioridad;
-            this.events.push(this.evento);
-            this.evento = {
-              'id': '',
-              'title': '',
-              'start': '',
-              'end': '',
-              'color': ''
-            };
-          }
-        });
-      }
+    if (us.tipo === '2') {
+      this.router.navigateByUrl('/dashboard/caso');
     }
+
     this.listRepetir = [{ descripcion: 'Nunca' }, { descripcion: 'Todos los días' }, { descripcion: 'Todas las semanas' },
     { descripcion: 'Todos los meses' }, { descripcion: 'Todos los años' }];
     this.listRecordatorio = [{ descripcion: 'Nunca' }, { descripcion: '5 minutos antes' }, { descripcion: '15 minutos antes' },
@@ -222,6 +219,32 @@ export class ActividadExtraComponent implements OnInit {
       today: 'Hoy',
       clear: 'Borrar'
     };
+  }
+
+  cargarActAbogado(us, cargar) {
+    if (cargar) {
+      this.actividadService.listActividadExtraPorCedulaUsuario({ cedula: us.cedula, id_user: us._id }).subscribe(dat => {
+        const data: any = dat;
+        this.listActividad = data;
+        for (const e of data) {
+          let fi = e.fecha_inicio.split('T');
+          let ff = e.fecha_inicio.split('T');
+          this.evento.id = e._id;
+          this.evento.title = e.actividad;
+          this.evento.start = fi[0];
+          this.evento.end = ff[0];
+          this.evento.color = e.prioridad;
+          this.events.push(this.evento);
+          this.evento = {
+            'id': '',
+            'title': '',
+            'start': '',
+            'end': '',
+            'color': ''
+          };
+        }
+      });
+    }
   }
   //#endregion
 

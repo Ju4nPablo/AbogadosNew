@@ -38,6 +38,7 @@ export class DashboardComponent implements OnInit {
   password: String = '';
   repitaPassword: String = '';
   blockCambio: Boolean = false;
+  mostrarDashboard: Boolean = true;
 
   constructor(
     private casoService: CasoService,
@@ -49,8 +50,10 @@ export class DashboardComponent implements OnInit {
     private notifyService: NotificacionesService,
   ) {
     this.blockCambio = false;
-    if (JSON.parse(localStorage.getItem('userLogin')).cambio_password)
+    if (JSON.parse(localStorage.getItem('userLogin')).cambio_password) {
       this.showDialog = true;
+      this.mostrarDashboard = false;
+    }
     this.listCasos = [];
     this.notifications = [];
     this.casoNotificacion = '';
@@ -77,9 +80,9 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.casoService.allCasoPendientes().subscribe(data => {
       this.listCasos = data;
-      for (const c of this.listCasos) {
-        this.casoNotificacion = c;
-        this.AgregarNotificación(c);
+      for (const caso of this.listCasos) {
+        this.casoNotificacion = caso;
+        this.AgregarNotificación(caso);
       }
       this.cantidad_notificaciones = this.notifications.length;
     });
@@ -112,11 +115,13 @@ export class DashboardComponent implements OnInit {
     const fechaNodoFin = new Date(node.data.fecha_fin);
     const res = fechaNodoFin.getTime() - fecha.getTime();
     const dias = Math.round(res / (1000 * 60 * 60 * 24));
-    if (dias < 6 && (node.data.estado.id === '1' || node.data.estado.id === '2' || node.data.estado.id === '4')) { //
+    if (dias < 6 && (node.data.estado.id === '1' || node.data.estado.id === '2' || node.data.estado.id === '4')
+      && (node.data.abogado.cedula === this.usuario.cedula || this.usuario.tipo === '1')) { //
       this.notifications.push(noti);
       // return;
     }
-    if (dias > 5 && dias < 15 && node.data.estado.id === '1') {
+    if (dias > 5 && dias < 15 && (node.data.estado.id === '1' || node.data.estado.id === '2' || node.data.estado.id === '4')
+      && (node.data.abogado.cedula === this.usuario.cedula || this.usuario.tipo === '1')) {
       noti.color = 'amarillo';
       this.notifications.push(noti);
       // return;
@@ -165,6 +170,7 @@ export class DashboardComponent implements OnInit {
           }
         };
         this.showDialog = false;
+        this.mostrarDashboard = true;
         this._serviceLogCambios.addLogCambio(log).subscribe();
         const mail = {
           destinatario: userCambioPassword.mail,
@@ -243,6 +249,10 @@ export class DashboardComponent implements OnInit {
     } else {
       return false;
     }
+  }
+
+  cancelar() {
+    this.router.navigateByUrl('/dashboard/login');
   }
 
 }

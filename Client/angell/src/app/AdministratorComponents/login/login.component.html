@@ -38,7 +38,7 @@
   </form>
 
   <p-dialog header="RECUPERAR CONTRASEÑA" [(visible)]="showDialog" [responsive]="true" showEffect="fade" [modal]="true"
-    [width]="550">
+    [width]="550" [closable]="false">
     <div *ngIf="userPasswd">
       <div>
         <div class="ui-g-12 ui-md-12 ui-lg-12" *ngIf="showCampo.userName">

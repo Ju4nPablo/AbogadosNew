@@ -54,6 +54,9 @@ export class AbogadoComponent implements OnInit {
   totalRecords: number;
   blockBotones: any = {};
   paginado: number = 10;
+
+  loading: boolean;
+
   //#endregion
 
   //#region CONSTRUCTOR
@@ -115,24 +118,33 @@ export class AbogadoComponent implements OnInit {
     this.urlImagen = 'assets/perfil.png';
 
     this.abogadoService.listAbogado().subscribe(data => {
+      this.loading = true;
       const aux: any = data;
       if (aux.length > 0) {
         this.totalRecords = aux.length;
-        for (const abo of aux) {
-          if (abo.sexo === '0') {
-            abo.sexo = 'Hombre';
-          } else {
-            abo.sexo = 'Mujer';
+        setTimeout(() => {
+          let cont = 0;
+          for (const abo of aux) {
+            if (abo.sexo === '0') {
+              abo.sexo = 'Hombre';
+            } else {
+              abo.sexo = 'Mujer';
+            }
+            if (abo.estado === '0') {
+              abo.estado = 'Activo';
+            } else {
+              abo.estado = 'Inactivo';
+            }
+            this.listaAbogado.push(abo);
+            cont++;
+            if (cont === this.totalRecords) {
+              this.loading = false;
+            };
           }
-          if (abo.estado === '0') {
-            abo.estado = 'Activo';
-          } else {
-            abo.estado = 'Inactivo';
-          }
-          this.listaAbogado.push(abo);
-        }
+        }, 2000);
       } else {
         this.notifyService.notify('error', 'ERROR', 'NO EXISTEN REGISTROS!');
+        this.loading = false;
       };
     }, err => {
       console.log(err);

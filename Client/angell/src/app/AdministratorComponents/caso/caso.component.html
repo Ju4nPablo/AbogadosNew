@@ -4,7 +4,8 @@
     <p>
       <b>Nota:</b>{{etiquetasFormCaso.nota}}</p>
     <p-table #dt [columns]="cols" [value]="listTabla" selectionMode="single" [(selection)]="selectProceso"
-      (onRowSelect)="selectItem($event)" [paginator]="true" [totalRecords]="totalRecords" [rows]="paginado">
+      [responsive]="true" (onRowSelect)="selectItem($event)" [paginator]="true" [totalRecords]="totalRecords"
+      [rows]="paginado" [loading]="loading">
       <ng-template pTemplate="caption">
         <div class="ui-g">
           <div class="ui-g-4" style="text-align:left">
@@ -45,27 +46,34 @@
           <td>{{rowData.estado}}</td>
         </tr>
       </ng-template>
+      <ng-template pTemplate="summary">
+        Existen {{listTabla?.length}} casos
+      </ng-template>
     </p-table>
   </p-panel>
 </form>
 
 <p-dialog header="{{etiquetasFormCaso.tituloFormCaso}}" [(visible)]="showDialogMod" [responsive]="true"
-  showEffect="fade" [modal]="true" [width]="1200">
+  showEffect="fade" [modal]="true" [width]="1200" [closable]="false">
   <!--  [height]="700" -->
   <div class="ui-g-12 ui-md-12">
-    <div class="ui-g-4 ui-md-4">
-      <span class="ui-float-label">
+    <div class="ui-g-6 ui-md-6">
+      <div class="ui-g-3">
+        <label for="">Cliente: </label>
+      </div>
+      <div class="ui-g-9">
         <input id="cli" type="text" pInputText [(ngModel)]="cliente.nombre" name="cli"
           class="form-control  input-sm input-md" disabled>
-        <label for="">Cliente: </label>
-      </span>
+      </div>
     </div>
-    <div class="ui-g-offset-1 ui-md-offset-1 ui-g-4 ui-md-4">
-      <span class="ui-float-label">
+    <div class="ui-g-6 ui-md-6">
+      <div class="ui-g-3">
+        <label for="">No. Carpeta: </label>
+      </div>
+      <div class="ui-g-4">
         <input id="cli" type="text" pInputText [(ngModel)]="cliente.numeroCarpeta" name="cli"
           class="form-control  input-sm input-md" disabled>
-        <label for="">No. Carpeta: </label>
-      </span>
+      </div>
     </div>
   </div>
   <div class="ui-g-12 ui-md-12">
@@ -94,7 +102,7 @@
 </p-dialog>
 
 <p-dialog header="{{etiquetasFormCaso.tituloFormDiligencia}}" [(visible)]="showDialog" [responsive]="true"
-  showEffect="fade" [modal]="true" [width]="750">
+  showEffect="fade" [modal]="true" [width]="850" [closable]="false">
   <div class="ui-g ui-fluid" *ngIf="node">
     <div class="ui-g ui-md">
       <div class="ui-g-3 ui-md-3" *ngIf="visibleCampos.showFechIni">
@@ -169,7 +177,7 @@
           [(disabled)]="blockCampos.blockDescripcionAbogado" pInputTextarea></textarea>
       </div>
       <div class="ui-g-12 ui-md-12" *ngIf="visibleCampos.showDescripcionCliente">
-        <label for="float-input">Observación: </label>
+        <label for="float-input">Observación cliente: </label>
         <textarea id="obserCliente" [(ngModel)]="info.data.descripcion_cliente" name="obserCliente" rows="2" cols="82"
           [(disabled)]="blockCampos.blockDescripcionCliente" pInputTextarea></textarea>
       </div>
@@ -192,7 +200,7 @@
 </p-dialog>
 
 <p-dialog header="{{etiquetasFormCaso.tituloFormDiligencia}}" [(visible)]="showDialogHijos" [responsive]="true"
-  showEffect="fade" [modal]="true" [width]="750">
+  showEffect="fade" [modal]="true" [width]="850" [closable]="false">
   <div class="ui-g ui-fluid" *ngIf="node">
     <div class="ui-g ui-md">
       <div class="ui-g-4 ui-md-4" *ngIf="visibleCampos.showFechIni">
@@ -256,7 +264,7 @@
           [(disabled)]="blockCampos.blockDescripcionAbogado" pInputTextarea></textarea>
       </div>
       <div class="ui-g-12 ui-md-12" *ngIf="visibleCampos.showDescripcionCliente">
-        <label for="float-input">Observación: </label>
+        <label for="float-input">Observación cliente: </label>
         <textarea id="obserCliente" [(ngModel)]="info.data.descripcion_cliente" name="obserCliente" rows="2" cols="82"
           [(disabled)]="blockCampos.blockDescripcionCliente" pInputTextarea></textarea>
       </div>
@@ -279,7 +287,7 @@
 </p-dialog>
 
 <p-dialog header="{{etiquetasFormCaso.tituloFormImagen}}" [(visible)]="showDialogImagenes" [responsive]="true"
-  showEffect="fade" [modal]="true" [width]="700">
+  showEffect="fade" [modal]="true" [width]="700" [closable]="false">
   <form #imagenForm=ngForm>
     <div class="ui-g-4">
       <div style="text-align: center;">
@@ -314,7 +322,8 @@
     class="ui-button-danger"></button>
 </p-dialog>
 
-<p-dialog header="IMAGEN" [(visible)]="showImagen" [responsive]="true" showEffect="fade" [modal]="true" [width]="600">
+<p-dialog header="IMAGEN" [(visible)]="showImagen" [responsive]="true" showEffect="fade" [modal]="true" [width]="600"
+  [closable]="false">
   <form>
     <button pButton type="button" (click)="exitShowImage()" label="Salir" class="ui-button-danger"></button>
     <div class="ui-g-4">
@@ -326,7 +335,7 @@
 </p-dialog>
 
 <p-dialog header="NUEVO CASO" [(visible)]="showDialogIng" [responsive]="true" showEffect="fade" [modal]="true"
-  [width]="1200">
+  [width]="1200" [closable]="false">
   <!--  [height]="700" -->
   <div class="ui-g ui-fluid" *ngIf="casoTreeInsert">
     <div class="ui-g-12">
@@ -347,7 +356,7 @@
 </p-dialog>
 
 <p-dialog header="MODIFICAR DILIGENCIA" [(visible)]="showDialogIngNodo" [responsive]="true" showEffect="fade"
-  [modal]="true" [width]="750">
+  [modal]="true" [width]="850" [closable]="false">
   <div class="ui-g ui-fluid" *ngIf="nodeInsert">
     <div class="ui-g ui-md">
       <div class="ui-g-3 ui-md-3">
@@ -412,7 +421,7 @@
           cols="82" [(disabled)]="blockCampos.blockDescripcionAbogado" pInputTextarea></textarea>
       </div>
       <div class="ui-g-12 ui-md-12">
-        <label for="float-input">Observación </label>
+        <label for="float-input">Observación cliente: </label>
         <textarea id="obserCliente" [(ngModel)]="nodeInsert.data.descripcion_cliente" name="obserCliente" rows="2"
           cols="82" [(disabled)]="blockCampos.blockDescripcionCliente" pInputTextarea></textarea>
       </div>
@@ -435,7 +444,7 @@
 </p-dialog>
 
 <p-dialog header="MODIFICAR DILIGENCIA" [(visible)]="showDialogIngNodoHijo" [responsive]="true" showEffect="fade"
-  [modal]="true" [width]="750">
+  [modal]="true" [width]="850" [closable]="false">
   <div class="ui-g ui-fluid" *ngIf="nodeInsert">
     <div class="ui-g ui-md">
       <div class="ui-g-4 ui-md-4">
@@ -493,7 +502,7 @@
           cols="82" [(disabled)]="blockCampos.blockDescripcionAbogado" pInputTextarea></textarea>
       </div>
       <div class="ui-g-12 ui-md-12">
-        <label for="float-input">Observación </label>
+        <label for="float-input">Observación cliente: </label>
         <textarea id="obserCliente" [(ngModel)]="nodeInsert.data.descripcion_cliente" name="obserCliente" rows="2"
           cols="82" [(disabled)]="blockCampos.blockDescripcionCliente" pInputTextarea></textarea>
       </div>
@@ -516,7 +525,7 @@
 </p-dialog>
 
 <p-dialog header="ENVIAR MAIL" [(visible)]="showDialogMail" [responsive]="true" showEffect="fade" [modal]="true"
-  [width]="750" [height]="650">
+  [width]="850" [height]="650" [closable]="false">
   <div class="ui-g ui-fluid">
     <div class="ui-g-11 ui-md-11">
       <div class="ui-g-2 ui-md-2">
@@ -585,7 +594,7 @@
 </p-dialog>
 
 <p-dialog header="ENVIAR OBSERVACIÓN" [(visible)]="showDialogMailCliente" [responsive]="true" showEffect="fade"
-  [modal]="true" [width]="750" [height]="550">
+  [modal]="true" [width]="850" [height]="550" [closable]="false">
   <div class="ui-g ui-fluid">
     <div class="ui-g-11 ui-md-11">
       <p-editor [(ngModel)]="bodyCliente" [style]="{'height':'320px'}" [(disabled)]="blockCampos.blockDescripcionAdmin">

@@ -5,7 +5,7 @@
       <b>Nota:</b> Click en un registro para modificar.</p>
     <p-table #dt [columns]="cols" [value]="listaUser" selectionMode="single" [responsive]="true"
       [(selection)]="selectUser" (onRowSelect)="onRowSelect($event)" [totalRecords]="totalRecords" [paginator]="true"
-      [rows]="paginado">
+      [rows]="paginado" [loading]="loading">
       <ng-template pTemplate="caption">
         <div class="ui-g">
           <div class="ui-g-4" style="text-align:left">
@@ -42,89 +42,101 @@
         </tr>
       </ng-template>
 
+      <ng-template pTemplate="summary">
+        Existen {{listaUser?.length}} usuarios
+      </ng-template>
+
     </p-table>
 
     <p-dialog header="INGRESO USUARIO" [(visible)]="showDialog" [responsive]="true" showEffect="fade" [modal]="true"
-      [width]="800">
+      [width]="800" [closable]="false">
       <div class="ui-g ui-fluid" *ngIf="user">
         <div>
-          <div class="ui-g-12">
-            <div class="ui-g-4">
-              <span class="ui-float-label">
-                <input pInputText type="text" id="nombre" [(ngModel)]="user.user_name" name="nombre"
-                  class="form-control  input-sm" minlength="6" (ngModelChange)="verificaNameUser()" class="minusc"
-                  required>
-                <label for="float-input">Nombre Usuario: *</label>
-              </span>
+          <div class="ui-g-6">
+            <div class="ui-g-6">
+              <label for="float-input">Nombre Usuario: *</label>
             </div>
-            <div class="ui-g-4">
-              <span class="ui-float-label">
-                <input pInputText type="password" id="password" [(ngModel)]="user.password" name="password"
-                  class="form-control  input-sm" (ngModelChange)="verificaPassword()" required>
-                <label for="float-input">Password: *</label>
-              </span>
-            </div>
-            <div class="ui-g-4">
-              <span class="ui-float-label">
-                <input pInputText type="password" id="passwordConfirmar" [(ngModel)]="confirmarPassword"
-                  name="passwordConfirmar" class="form-control  input-sm" (ngModelChange)="igualarPassword()" required>
-                <label for="float-input">Confirmar password: *</label>
-              </span>
+            <div class="ui-g-6">
+              <input pInputText type="text" id="nombre" [(ngModel)]="user.user_name" name="nombre"
+                class="form-control  input-sm" minlength="6" (ngModelChange)="verificaNameUser()" class="minusc"
+                required>
             </div>
           </div>
-          <div class="ui-g-12">
+          <div class="ui-g-6">
+            <div class="ui-g-4">
+              <label for="float-input">Password: *</label>
+            </div>
+            <div class="ui-g-8">
+              <input pInputText type="password" id="password" [(ngModel)]="user.password" name="password"
+                class="form-control  input-sm" (ngModelChange)="verificaPassword()" required>
+            </div>
+          </div>
+          <div class="ui-g-6">
             <div class="ui-g-6">
-              <span class="ui-float-label">
-                <input id="cedula" type="text" pInputText [(ngModel)]="user.cedula" name="cedula"
-                  onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"
-                  (ngModelChange)="verificaCedula()" class="form-control  input-sm">
-                <label for="float-input">Cédula: *</label>
-              </span>
+              <label for="float-input">Confirmar password: *</label>
             </div>
             <div class="ui-g-6">
-              <span class="ui-float-label">
-                <input id="nombres" type="text" pInputText [(ngModel)]="user.nombres" name="nombres"
-                  onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
+              <input pInputText type="password" id="passwordConfirmar" [(ngModel)]="confirmarPassword"
+                name="passwordConfirmar" class="form-control  input-sm" (ngModelChange)="igualarPassword()" required>
+            </div>
+          </div>
+          <div class="ui-g-6">
+            <div class="ui-g-4">
+              <label for="float-input">Cédula: *</label>
+            </div>
+            <div class="ui-g-8">
+              <input id="cedula" type="text" pInputText [(ngModel)]="user.cedula" name="cedula"
+                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="13"
+                (ngModelChange)="verificaCedula()" class="form-control  input-sm">
+            </div>
+          </div>
+          <div class="ui-g-6">
+            <div class="ui-g-6">
+              <label for="float-input">Nombres: *</label>
+            </div>
+            <div class="ui-g-6">
+              <input id="nombres" type="text" pInputText [(ngModel)]="user.nombres" name="nombres"
+                onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
                 event.charCode === 241 || event.charCode === 32 || event.charCode === 209 || event.charCode >= 65 && event.charCode <= 90' maxlength="50" (ngModelChange)="verificaNombres()"
-                  class="form-control  input-sm">
-                <label for="float-input">Nombres: *</label>
-              </span>
+                class="form-control  input-sm">
             </div>
           </div>
-          <div class="ui-g-12">
-            <div class="ui-g-6">
-              <span class="ui-float-label">
-                <input id="apellidos" type="text" pInputText [(ngModel)]="user.apellidos" name="apellidos"
-                  onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
+          <div class="ui-g-6">
+            <div class="ui-g-4">
+              <label for="float-input">Apellidos: *</label>
+            </div>
+            <div class="ui-g-8">
+              <input id="apellidos" type="text" pInputText [(ngModel)]="user.apellidos" name="apellidos"
+                onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
                 event.charCode === 241 || event.charCode === 32 || event.charCode === 209 || event.charCode >= 65 && event.charCode <= 90' maxlength="50" (ngModelChange)="verificaApellidos()"
-                  class="form-control  input-sm">
-                <label for="float-input">Apellidos: *</label>
-              </span>
-            </div>
-            <div class="ui-g-6">
-              <span class="ui-float-label">
-                <p-dropdown id="tipo" name="tipo" [options]="listTipoUser" [(ngModel)]="selectTipo" optionLabel="tipo"
-                  [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
-                <label for="float-input">Tipo Usuario: *</label>
-              </span>
+                class="form-control  input-sm">
             </div>
           </div>
-          <div class="ui-g-12 ui-md-12">
-            <div class="ui-g-6 ui-md-6">
-              <span class="ui-float-label">
-                <input pInputText type="text" id="mail" [(ngModel)]="user.mail" name="mail"
-                  (ngModelChange)="verificaEmail()" class="form-control  input-sm">
-                <label for="float-input">Email: *</label>
-              </span>
+          <div class="ui-g-6">
+            <div class="ui-g-6">
+              <label for="float-input">Tipo Usuario: *</label>
             </div>
             <div class="ui-g-6">
-              <div class="ui-g-4">
-                <label for="color">Estado: *</label>
-              </div>
-              <div class="ui-g-8">
-                <p-inputSwitch pInputText id="estado" [(ngModel)]="selectEstado" name="estado" onLabel="Activo"
-                  offLabel="Inactivo"></p-inputSwitch>
-              </div>
+              <p-dropdown id="tipo" name="tipo" [options]="listTipoUser" [(ngModel)]="selectTipo" optionLabel="tipo"
+                [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
+            </div>
+          </div>
+          <div class="ui-g-6 ui-md-6">
+            <div class="ui-g-4">
+              <label for="float-input">Email: *</label>
+            </div>
+            <div class="ui-g-8">
+              <input pInputText type="text" id="mail" [(ngModel)]="user.mail" name="mail"
+                (ngModelChange)="verificaEmail()" class="form-control  input-sm">
+            </div>
+          </div>
+          <div class="ui-g-6">
+            <div class="ui-g-6">
+              <label for="color">Estado: *</label>
+            </div>
+            <div class="ui-g-6">
+              <p-inputSwitch pInputText id="estado" [(ngModel)]="selectEstado" name="estado" onLabel="Activo"
+                offLabel="Inactivo"></p-inputSwitch>
             </div>
           </div>
           <br>
@@ -142,86 +154,94 @@
     </p-dialog>
 
     <p-dialog header="MODIFICAR USUARIO" [(visible)]="showDialogMod" [responsive]="true" showEffect="fade"
-      [modal]="true" [width]="800">
+      [modal]="true" [width]="800" [closable]="false">
       <div class="ui-g ui-fluid" *ngIf="selectUser">
         <div>
-          <div class="ui-g-12">
-            <div class="ui-g-4">
-              <span class="ui-float-label">
-                <input pInputText type="text" id="nombreMod" [(ngModel)]="selectUser.user_name" name="nombreMod"
-                  class="form-control input-sm" minlength="6" (ngModelChange)="verificaNameUser()" required>
-                <label for="float-input">Nombre Usuario: *</label>
-              </span>
+          <div class="ui-g-6">
+            <div class="ui-g-6">
+              <label for="float-input">Nombre Usuario: *</label>
             </div>
-            <div class="ui-g-4">
-              <span class="ui-float-label">
-                <input pInputText type="password" id="passwordMod" [(ngModel)]="selectUser.password" name="passwordMod"
-                  class="form-control  input-sm" (ngModelChange)="verificaPassword()">
-                <label for="float-input">Password: *</label>
-              </span>
-            </div>
-            <div class="ui-g-4">
-              <span class="ui-float-label">
-                <input pInputText type="password" id="passwordConfirmarMod" [(ngModel)]="confirmarPassword"
-                  name="passwordConfirmarMod" class="form-control  input-sm" (ngModelChange)="igualarPasswordMod()"
-                  required>
-                <label for="float-input">Confirmar password: *</label>
-              </span>
+            <div class="ui-g-6">
+              <input pInputText type="text" id="nombreMod" [(ngModel)]="selectUser.user_name" name="nombreMod"
+                class="form-control input-sm" minlength="6" (ngModelChange)="verificaNameUser()" required>
             </div>
           </div>
-          <div class="ui-g-12">
+          <div class="ui-g-6">
+            <div class="ui-g-4">
+              <label for="float-input">Password: *</label>
+            </div>
+            <div class="ui-g-8">
+              <input pInputText type="password" id="passwordMod" [(ngModel)]="selectUser.password" name="passwordMod"
+                class="form-control  input-sm" (ngModelChange)="verificaPassword()">
+            </div>
+          </div>
+          <div class="ui-g-6">
             <div class="ui-g-6">
-              <span class="ui-float-label">
-                <input id="cedulaMod" type="text" pInputText [(ngModel)]="selectUser.cedula" name="cedulaMod"
-                  onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"
-                  (ngModelChange)="verificaCedula()" class="form-control  input-sm">
-                <label for="float-input">Cédula: *</label>
-              </span>
+              <label for="float-input">Confirmar password: *</label>
             </div>
             <div class="ui-g-6">
-              <span class="ui-float-label">
-                <input id="nombresMod" type="text" pInputText [(ngModel)]="selectUser.nombres" name="nombresMod"
-                  onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
+              <input pInputText type="password" id="passwordConfirmarMod" [(ngModel)]="confirmarPassword"
+                name="passwordConfirmarMod" class="form-control  input-sm" (ngModelChange)="igualarPasswordMod()"
+                required>
+            </div>
+          </div>
+          <div class="ui-g-6">
+            <div class="ui-g-4">
+              <label for="float-input">Cédula: *</label>
+            </div>
+            <div class="ui-g-8">
+              <input id="cedulaMod" type="text" pInputText [(ngModel)]="selectUser.cedula" name="cedulaMod"
+                onkeypress='return event.charCode >= 48 && event.charCode <= 57' maxlength="10"
+                (ngModelChange)="verificaCedula()" class="form-control  input-sm">
+            </div>
+          </div>
+          <div class="ui-g-6">
+            <div class="ui-g-6">
+              <label for="float-input">Nombres: *</label>
+            </div>
+            <div class="ui-g-6">
+              <input id="nombresMod" type="text" pInputText [(ngModel)]="selectUser.nombres" name="nombresMod"
+                onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
                   event.charCode === 241 || event.charCode === 32 || event.charCode === 209 || event.charCode >= 65 && event.charCode <= 90'
-                  maxlength="50" (ngModelChange)="verificaNombres()" class="form-control  input-sm">
-                <label for="float-input">Nombres: *</label>
-              </span>
+                maxlength="50" (ngModelChange)="verificaNombres()" class="form-control  input-sm">
             </div>
           </div>
-          <div class="ui-g-12">
-            <div class="ui-g-6">
-              <span class="ui-float-label">
-                <input id="apellidosMod" type="text" pInputText [(ngModel)]="selectUser.apellidos" name="apellidosMod"
-                  onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
+          <div class="ui-g-6">
+            <div class="ui-g-4">
+              <label for="float-input">Apellidos: *</label>
+            </div>
+            <div class="ui-g-8">
+              <input id="apellidosMod" type="text" pInputText [(ngModel)]="selectUser.apellidos" name="apellidosMod"
+                onkeypress='return event.charCode >= 97 && event.charCode <= 122 ||
                   event.charCode === 241 || event.charCode === 32 || event.charCode === 209 || event.charCode >= 65 && event.charCode <= 90'
-                  maxlength="50" (ngModelChange)="verificaApellidos()" class="form-control  input-sm">
-                <label for="float-input">Apellidos: *</label>
-              </span>
-            </div>
-            <div class="ui-g-6">
-              <span class="ui-float-label">
-                <p-dropdown id="tipoMod" name="tipoMod" [options]="listTipoUser" [(ngModel)]="selectTipo"
-                  optionLabel="tipo" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
-                <label for="float-input">Tipo Usuario: *</label>
-              </span>
+                maxlength="50" (ngModelChange)="verificaApellidos()" class="form-control  input-sm">
             </div>
           </div>
-          <div class="ui-g-12 ui-md-12">
-            <div class="ui-g-6 ui-md-6">
-              <span class="ui-float-label">
-                <input pInputText type="text" id="mailMod" [(ngModel)]="selectUser.mail" name="mailMod"
-                  (ngModelChange)="verificaEmail()" class="form-control  input-sm">
-                <label for="float-input">Email: *</label>
-              </span>
+          <div class="ui-g-6">
+            <div class="ui-g-6">
+              <label for="float-input">Tipo Usuario: *</label>
             </div>
             <div class="ui-g-6">
-              <div class="ui-g-4">
-                <label for="color">Estado: *</label>
-              </div>
-              <div class="ui-g-8">
-                <p-inputSwitch pInputText id="estado" [(ngModel)]="selectEstado" name="estado" onLabel="Activo"
-                  offLabel="Inactivo"></p-inputSwitch>
-              </div>
+              <p-dropdown id="tipoMod" name="tipoMod" [options]="listTipoUser" [(ngModel)]="selectTipo"
+                optionLabel="tipo" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
+            </div>
+          </div>
+          <div class="ui-g-6 ui-md-6">
+            <div class="ui-g-4">
+              <label for="float-input">Email: *</label>
+            </div>
+            <div class="ui-g-8">
+              <input pInputText type="text" id="mailMod" [(ngModel)]="selectUser.mail" name="mailMod"
+                (ngModelChange)="verificaEmail()" class="form-control  input-sm">
+            </div>
+          </div>
+          <div class="ui-g-6">
+            <div class="ui-g-6">
+              <label for="color">Estado: *</label>
+            </div>
+            <div class="ui-g-6">
+              <p-inputSwitch pInputText id="estado" [(ngModel)]="selectEstado" name="estado" onLabel="Activo"
+                offLabel="Inactivo"></p-inputSwitch>
             </div>
           </div>
           <br>

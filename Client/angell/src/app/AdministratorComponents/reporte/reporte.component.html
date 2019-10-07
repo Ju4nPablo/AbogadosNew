@@ -8,55 +8,64 @@
       </div>
     </p-header>
     <div class="ui-g-12 ui-md-12 ui-panel-content">
-
       <p><b>Nota: </b>Si no posee rango de fechas trae la información del filtro que posee.</p>
       <div class="ui-g-4 ui-md-4">
-        <span class="ui-float-label">
+        <div class="ui-g-4">
+          <label>Abogado: *</label>
+        </div>
+        <div class="ui-g-8">
           <p-dropdown id="abogado" name="abogado" [options]="listAbogado" [(ngModel)]="selectAbogado"
             optionLabel="nombre" [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px">
           </p-dropdown>
-          <label for="float-input">Abogado: *</label>
-        </span>
+        </div>
       </div>
       <div class="ui-g-4 ui-md-4">
-        <span class="ui-float-label">
+        <div class="ui-g-4">
+          <label>Cliente: *</label>
+        </div>
+        <div class="ui-g-8">
           <p-dropdown id="abogado" name="cliente" [options]="listCliente" [(ngModel)]="selectCliente"
             optionLabel="nombre" [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px">
           </p-dropdown>
-          <label for="float-input">Cliente: *</label>
-        </span>
+        </div>
       </div>
       <div class="ui-g-4 ui-md-4">
-        <span class="ui-float-label">
+        <div class="ui-g-4">
+          <label>Estado: *</label>
+        </div>
+        <div class="ui-g-8">
           <p-dropdown id="abogado" name="abogado" [options]="listEstado" [(ngModel)]="selectEstado" optionLabel="estado"
             [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px"></p-dropdown>
-          <label for="float-input">Estado: *</label>
-        </span>
+        </div>
       </div>
-
-      <div class="ui-g-4 ui-md-4">
-        <label for="float-input">Habilitar fechas: </label>
+      <div class="ui-g-2 ui-md-2">
+        <label>Habilitar fechas: </label>
         <p-checkbox id="rangoFecha" name="rangoFecha" [(ngModel)]="blockFecha" binary="true">
         </p-checkbox>
       </div>
 
-      <div>
+      <div *ngIf="blockFecha">
         <div class="ui-g-4 ui-md-4">
-          <span class="ui-float-label">
+          <div class="ui-g-5">
+            <label>Fecha inicio: *</label>
+          </div>
+          <div class="ui-g-7">
             <p-calendar id="fechaInicio" name="fechaInicio" [locale]="es" [(ngModel)]="fechaInicio" [showIcon]="true"
               [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
               [disabledDays]="[0,7]" (onSelect)="onSelectFechaIncicio($event)" [(disabled)]="!blockFecha">
             </p-calendar>
-            <label for="float-input">Fecha inicio: *</label>
-          </span>
+          </div>
         </div>
+        <div class="ui-g-1 ui-md-1"></div>
         <div class="ui-g-4 ui-md-4">
-          <span class="ui-float-label">
+          <div class="ui-g-4">
+            <label>Fecha fin: *</label>
+          </div>
+          <div class="ui-g-7">
             <p-calendar id="fechaFin" name="fechaFin" [locale]="es" [(ngModel)]="fechaFin" [showIcon]="true"
               [monthNavigator]="true" [yearNavigator]="true" yearRange="2017:2050" dateFormat="dd/mm/yy" tabindex="0"
               [disabledDays]="[0,7]" (onSelect)="onSelectFechaFin($event)" [(disabled)]="!blockFecha"></p-calendar>
-            <label for="float-input">Fecha fin: *</label>
-          </span>
+          </div>
         </div>
       </div>
 
@@ -69,7 +78,7 @@
 <form>
   <br>
   <p-panel header="CASOS">
-    <p-table #dt [columns]="cols" [value]="listCaso" selectionMode="single" [paginator]="true" [rows]="10">
+    <p-table #dt [columns]="cols" [value]="listCaso" selectionMode="single" [paginator]="true" [rows]="10" [loading]="loading">
       <!-- [(selection)]="selectProceso"  (onRowSelect)="selectItem($event)" -->
       <!-- <ng-template pTemplate="caption">
         <div style="text-align: right">
@@ -94,6 +103,11 @@
           <!-- <td>{{rowData.data.estado.fechaFin}}</td> -->
         </tr>
       </ng-template>
+
+      <ng-template pTemplate="summary">
+        Se encontraron {{listCaso?.length}} casos
+      </ng-template>
+
     </p-table>
   </p-panel>
 </form>

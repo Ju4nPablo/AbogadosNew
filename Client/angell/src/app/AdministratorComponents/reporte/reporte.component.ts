@@ -28,6 +28,8 @@ export class ReporteComponent implements OnInit {
   selectEstado: any = '';
   blockBotones: any = {};
   blockFecha: boolean = false;
+  loading: boolean;
+  totalRecords: number;
 
   constructor(
     private casoService: CasoService,
@@ -332,19 +334,28 @@ export class ReporteComponent implements OnInit {
 
   cargarTabla(lista) {
     if (lista.length > 0) {
-      lista.forEach(item => {
-        // let cli = this.buscarCliente(item.data.cliente.cedula);
-        let fech = new Date(item.data.fecha_inicio);
-        let fec = fech.getDate() + "/" + (((fech.getMonth() + 1) < 10) ? ('0' + (fech.getMonth() + 1)) : (fech.getMonth() + 1)) + "/" + fech.getFullYear();
-        this.listCaso.push({
-          id: item._id,
-          label: item.label,
-          cliente: item.data.cliente.nombre,
-          abogado: item.data.abogado.nombre,
-          estado: item.data.estado.estado,
-          fecha: fec,
-        });
-      });
+      this.loading = true;
+      setTimeout(() => {
+        let cont = 0;
+        this.totalRecords = lista.length;
+        for (let item of lista) {
+          // let cli = this.buscarCliente(item.data.cliente.cedula);
+          let fech = new Date(item.data.fecha_inicio);
+          let fec = fech.getDate() + "/" + (((fech.getMonth() + 1) < 10) ? ('0' + (fech.getMonth() + 1)) : (fech.getMonth() + 1)) + "/" + fech.getFullYear();
+          this.listCaso.push({
+            id: item._id,
+            label: item.label,
+            cliente: item.data.cliente.nombre,
+            abogado: item.data.abogado.nombre,
+            estado: item.data.estado.estado,
+            fecha: fec,
+          });
+          cont++;
+          if (cont === this.totalRecords) {
+            this.loading = false;
+          };
+        };
+      }, 2000);
       this.blockBotones = this._serviceBotones.blockBotonesReport;
     } else
       this.notifyService.notify('error', 'ERROR', 'NO EXISTEN REGISTROS!');

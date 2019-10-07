@@ -86,6 +86,8 @@ export class CasoComponent implements OnInit {
   paginado: number = 10;
   bodyCliente: any = '';
 
+  loading: boolean;
+
   constructor(
     private casoService: CasoService,
     private clienteService: ClienteService,
@@ -293,24 +295,34 @@ export class CasoComponent implements OnInit {
   }
 
   cargarTabla(lista) {
+    this.loading = true;
+    let cont = 0;
     this.totalRecords = lista.length;
     if (lista.length > 0) {
-      lista.forEach(item => {
-        // let cli = this.buscarCliente(item.data.cliente.cedula);
-        let fech = new Date(item.data.fecha_inicio);
-        let fec = fech.getDate() + "/" + (((fech.getMonth() + 1) < 10) ? ('0' + (fech.getMonth() + 1)) : (fech.getMonth() + 1)) + "/" + fech.getFullYear();
-        this.listTabla.push({
-          id: item._id,
-          label: item.label,
-          cliente: item.data.cliente.nombre,
-          abogado: item.data.abogado.nombre,
-          numeroCarpeta: this.buscarCliente(item.data.cliente.cedula).numeroCarpeta,
-          fecha: fec,
-          estado: item.data.estado.estado
-        });
-      });
+
+      setTimeout(() => {
+        for (let item of lista) {
+          cont++;
+          // let cli = this.buscarCliente(item.data.cliente.cedula);
+          let fech = new Date(item.data.fecha_inicio);
+          let fec = fech.getDate() + "/" + (((fech.getMonth() + 1) < 10) ? ('0' + (fech.getMonth() + 1)) : (fech.getMonth() + 1)) + "/" + fech.getFullYear();
+          this.listTabla.push({
+            id: item._id,
+            label: item.label,
+            cliente: item.data.cliente.nombre,
+            abogado: item.data.abogado.nombre,
+            numeroCarpeta: this.buscarCliente(item.data.cliente.cedula).numeroCarpeta,
+            fecha: fec,
+            estado: item.data.estado.estado
+          });
+          if (cont === this.totalRecords) {
+            this.loading = false;
+          };
+        };
+      }, 2000);
     } else {
       this.notifyService.notify('error', 'ERROR', 'NO EXISTEN REGISTROS!');
+      this.loading = false;
     };
   };
 
@@ -1341,6 +1353,7 @@ export class CasoComponent implements OnInit {
   // mostrar formulario de mail administrador.
   mostrarDialogMail() {
     this.showDialogMail = true;
+    this.datosMail.para = this.cliente.mail;
   }
   // mostrar formulario de envio de mail cliente.
   mostrarDialogMailCliente() {
@@ -1392,6 +1405,10 @@ export class CasoComponent implements OnInit {
     if (this.paginado < 3) {
       this.paginado = 10;
       this.notifyService.notify('error', 'ERROR', 'Paginado mínimo 3.');
+    }
+    if (this.paginado > 25) {
+      this.paginado = 25;
+      this.notifyService.notify('error', 'ERROR', 'Paginado máximo 25.');
     }
   };
   //#endregion

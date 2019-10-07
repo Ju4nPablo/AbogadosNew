@@ -1,22 +1,24 @@
 <br>
 <form>
-    <br>
-    <p-panel header="GENERAR GRÁFICA PARA ABOGADOS" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
-      <div class="ui-g-12 ui-md-12 ui-panel-content">
-        <div class="ui-g-4 ui-md-4">
-          <span class="ui-float-label">
-            <p-dropdown id="abogado" name="abogado" [options]="listAbogado" [(ngModel)]="selectAbogado"
-              optionLabel="nombre" [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px">
-            </p-dropdown>
-            <label for="float-input">Abogado: *</label>
-          </span>
+  <br>
+  <p-panel header="GENERAR GRÁFICA PARA ABOGADOS" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
+    <div class="ui-g-12 ui-md-12 ui-panel-content">
+      <div class="ui-g-4 ui-md-4">
+        <div class="ui-g-4">
+          <label>Abogado: *</label>
+        </div>
+        <div class="ui-g-8">
+          <p-dropdown id="abogado" name="abogado" [options]="listAbogado" [(ngModel)]="selectAbogado"
+            optionLabel="nombre" [showClear]="true" filter="true" [style]="{'width':'100%'}" scrollHeight="150px">
+          </p-dropdown>
         </div>
       </div>
-      <button pButton type="button" icon="fa fa-search" label="Generar" class="ui-button-success"
-        (click)="generar()"></button>
-    </p-panel>
-  </form>
-  
+    </div>
+    <button pButton type="button" icon="fa fa-search" label="Generar" class="ui-button-success"
+      (click)="generar()"></button>
+  </p-panel>
+</form>
+
 <form>
   <p-panel header="GRÁFICA" [toggleable]="true" [style]="{'margin-bottom':'20px'}">
     <p-chart type="pie" [data]="data"></p-chart>

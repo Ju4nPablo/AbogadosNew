@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CasoService } from '../../Services/caso/caso.service';
 import { AbogadoService } from '../../Services/abogado/abogado.service';
+import { NotificacionesService } from '../../Services/notificaciones/notificaciones.service';
 
 @Component({
   selector: 'app-graficos',
@@ -20,6 +21,7 @@ export class GraficosComponent implements OnInit {
   constructor(
     private casoService: CasoService,
     private abogadoService: AbogadoService,
+    private notifyService: NotificacionesService,
   ) {
     this.inicio();
   }
@@ -78,35 +80,42 @@ export class GraficosComponent implements OnInit {
   };
 
   generar() {
-    this.numAbandonado = 0;
-    this.numActivos = 0;
-    this.numPendientes = 0;
-    this.numTerminados = 0;
-    this.casoService.allCasoGraficos().subscribe(data => {
-      this.listCaso = data;
-      for (let caso of this.listCaso) {
-        this.verificarCasoRecursive(caso);
+    if (this.selectAbogado._id !== '-1') {
+      this.numAbandonado = 0;
+      this.numActivos = 0;
+      this.numPendientes = 0;
+      this.numTerminados = 0;
+      if (this.listCaso.length > 0) {
+        for (let caso of this.listCaso) {
+          this.verificarCasoRecursive(caso);
+        }
+        this.data = {
+          labels: ['Pendientes', 'Activos', 'Abandonados', 'Terminados'],
+          datasets: [
+            {
+              data: [this.numPendientes, this.numActivos, this.numAbandonado, this.numTerminados],
+              backgroundColor: [
+                "#FF6384",
+                "#2E9AFE",
+                "#A0A79E",
+                "#65C546",
+              ],
+              hoverBackgroundColor: [
+                "#FF6384",
+                "#2E9AFE",
+                "#A0A79E",
+                "#65C546",
+              ]
+            }]
+        };
+        if (this.numAbandonado === 0 && this.numActivos === 0 && this.numPendientes === 0 && this.numTerminados === 0)
+          this.notifyService.notify('warn', 'NOTIFICACIÓN', 'No existen diligencias registradas!');
+      } else {
+        this.notifyService.notify('warn', 'NOTIFICACIÓN', 'No existe CASOS!');
       }
-      this.data = {
-        labels: ['Pendientes', 'Activos', 'Abandonados', 'Terminados'],
-        datasets: [
-          {
-            data: [this.numPendientes, this.numActivos, this.numAbandonado, this.numTerminados],
-            backgroundColor: [
-              "#FF6384",
-              "#2E9AFE",
-              "#A0A79E",
-              "#65C546",
-            ],
-            hoverBackgroundColor: [
-              "#FF6384",
-              "#2E9AFE",
-              "#A0A79E",
-              "#65C546",
-            ]
-          }]
-      };
-    });
+    } else {
+      this.notifyService.notify('error', 'ERROR', 'Seleccione un abogado de la lista!');
+    }
   };
 
   private verificarCasoRecursive(node) {
