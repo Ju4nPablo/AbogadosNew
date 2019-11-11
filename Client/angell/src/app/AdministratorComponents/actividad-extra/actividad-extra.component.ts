@@ -131,7 +131,7 @@ export class ActividadExtraComponent implements OnInit {
     this.abogadoService.listAbogado().subscribe(dat => {
       const data: any = dat;
       this.listAbogado = data;
-      this.selectAbogado = data[1];
+      this.selectAbogado = data[0];
       if (us.tipo === '3') {
         for (let abog of this.listAbogado) {
           if (abog.cedula === us.cedula) {
@@ -165,7 +165,7 @@ export class ActividadExtraComponent implements OnInit {
         this.listActividad = data;
         for (const e of data) {
           let fi = e.fecha_inicio.split('T');
-          let ff = e.fecha_inicio.split('T');
+          let ff = e.fecha_fin.split('T');
           this.evento.id = e._id;
           this.evento.title = e.actividad;
           this.evento.start = fi[0];
@@ -310,11 +310,13 @@ export class ActividadExtraComponent implements OnInit {
           }
           this._serviceLogCambios.addLogCambio(log).subscribe();
           this.notifyService.notify('error', 'ERROR', 'ERROR DE CONEXIÓN!');
+          this.blockBotones = this._serviceBotones.blockBotonesGene;
         };
 
       });
     } else {
       this.notifyService.notify('error', 'ERROR', 'Ingrese una actividad!');
+      this.blockBotones = this._serviceBotones.blockBotonesGene;
     }
   }
   // Modificar una actividad
@@ -577,9 +579,10 @@ export class ActividadExtraComponent implements OnInit {
   // Muestra el fomrulario para ingresar una actividad
   showDialogAdd(event) {
     // this.inicio();
+    let fech = event.date._d;
     this.showDialog = true;
-    this.actividad.fecha_inicio = event.date._d;
-    this.actividad.fecha_fin = event.date._d;
+    this.actividad.fecha_inicio = fech
+    this.actividad.fecha_fin = fech;
   }
   // carga los datos para ser modificados.
   editActividad(event) {
